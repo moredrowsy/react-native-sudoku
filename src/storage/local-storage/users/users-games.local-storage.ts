@@ -1,10 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUserStorageKey } from './users.local-storage';
 import {
-  makeSudokuGameForUserFromGameForData,
   restoreSudokuGameUser,
-  SudokuGameForData,
-  SudokuGameForUser,
+  SudokuGameEntity,
   updateSudokuCellValueAndScore,
 } from '../../../sudoku';
 
@@ -20,7 +18,7 @@ export async function getUserGame(userId: string, sudokuId: string) {
   const key = getUserGameStorageKey(userId, sudokuId);
   const item = await AsyncStorage.getItem(key);
   return {
-    game: item ? (JSON.parse(item) as SudokuGameForUser) : null,
+    game: item ? (JSON.parse(item) as SudokuGameEntity) : null,
     key,
   };
 }
@@ -28,14 +26,14 @@ export async function getUserGame(userId: string, sudokuId: string) {
 export async function getUserGames(userId: string) {
   const key = getUserGameStorageKey(userId);
   const gameKeys = await AsyncStorage.getAllKeys();
-  const games: Record<string, SudokuGameForUser> = {};
+  const games: Record<string, SudokuGameEntity> = {};
 
   for (const gameKey of gameKeys) {
     if (gameKey.includes(key)) {
       const item = await AsyncStorage.getItem(gameKey);
 
       if (item) {
-        const sudoku: SudokuGameForUser = await JSON.parse(item);
+        const sudoku: SudokuGameEntity = await JSON.parse(item);
 
         if (sudoku) {
           games[sudoku.id] = sudoku;
@@ -50,7 +48,7 @@ export async function getUserGames(userId: string) {
 // Only add game if it does not exist
 export async function addSudokuGameToUser(
   userId: string,
-  sudoku: SudokuGameForUser
+  sudoku: SudokuGameEntity
 ) {
   const key = getUserGameStorageKey(userId, sudoku.id);
   const item = await AsyncStorage.getItem(key);
@@ -63,14 +61,13 @@ export async function addSudokuGameToUser(
 // Only add game if it does not exist
 export async function addSudokuGameDataToUser(
   userId: string,
-  sudokuGameForData: SudokuGameForData
+  sudoku: SudokuGameEntity
 ) {
-  const key = getUserGameStorageKey(userId, sudokuGameForData.id);
+  const key = getUserGameStorageKey(userId, sudoku.id);
   const item = await AsyncStorage.getItem(key);
 
   if (!item) {
-    const deepCopy = makeSudokuGameForUserFromGameForData(sudokuGameForData);
-    return AsyncStorage.setItem(key, JSON.stringify(deepCopy));
+    return AsyncStorage.setItem(key, JSON.stringify(sudoku));
   }
 }
 
@@ -106,7 +103,7 @@ export async function resetSudokuGameFromUser(
 // Overwrites original game
 export async function saveSudokuGameToUser(
   userId: string,
-  sudoku: SudokuGameForUser
+  sudoku: SudokuGameEntity
 ) {
   const key = getUserGameStorageKey(userId, sudoku.id);
   return AsyncStorage.setItem(key, JSON.stringify(sudoku));

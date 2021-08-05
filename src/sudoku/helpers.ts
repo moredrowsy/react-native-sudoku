@@ -1,15 +1,17 @@
 import { cloneDeep } from 'lodash';
 import {
   SudokuCellEntity,
-  SudokuGameForData,
   SudokuGameEntity,
-  SudokuGameForUser,
   SudokuUserEntity,
   UserEntity,
 } from './types';
 import { SUDOKU_EMPTY_CELL } from './constants';
 
-export function createSudokuGame(id: string, data: number[][]) {
+export function createSudokuGame(
+  id: string,
+  data: number[][],
+  solution?: number[][]
+) {
   const board: SudokuCellEntity[][] = [];
   let score = 0;
 
@@ -22,7 +24,7 @@ export function createSudokuGame(id: string, data: number[][]) {
         row: i,
         value: data[i][j],
         mutable: data[i][j] === SUDOKU_EMPTY_CELL,
-        answer: data[i][j],
+        answer: solution ? solution[i][j] : undefined,
       };
       row.push(cell);
 
@@ -35,22 +37,15 @@ export function createSudokuGame(id: string, data: number[][]) {
     id,
     board,
     defaultScore: score,
+    hasSolution: solution ? true : false,
+    userScore: score,
+    selectedCell: { col: -1, row: -1 },
   };
 
   return sudoku;
 }
 
-export function createSudokuGameData(
-  id: string,
-  data: number[][],
-  solution?: number[][]
-) {
-  const sudoku = createSudokuGame(id, data);
-  const sudokuGameData: SudokuGameForData = { ...sudoku, solution };
-  return sudokuGameData;
-}
-
-export function restoreSudokuGameUser(sudoku: SudokuGameForUser) {
+export function restoreSudokuGameUser(sudoku: SudokuGameEntity) {
   const board = sudoku.board;
   for (let i = 0; i < board.length; ++i) {
     for (let j = 0; j < board.length; ++j) {
@@ -66,7 +61,7 @@ export function restoreSudokuGameUser(sudoku: SudokuGameForUser) {
 }
 
 export function updateSudokuCellValueAndScore(
-  sudoku: SudokuGameForUser,
+  sudoku: SudokuGameEntity,
   col: number,
   row: number,
   value: number
@@ -84,6 +79,13 @@ export function updateSudokuCellValueAndScore(
     --sudoku.userScore;
   }
 
+  if (
+    !sudoku.hasSolution &&
+    sudoku.userScore === sudoku.board.length * sudoku.board.length
+  ) {
+    setSudokuGameSolutionFromCurrentValues(sudoku);
+  }
+
   return sudoku;
 }
 
@@ -93,19 +95,6 @@ export function getUserFromSudokuUser(sudokuUser: SudokuUserEntity) {
     username: sudokuUser.username,
   };
   return user;
-}
-
-export function makeSudokuGameForUserFromGameForData(
-  sudokuGmeData: SudokuGameForData
-) {
-  const sudokuShallow: SudokuGameForUser = {
-    id: sudokuGmeData.id,
-    board: sudokuGmeData.board,
-    defaultScore: sudokuGmeData.defaultScore,
-    userScore: sudokuGmeData.defaultScore,
-    selectedCell: { col: -1, row: -1 },
-  };
-  return cloneDeep(sudokuShallow);
 }
 
 export function makeEmptyEmptyBoard(boardSize: number) {
@@ -148,4 +137,33 @@ export function getAvailableCells(
   for (let i = 0; i < board.length; ++i) unique.delete(board[i][col].value);
 
   return unique;
+}
+
+export function setSudokuGameSolutionFromCurrentValues(
+  sudoku: SudokuGameEntity
+) {
+  const { board } = sudoku;
+  for (let i = 0; i < board.length; ++i) {
+    for (let j = 0; j < board.length; ++j) {
+      board[i][j].answer = board[i][j].value;
+    }
+  }
+  sudoku.hasSolution = true;
+}
+
+export function copySudokuGameSolution(
+  sourceGame: SudokuGameEntity,
+  targetGame: SudokuGameEntity
+) {
+  const sourceBoard = sourceGame.board;
+  const targetBoard = targetGame.board;
+
+  if (sourceBoard.length === targetBoard.length) {
+    for (let i = 0; i < sourceBoard.length; ++i) {
+      for (let j = 0; j < sourceBoard.length; ++j) {
+        targetBoard[i][j].answer = sourceBoard[i][j].answer;
+      }
+    }
+  }
+  targetGame.hasSolution;
 }

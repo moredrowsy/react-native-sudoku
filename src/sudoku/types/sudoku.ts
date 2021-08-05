@@ -12,7 +12,7 @@ export interface CellEntity {
 export interface SudokuCellEntity extends CellEntity {
   value: number;
   mutable: boolean;
-  answer: number | null;
+  answer: number | undefined;
 }
 
 export interface ControllCellEntity {
@@ -24,13 +24,7 @@ export interface SudokuGameEntity {
   id: string;
   board: SudokuCellEntity[][];
   defaultScore: number;
-}
-
-export interface SudokuGameForData extends SudokuGameEntity {
-  solution?: number[][];
-}
-
-export interface SudokuGameForUser extends SudokuGameEntity {
+  hasSolution: boolean;
   userScore: number;
   selectedCell: CellEntity;
 }

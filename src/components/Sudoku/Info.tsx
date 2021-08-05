@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import { AppDispatch, RootState } from '../../storage/store';
-import { blue, green } from '../../styles';
+import {
+  AppDispatch,
+  RootState,
+  updateGameDataWithSolutionAsync,
+} from '../../storage/store';
+import { black, blue, green } from '../../styles';
 
-function Info({ total, defaultScore, userScore }: Props) {
+function Info({
+  id,
+  userId,
+  total,
+  defaultHasSolution,
+  defaultScore,
+  userScore,
+  dispatch,
+}: Props) {
   if (defaultScore && userScore && total) {
+    // Update default game data with user's solution if it does not have any
+    useEffect(() => {
+      if (!defaultHasSolution && userScore === total) {
+        dispatch(updateGameDataWithSolutionAsync(id, userId));
+      }
+    }, [defaultHasSolution, userScore, total]);
+
     return (
       <View>
         {userScore === total ? (
@@ -29,6 +48,7 @@ const styles = StyleSheet.create({
   score: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: black,
   },
   completed: {
     color: green,
@@ -42,7 +62,7 @@ interface OwnProps {
   userId: string;
 }
 
-const mapState = ({ users }: RootState, { id, userId }: OwnProps) => {
+const mapState = ({ users, sudokus }: RootState, { id, userId }: OwnProps) => {
   let defaultScore = null;
   let userScore = null;
   let total = null;
@@ -55,6 +75,9 @@ const mapState = ({ users }: RootState, { id, userId }: OwnProps) => {
   }
 
   return {
+    id,
+    userId,
+    defaultHasSolution: id in sudokus ? sudokus[id].hasSolution : null,
     defaultScore,
     total,
     userScore,

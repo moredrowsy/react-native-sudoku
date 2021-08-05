@@ -103,7 +103,7 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
           style={[
             styles.control,
             { height: cellSize + SUDOKU_CELL_NORMAL_MARGIN * 2 },
-            isComplete && styles.noDisplay,
+
             cellMarginStyle,
           ]}
         >
@@ -125,19 +125,29 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
               />
             ))}
         </View>
-        <View style={[styles.control, !isValidIndices && styles.noDisplay]}>
-          <TouchableOpacity
-            onPress={onCellClear}
-            style={styles.btn}
-            disabled={!isValidIndices}
-          >
-            <AntDesign name='closesquareo' size={cellSize * 1.2} color={red} />
-          </TouchableOpacity>
-          <View style={{ width: cellSize, height: cellSize }}></View>
+        <View style={[styles.control]}>
+          <View style={{ width: 1, height: cellSize }}></View>
+          {isValidIndices && (
+            <>
+              <TouchableOpacity
+                onPress={onCellClear}
+                style={styles.btn}
+                disabled={!isValidIndices}
+              >
+                <AntDesign
+                  name='closesquareo'
+                  size={cellSize * 1.2}
+                  color={red}
+                />
+              </TouchableOpacity>
+              <View style={{ width: cellSize, height: cellSize }}></View>
+            </>
+          )}
+
           <TouchableOpacity
             onPress={onReset}
             style={styles.btn}
-            disabled={!isValidIndices}
+            disabled={false}
           >
             <MaterialCommunityIcons
               name='restart'

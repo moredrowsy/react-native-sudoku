@@ -1,4 +1,4 @@
-import { SudokuGameForUser } from './sudoku';
+import { SudokuGameEntity } from './sudoku';
 
 export interface UserEntity {
   name: string;
@@ -6,5 +6,5 @@ export interface UserEntity {
 }
 
 export interface SudokuUserEntity extends UserEntity {
-  sudokus: Record<string, SudokuGameForUser>;
+  sudokus: Record<string, SudokuGameEntity>;
 }

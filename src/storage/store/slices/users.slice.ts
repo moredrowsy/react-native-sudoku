@@ -1,19 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '..';
+import { cloneDeep } from 'lodash';
 import * as API from '../../api';
 import * as LocalStorage from '../../local-storage';
 
 import { setStatus } from '../slices/status.slice';
 import {
   getUserFromSudokuUser,
-  makeSudokuGameForUserFromGameForData,
   restoreSudokuGameUser,
-  SudokuGameForUser,
   SudokuUserEntity,
   updateSudokuCellValueAndScore,
   UserEntity,
 } from '../../../sudoku';
-import { AppStatus, CellEntity, SudokuGameForData } from '../../../types';
+import { AppStatus, CellEntity, SudokuGameEntity } from '../../../types';
 
 const sliceName = 'users';
 const initialState: Record<string, SudokuUserEntity> = {};
@@ -40,7 +39,7 @@ const users = createSlice({
     // Only add game if it does not exist
     addSudokuGameToUser: (
       state,
-      action: PayloadAction<{ userId: string; sudoku: SudokuGameForUser }>
+      action: PayloadAction<{ userId: string; sudoku: SudokuGameEntity }>
     ) => {
       const { userId, sudoku } = action.payload;
 
@@ -55,11 +54,11 @@ const users = createSlice({
       state,
       action: PayloadAction<{
         userId: string;
-        sudokuGameForData: SudokuGameForData;
+        sudokuGame: SudokuGameEntity;
       }>
     ) => {
-      const { userId, sudokuGameForData } = action.payload;
-      const deepCopy = makeSudokuGameForUserFromGameForData(sudokuGameForData);
+      const { userId, sudokuGame } = action.payload;
+      const deepCopy = cloneDeep(sudokuGame);
       if (userId in state) {
         const { sudokus } = state[userId];
         if (!(deepCopy.id in sudokus)) {
@@ -101,7 +100,7 @@ const users = createSlice({
     // Overwrites original sudoku user game
     saveSudokuGameToUser: (
       state,
-      action: PayloadAction<{ userId: string; sudoku: SudokuGameForUser }>
+      action: PayloadAction<{ userId: string; sudoku: SudokuGameEntity }>
     ) => {
       const { userId, sudoku } = action.payload;
 
@@ -202,7 +201,7 @@ export const addSudokuUserAsync =
 
 export const addSudokuGameToUserAsync =
   (
-    { userId, sudoku }: { userId: string; sudoku: SudokuGameForUser },
+    { userId, sudoku }: { userId: string; sudoku: SudokuGameEntity },
     onSuccess?: () => void,
     onError?: (msg: string) => void
   ): AppThunk =>
@@ -223,17 +222,14 @@ export const addSudokuGameToUserAsync =
 
 export const addSudokuGameDataToUserAsync =
   (
-    {
-      userId,
-      sudokuGameForData,
-    }: { userId: string; sudokuGameForData: SudokuGameForData },
+    { userId, sudokuGame }: { userId: string; sudokuGame: SudokuGameEntity },
     onSuccess?: () => void,
     onError?: (msg: string) => void
   ): AppThunk =>
   async (dispatch) => {
     try {
-      LocalStorage.users.addSudokuGameDataToUser(userId, sudokuGameForData);
-      dispatch(addSudokuGameDataToUser({ userId, sudokuGameForData }));
+      LocalStorage.users.addSudokuGameDataToUser(userId, sudokuGame);
+      dispatch(addSudokuGameDataToUser({ userId, sudokuGame }));
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {
@@ -332,7 +328,7 @@ export const saveSudokuUserAsync =
 
 export const saveSudokuGameToUserAsync =
   (
-    { userId, sudoku }: { userId: string; sudoku: SudokuGameForUser },
+    { userId, sudoku }: { userId: string; sudoku: SudokuGameEntity },
     onSuccess?: () => void,
     onError?: (msg: string) => void
   ): AppThunk =>
@@ -350,6 +346,7 @@ export const saveSudokuGameToUserAsync =
       }
     }
   };
+
 export const updateSudokuGameValueAsync =
   (
     {

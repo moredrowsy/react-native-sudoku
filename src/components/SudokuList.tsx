@@ -18,7 +18,7 @@ import {
   RootState,
 } from '../storage/store';
 
-import { SudokuGameForData } from '../types';
+import { SudokuGameEntity } from '../types';
 import Board from './Sudoku/Board';
 import { blue } from '../styles';
 
@@ -37,7 +37,7 @@ function SudokuList({
   const onPressSudoku = (id: string) => {
     if (userId && userSudokus && !(id in userSudokus)) {
       dispatch(
-        addSudokuGameDataToUserAsync({ userId, sudokuGameForData: sudokus[id] })
+        addSudokuGameDataToUserAsync({ userId, sudokuGame: sudokus[id] })
       );
     }
 
@@ -52,7 +52,7 @@ function SudokuList({
     );
   };
 
-  const renderSudokuGameItem: ListRenderItem<SudokuGameForData> = ({
+  const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
     item,
     index,
   }) => (

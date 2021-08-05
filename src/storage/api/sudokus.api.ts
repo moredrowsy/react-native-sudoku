@@ -1,17 +1,17 @@
-import { createSudokuGameData, SudokuGameForData } from '../../sudoku';
+import { createSudokuGame, SudokuGameEntity } from '../../sudoku';
 import DATA from './_DATA';
 
 // TODO: Data is mocked. Make backend api endpoints to fetch new sudoku games
 
-export function getSudokuGameDataRecord(
+export function getSudokuGameRecord(
   excludeIds: string[]
-): Promise<Record<string, SudokuGameForData>> {
+): Promise<Record<string, SudokuGameEntity>> {
   const excludeThese = new Set(excludeIds);
-  const sudokus: Record<string, SudokuGameForData> = {};
+  const sudokus: Record<string, SudokuGameEntity> = {};
 
   for (const { id, data, solution } of Object.values(DATA)) {
     if (!excludeThese.has(id)) {
-      const sudoku = createSudokuGameData(id, data, solution);
+      const sudoku = createSudokuGame(id, data, solution);
       sudokus[sudoku.id] = sudoku;
     }
   }

@@ -14,7 +14,7 @@ import { CommonActions } from '@react-navigation/native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../storage/store';
 
-import { SudokuGameForData } from '../types';
+import { SudokuGameEntity } from '../types';
 import Board from './Sudoku/Board';
 import { blue } from '../styles';
 
@@ -41,7 +41,7 @@ function SudokuListForUser({
     );
   };
 
-  const renderSudokuGameItem: ListRenderItem<SudokuGameForData> = ({
+  const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
     item,
     index,
   }) => (
