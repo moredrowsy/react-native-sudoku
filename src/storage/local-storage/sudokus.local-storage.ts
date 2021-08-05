@@ -8,7 +8,7 @@ export function getSudokuGameStorageKey(id: string) {
   return `${SUDOKUS_STORAGE_KEY}:${id}`;
 }
 
-export async function getSudokuGameData(id: string) {
+export async function getSudokuGame(id: string) {
   const key = getSudokuGameStorageKey(id);
   const item = await AsyncStorage.getItem(key);
   return {
@@ -22,9 +22,9 @@ export async function getSudokuGameRecord() {
   const gameKeys = await AsyncStorage.getAllKeys();
   const games: Record<string, SudokuGameEntity> = {};
 
-  for (const gamgameDataKey of gameKeys) {
-    if (gamgameDataKey.includes(key)) {
-      const item = await AsyncStorage.getItem(gamgameDataKey);
+  for (const gameKey of gameKeys) {
+    if (gameKey.includes(key)) {
+      const item = await AsyncStorage.getItem(gameKey);
 
       if (item) {
         const sudoku: SudokuGameEntity = await JSON.parse(item);
@@ -40,7 +40,7 @@ export async function getSudokuGameRecord() {
 }
 
 // Only add game if it does not exist
-export async function addSudokuGameData(sudoku: SudokuGameEntity) {
+export async function addSudokuGame(sudoku: SudokuGameEntity) {
   const key = getSudokuGameStorageKey(sudoku.id);
   const item = await AsyncStorage.getItem(key);
 
@@ -50,13 +50,13 @@ export async function addSudokuGameData(sudoku: SudokuGameEntity) {
 }
 
 // Remove game in storage
-export async function removeSudokuGameData(id: string) {
+export async function removeSudokuGame(id: string) {
   const key = getSudokuGameStorageKey(id);
   return AsyncStorage.removeItem(key);
 }
 
 // Overwrites original game
-export async function saveSudokuGameData(sudoku: SudokuGameEntity) {
+export async function saveSudokuGame(sudoku: SudokuGameEntity) {
   const key = getSudokuGameStorageKey(sudoku.id);
   return AsyncStorage.setItem(key, JSON.stringify(sudoku));
 }

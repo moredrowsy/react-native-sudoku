@@ -13,7 +13,7 @@ import { CommonActions } from '@react-navigation/native';
 // Redux
 import { connect, ConnectedProps } from 'react-redux';
 import {
-  addSudokuGameDataToUserAsync,
+  addSudokuGameToUserAsync,
   AppDispatch,
   RootState,
 } from '../storage/store';
@@ -36,9 +36,7 @@ function SudokuList({
 
   const onPressSudoku = (id: string) => {
     if (userId && userSudokus && !(id in userSudokus)) {
-      dispatch(
-        addSudokuGameDataToUserAsync({ userId, sudokuGame: sudokus[id] })
-      );
+      dispatch(addSudokuGameToUserAsync({ userId, sudoku: sudokus[id] }));
     }
 
     navigation.dispatch(

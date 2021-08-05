@@ -58,19 +58,6 @@ export async function addSudokuGameToUser(
   }
 }
 
-// Only add game if it does not exist
-export async function addSudokuGameDataToUser(
-  userId: string,
-  sudoku: SudokuGameEntity
-) {
-  const key = getUserGameStorageKey(userId, sudoku.id);
-  const item = await AsyncStorage.getItem(key);
-
-  if (!item) {
-    return AsyncStorage.setItem(key, JSON.stringify(sudoku));
-  }
-}
-
 export async function removeSudokuGameFromUser(
   userId: string,
   sudokuId: string

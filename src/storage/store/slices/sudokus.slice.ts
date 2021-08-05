@@ -13,25 +13,25 @@ const sudokus = createSlice({
   initialState,
   reducers: {
     // Only add game if it does not exist
-    addSudokuGameData: (state, action: PayloadAction<SudokuGameEntity>) => {
+    addSudokuGame: (state, action: PayloadAction<SudokuGameEntity>) => {
       if (!(action.payload.id in state))
         state[action.payload.id] = action.payload;
     },
     // Remove game in storage
-    removeSudokuGameData: (state, action: PayloadAction<string>) => {
+    removeSudokuGame: (state, action: PayloadAction<string>) => {
       delete state[action.payload];
     },
     // Overwrites original game
-    saveSudokuGameData: (state, action: PayloadAction<SudokuGameEntity>) => {
+    saveSudokuGame: (state, action: PayloadAction<SudokuGameEntity>) => {
       state[action.payload.id] = action.payload;
     },
-    setSudokuGameDataRecord: (
+    setSudokuGameRecord: (
       state,
       action: PayloadAction<Record<string, SudokuGameEntity>>
     ) => {
       return action.payload;
     },
-    updateGameDataWithSolution: (
+    updateGameWithSolution: (
       state,
       action: PayloadAction<SudokuGameEntity>
     ) => {
@@ -50,18 +50,18 @@ const sudokus = createSlice({
 });
 
 export const {
-  addSudokuGameData,
-  removeSudokuGameData,
-  saveSudokuGameData,
-  setSudokuGameDataRecord,
-  updateGameDataWithSolution,
+  addSudokuGame,
+  removeSudokuGame,
+  saveSudokuGame,
+  setSudokuGameRecord,
+  updateGameWithSolution,
 } = sudokus.actions;
 
 // SELECTOR
 export const selectSudokus = (state: RootState) => state.sudokus;
 
 // ASYNC ACTIONS
-export const addSudokuGameDataAsync =
+export const addSudokuGameAsync =
   (
     sudoku: SudokuGameEntity,
     onSuccess?: () => void,
@@ -69,8 +69,8 @@ export const addSudokuGameDataAsync =
   ): AppThunk =>
   async (dispatch) => {
     try {
-      dispatch(addSudokuGameData(sudoku));
-      LocalStorage.sudokus.addSudokuGameData(sudoku);
+      dispatch(addSudokuGame(sudoku));
+      LocalStorage.sudokus.addSudokuGame(sudoku);
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {
@@ -82,7 +82,7 @@ export const addSudokuGameDataAsync =
     }
   };
 
-export const removeSudokuGameDataAsync =
+export const removeSudokuGameAsync =
   (
     id: string,
     onSuccess?: () => void,
@@ -90,8 +90,8 @@ export const removeSudokuGameDataAsync =
   ): AppThunk =>
   async (dispatch) => {
     try {
-      dispatch(removeSudokuGameData(id));
-      LocalStorage.sudokus.removeSudokuGameData(id);
+      dispatch(removeSudokuGame(id));
+      LocalStorage.sudokus.removeSudokuGame(id);
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {
@@ -103,7 +103,7 @@ export const removeSudokuGameDataAsync =
     }
   };
 
-export const saveSudokuGameDataAsync =
+export const saveSudokuGameAsync =
   (
     sudoku: SudokuGameEntity,
     onSuccess?: () => void,
@@ -111,8 +111,8 @@ export const saveSudokuGameDataAsync =
   ): AppThunk =>
   async (dispatch) => {
     try {
-      dispatch(saveSudokuGameData(sudoku));
-      LocalStorage.sudokus.saveSudokuGameData(sudoku);
+      dispatch(saveSudokuGame(sudoku));
+      LocalStorage.sudokus.saveSudokuGame(sudoku);
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {
@@ -124,7 +124,7 @@ export const saveSudokuGameDataAsync =
     }
   };
 
-export const updateGameDataWithSolutionAsync =
+export const updateGameWithSolutionAsync =
   (
     id: string,
     userId: string,
@@ -137,8 +137,8 @@ export const updateGameDataWithSolutionAsync =
 
       if (userId in users && id in sudokus && id in users[userId].sudokus) {
         const userSudoku = users[userId].sudokus[id];
-        LocalStorage.sudokus.saveSudokuGameData(userSudoku);
-        dispatch(updateGameDataWithSolution(userSudoku));
+        LocalStorage.sudokus.saveSudokuGame(userSudoku);
+        dispatch(updateGameWithSolution(userSudoku));
       }
 
       if (onSuccess) onSuccess();
@@ -155,7 +155,6 @@ export const initSudokuGameDataAsync =
   (onSuccess?: () => void, onError?: (msg: string) => void): AppThunk =>
   async (dispatch) => {
     try {
-      // LocalStorage.clearAll();
       const sudokusFromLocal = await LocalStorage.sudokus.getSudokuGameRecord();
       const currentGameIds = Object.keys(sudokusFromLocal);
       const sudokusFromRemote = await API.sudokus.getSudokuGameRecord(
@@ -171,7 +170,7 @@ export const initSudokuGameDataAsync =
         } else sudokus[key] = sudokusFromRemote[key];
       }
 
-      dispatch(setSudokuGameDataRecord(sudokus));
+      dispatch(setSudokuGameRecord(sudokus));
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {

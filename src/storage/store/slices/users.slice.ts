@@ -39,26 +39,13 @@ const users = createSlice({
     // Only add game if it does not exist
     addSudokuGameToUser: (
       state,
-      action: PayloadAction<{ userId: string; sudoku: SudokuGameEntity }>
-    ) => {
-      const { userId, sudoku } = action.payload;
-
-      if (userId in state) {
-        const { sudokus } = state[userId];
-        if (!(sudoku.id in sudokus)) {
-          sudokus[sudoku.id] = sudoku;
-        }
-      }
-    },
-    addSudokuGameDataToUser: (
-      state,
       action: PayloadAction<{
         userId: string;
-        sudokuGame: SudokuGameEntity;
+        sudoku: SudokuGameEntity;
       }>
     ) => {
-      const { userId, sudokuGame } = action.payload;
-      const deepCopy = cloneDeep(sudokuGame);
+      const { userId, sudoku } = action.payload;
+      const deepCopy = cloneDeep(sudoku);
       if (userId in state) {
         const { sudokus } = state[userId];
         if (!(deepCopy.id in sudokus)) {
@@ -143,7 +130,6 @@ export const {
   addUser,
   addSudokuUser,
   addSudokuGameToUser,
-  addSudokuGameDataToUser,
   removeSudokuUser,
   removeSudokuGameFromUser,
   resetSudokuGameFromUser,
@@ -209,27 +195,6 @@ export const addSudokuGameToUserAsync =
     try {
       LocalStorage.users.addSudokuGameToUser(userId, sudoku);
       dispatch(addSudokuGameToUser({ userId, sudoku }));
-
-      if (onSuccess) onSuccess();
-    } catch (e: unknown) {
-      if (onError) {
-        if (e instanceof Error) onError(e.message);
-        else if (typeof e === 'string') onError(e);
-        else onError('Error');
-      }
-    }
-  };
-
-export const addSudokuGameDataToUserAsync =
-  (
-    { userId, sudokuGame }: { userId: string; sudokuGame: SudokuGameEntity },
-    onSuccess?: () => void,
-    onError?: (msg: string) => void
-  ): AppThunk =>
-  async (dispatch) => {
-    try {
-      LocalStorage.users.addSudokuGameDataToUser(userId, sudokuGame);
-      dispatch(addSudokuGameDataToUser({ userId, sudokuGame }));
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {

@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import {
   AppDispatch,
   RootState,
-  updateGameDataWithSolutionAsync,
+  updateGameWithSolutionAsync,
 } from '../../storage/store';
 import { black, blue, green } from '../../styles';
 
@@ -21,7 +21,7 @@ function Info({
     // Update default game data with user's solution if it does not have any
     useEffect(() => {
       if (!defaultHasSolution && userScore === total) {
-        dispatch(updateGameDataWithSolutionAsync(id, userId));
+        dispatch(updateGameWithSolutionAsync(id, userId));
       }
     }, [defaultHasSolution, userScore, total]);
 
