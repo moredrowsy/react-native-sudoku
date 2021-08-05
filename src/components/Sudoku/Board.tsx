@@ -9,7 +9,7 @@ import {
   cellStyles,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
-import { getCellSize, makeEmptyEmptyBoard } from '../../sudoku';
+import { getCellSize, EMPTY_BOARDS } from '../../sudoku';
 import SudokuCell from './SudokuCell';
 
 function Board({
@@ -27,7 +27,7 @@ function Board({
   };
 
   const rootSize = Math.sqrt(boardSize);
-  const emptyBoard = makeEmptyEmptyBoard(boardSize);
+  const emptyBoard = EMPTY_BOARDS[boardSize];
   const { width, height } = Dimensions.get('window');
   const dimension = boardDimension ? boardDimension : Math.min(width, height);
   const cellSize = getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN);

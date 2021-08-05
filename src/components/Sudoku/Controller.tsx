@@ -13,7 +13,7 @@ import {
   ControllCellEntity,
   getAvailableCells,
   getCellSize,
-  makeEmptySudokuRow,
+  EMPTY_BOARDS,
   SUDOKU_EMPTY_CELL,
 } from '../../sudoku';
 import {
@@ -43,7 +43,7 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
       SUDOKU_CELL_NORMAL_MARGIN
     );
     const isComplete = sudoku.userScore === boardSize * boardSize;
-    const rows = makeEmptySudokuRow(boardSize);
+    const rows = EMPTY_BOARDS[boardSize][0];
     const isValidIndices =
       col > -1 && col < boardSize && row > -1 && row < boardSize;
 

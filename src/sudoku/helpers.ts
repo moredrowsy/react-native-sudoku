@@ -97,22 +97,6 @@ export function getUserFromSudokuUser(sudokuUser: SudokuUserEntity) {
   return user;
 }
 
-export function makeEmptyEmptyBoard(boardSize: number) {
-  const board = [];
-  for (let i = 0; i < boardSize; ++i) {
-    const row = [];
-    for (let j = 0; j < boardSize; ++j) row.push(null);
-    board.push(row);
-  }
-  return board;
-}
-
-export function makeEmptySudokuRow(boardSize: number) {
-  const cells = [];
-  for (let i = 1; i <= boardSize; ++i) cells.push(i);
-  return cells;
-}
-
 export function getCellSize(
   dimension: number,
   boardSize: number,
