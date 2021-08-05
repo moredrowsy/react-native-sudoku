@@ -31,15 +31,6 @@ function SudokuCell({
   let bgColor = backgroundColor;
   let txtColor = textColor;
 
-  if (
-    sudokuCell &&
-    sudokuCell.mutable &&
-    sudokuCell.value !== SUDOKU_EMPTY_CELL
-  ) {
-    bgColor = blue;
-    txtColor = white;
-  }
-
   if (isSelected) {
     bgColor = blue;
     txtColor = white;
@@ -48,6 +39,15 @@ function SudokuCell({
   if (noSelectedColor) {
     bgColor = backgroundColor;
     txtColor = textColor;
+  }
+
+  if (
+    sudokuCell &&
+    sudokuCell.mutable &&
+    sudokuCell.value !== SUDOKU_EMPTY_CELL
+  ) {
+    bgColor = blue;
+    txtColor = white;
   }
 
   const onCellPress = () => {
