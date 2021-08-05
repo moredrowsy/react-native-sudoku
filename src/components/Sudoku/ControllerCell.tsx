@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, StyleSheet, View } from 'react-native';
+import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
 import { blue, white } from '../../styles';

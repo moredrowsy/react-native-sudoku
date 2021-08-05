@@ -20,7 +20,7 @@ import { blue } from '../styles';
 
 const FLAT_LIST_MARGIN_SIZE = 30;
 
-function SudokuList({
+function SudokuListForUser({
   userId,
   userSudokus,
   loading,
@@ -122,4 +122,4 @@ const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = OwnProps & PropsFromRedux;
 
-export default connect(mapState)(SudokuList);
+export default connect(mapState)(SudokuListForUser);

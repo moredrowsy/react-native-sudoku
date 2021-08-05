@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { AppDispatch, RootState } from '../../storage/store';
 import Board from './Board';
 import Controller from './Controller';

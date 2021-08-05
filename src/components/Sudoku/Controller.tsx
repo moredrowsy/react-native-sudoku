@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect, ConnectedProps } from 'react-redux';
@@ -45,6 +45,7 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
       }));
     }
 
+    // TODO: Conver to useCalllback with correct dependency list
     const onCellPress = (value: number) => {
       if (col > -1 && row > -1 && userId) {
         const cellValue = board[row][col].value;
