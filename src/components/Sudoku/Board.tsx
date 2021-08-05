@@ -4,8 +4,11 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 // Redux
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
-import { black, blue, white } from '../../styles';
-import { cellStyles, SUDOKU_CELL_NORMAL_MARGIN } from '../../styles/sudoku';
+import {
+  cellColorThemes,
+  cellStyles,
+  SUDOKU_CELL_NORMAL_MARGIN,
+} from '../../styles';
 import { getCellSize, makeEmptyEmptyBoard } from '../../sudoku';
 import SudokuCell from './SudokuCell';
 
@@ -16,8 +19,13 @@ function Board({
   isPressable,
   userId,
   hasUserBoard,
-  noSelectedColor = false,
+  hideSelectedColor = false,
 }: Props) {
+  const cellColors = cellColorThemes.default;
+  const cellMarginStyle = {
+    backgroundColor: cellColors.margin,
+  };
+
   const rootSize = Math.sqrt(boardSize);
   const emptyBoard = makeEmptyEmptyBoard(boardSize);
   const { width, height } = Dimensions.get('window');
@@ -27,7 +35,7 @@ function Board({
   return (
     <View>
       {emptyBoard.map((rows, row) => (
-        <View key={row} style={[styles.cellRow, styles.cellMarginColor]}>
+        <View key={row} style={[styles.cellRow, cellMarginStyle]}>
           {rows.map((_, col) => (
             <SudokuCell
               key={col}
@@ -48,11 +56,7 @@ function Board({
                   ? cellStyles.cellSepBottom
                   : null,
               ]}
-              backgroundColor={white}
-              opacityColor={blue}
-              textColor={black}
-              pressTextColor={white}
-              noSelectedColor={noSelectedColor}
+              hideSelectedColor={hideSelectedColor}
             />
           ))}
         </View>
@@ -66,7 +70,7 @@ interface OwnProps {
   userId?: string | null;
   boardDimension?: number;
   isPressable: boolean;
-  noSelectedColor?: boolean;
+  hideSelectedColor?: boolean;
 }
 
 const mapState = ({ sudokus, users }: RootState, { id, userId }: OwnProps) => {
@@ -91,8 +95,5 @@ export default connect(mapState)(Board);
 const styles = StyleSheet.create({
   cellRow: {
     flexDirection: 'row',
-  },
-  cellMarginColor: {
-    backgroundColor: black,
   },
 });

@@ -34,3 +34,13 @@ export interface SudokuGameForUser extends SudokuGameEntity {
   userScore: number;
   selectedCell: CellEntity;
 }
+
+export interface CellColors {
+  background: string;
+  opacityBackground: string;
+  text: string;
+  margin: string;
+  selectedBackground: string;
+  selectedOpacity: string;
+  selectedTextColor: string;
+}

@@ -62,7 +62,7 @@ function SudokuList({
           id={item.id}
           userId={userId}
           isPressable={false}
-          noSelectedColor={true}
+          hideSelectedColor={true}
         />
       </TouchableOpacity>
     </View>

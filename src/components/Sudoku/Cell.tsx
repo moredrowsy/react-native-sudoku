@@ -11,6 +11,7 @@ function Cell({
   opacityColor,
   textColor,
   onPress,
+  hideZero = true,
 }: Props) {
   const outerContainer = opacityColor
     ? { backgroundColor: opacityColor }
@@ -57,7 +58,7 @@ function Cell({
               { fontSize: 0.75 * cellSize },
             ]}
           >
-            {value === SUDOKU_EMPTY_CELL ? ' ' : value}
+            {value === SUDOKU_EMPTY_CELL && hideZero ? ' ' : value}
           </Text>
         </View>
       )}
@@ -75,8 +76,8 @@ interface Props {
   backgroundColor?: string;
   opacityColor?: string;
   textColor?: string;
-  pressTextColor?: string;
   onPress: () => void;
+  hideZero?: boolean;
 }
 
 const styles = StyleSheet.create({

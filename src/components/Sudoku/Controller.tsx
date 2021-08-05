@@ -8,7 +8,6 @@ import {
   RootState,
   updateSudokuGameValueAsync,
 } from '../../storage/store';
-import { cellStyles, SUDOKU_CELL_NORMAL_MARGIN } from '../../styles/sudoku';
 import {
   CellEntity,
   ControllCellEntity,
@@ -17,10 +16,21 @@ import {
   makeEmptySudokuRow,
   SUDOKU_EMPTY_CELL,
 } from '../../sudoku';
-import { black, blue, red, white } from '../../styles';
+import {
+  blue,
+  red,
+  cellColorThemes,
+  cellStyles,
+  SUDOKU_CELL_NORMAL_MARGIN,
+} from '../../styles';
 import ControllerCell from './ControllerCell';
 
 function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
+  const cellColors = cellColorThemes.default;
+  const cellMarginStyle = {
+    backgroundColor: cellColors.margin,
+  };
+
   if (sudoku) {
     const { col, row } = selectedCell;
     const { board } = sudoku;
@@ -34,10 +44,12 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
     );
     const isComplete = sudoku.userScore === boardSize * boardSize;
     const rows = makeEmptySudokuRow(boardSize);
+    const isValidIndices =
+      col > -1 && col < boardSize && row > -1 && row < boardSize;
 
     let unique = new Set<number>();
     let sudokuCells: ControllCellEntity[] = [];
-    if (col > -1 && col < boardSize && row > -1 && row < boardSize) {
+    if (isValidIndices) {
       unique = getAvailableCells(col, row, board);
       sudokuCells = rows.map((value) => ({
         value,
@@ -45,9 +57,9 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
       }));
     }
 
-    // TODO: Conver to useCalllback with correct dependency list
+    // TODO: useCallback, is it pointless to memorize?
     const onCellPress = (value: number) => {
-      if (col > -1 && row > -1 && userId) {
+      if (isValidIndices && userId) {
         const cellValue = board[row][col].value;
         if (cellValue !== value) {
           dispatch(
@@ -64,7 +76,7 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
     };
 
     const onCellClear = () => {
-      if (col > -1 && row > -1 && userId) {
+      if (isValidIndices && userId) {
         const cellValue = board[row][col].value;
         if (cellValue !== SUDOKU_EMPTY_CELL) {
           dispatch(
@@ -92,7 +104,7 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
             styles.control,
             { height: cellSize + SUDOKU_CELL_NORMAL_MARGIN * 2 },
             isComplete && styles.noDisplay,
-            styles.cellMarginColor,
+            cellMarginStyle,
           ]}
         >
           {unique &&
@@ -109,20 +121,24 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
                   cellStyles.cellTop,
                   index === 0 ? cellStyles.cellLeft : null,
                 ]}
-                backgroundColor={white}
-                opacityColor={blue}
-                textColor={black}
-                pressTextColor={white}
                 onPress={() => onCellPress(cell.value)}
               />
             ))}
         </View>
-        <View style={styles.control}>
-          <TouchableOpacity onPress={onCellClear} style={styles.btn}>
+        <View style={[styles.control, !isValidIndices && styles.noDisplay]}>
+          <TouchableOpacity
+            onPress={onCellClear}
+            style={styles.btn}
+            disabled={!isValidIndices}
+          >
             <AntDesign name='closesquareo' size={cellSize * 1.2} color={red} />
           </TouchableOpacity>
           <View style={{ width: cellSize, height: cellSize }}></View>
-          <TouchableOpacity onPress={onReset} style={styles.btn}>
+          <TouchableOpacity
+            onPress={onReset}
+            style={styles.btn}
+            disabled={!isValidIndices}
+          >
             <MaterialCommunityIcons
               name='restart'
               size={cellSize * 1.2}
@@ -155,9 +171,6 @@ const styles = StyleSheet.create({
   },
   cellRow: {
     flexDirection: 'row',
-  },
-  cellMarginColor: {
-    backgroundColor: black,
   },
 });
 

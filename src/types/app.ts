@@ -3,3 +3,7 @@ export interface AppStatus {
   userId: string | null;
   loading: boolean;
 }
+
+export interface AppOptions {
+  showHints: boolean;
+}

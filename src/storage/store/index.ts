@@ -1,10 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import options from './slices/options.slice';
 import status from './slices/status.slice';
 import sudokus from './slices/sudokus.slice';
 import users from './slices/users.slice';
 
 export const store = configureStore({
   reducer: {
+    options,
     status,
     sudokus,
     users,

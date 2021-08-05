@@ -9,6 +9,7 @@ import {
   RootState,
   initSudokuGameDataAsync,
   initSudokuUserAsync,
+  initAppOptionsAsync,
 } from '../storage/store';
 
 // Navigation
@@ -20,11 +21,7 @@ import AppOptions from './AppOptions';
 import StatusBar from './StatusBar';
 import Sudoku from './Sudoku';
 import SudokuList from './SudokuList';
-import { black, blue, gray, white } from '../styles';
-import {
-  SUDOKU_CELL_NORMAL_MARGIN,
-  SUDOKU_CELL_SEP_MARGIN,
-} from '../styles/sudoku';
+import { blue, gray, white } from '../styles';
 import SudokuListForUser from './SudokuListForUser';
 
 type StackParamList = {
@@ -116,6 +113,7 @@ function App({ dispatch, status }: Props) {
   useEffect(() => {
     dispatch(initSudokuUserAsync());
     dispatch(initSudokuGameDataAsync());
+    dispatch(initAppOptionsAsync());
   }, []);
 
   return (

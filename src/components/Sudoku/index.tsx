@@ -20,7 +20,7 @@ function Sudoku({ hasSudokuGameForUser, id, userId }: Props) {
             id={id}
             userId={userId}
             isPressable={true}
-            noSelectedColor={false}
+            hideSelectedColor={false}
           />
         </View>
         <View style={styles.controller}>

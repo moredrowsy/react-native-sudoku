@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
-import { blue, white } from '../../styles';
+import { cellColorThemes } from '../../styles';
 import Cell from './Cell';
 
 function SudokuCell({
@@ -11,24 +11,32 @@ function SudokuCell({
   value,
   cellSize,
   isPressable = true,
-  backgroundColor,
-  opacityColor,
-  textColor,
-  pressTextColor,
+  showHints,
   style,
   onPress,
   dispatch,
 }: Props) {
+  const cellColors = cellColorThemes.default;
+
+  let bgColor = cellColors.background;
+  let opColor = cellColors.opacityBackground;
+  let txtColor = cellColors.text;
+
+  if (isPressable && showHints) {
+    bgColor = cellColors.selectedBackground;
+    opColor = cellColors.selectedOpacity;
+    txtColor = cellColors.selectedTextColor;
+  }
+
   return (
     <View style={style}>
       <Cell
         value={value}
         isPressable={isPressable}
         cellSize={cellSize}
-        backgroundColor={isPressable ? blue : backgroundColor}
-        opacityColor={opacityColor}
-        textColor={isPressable ? white : textColor}
-        pressTextColor={pressTextColor}
+        backgroundColor={bgColor}
+        opacityColor={opColor}
+        textColor={txtColor}
         onPress={onPress ? onPress : () => {}}
       />
     </View>
@@ -41,15 +49,13 @@ interface OwnProps {
   value: number;
   cellSize: number;
   isPressable: boolean;
-  backgroundColor?: string;
-  opacityColor?: string;
-  textColor?: string;
-  pressTextColor?: string;
   onPress?: () => void;
   style?: StyleProp<any>;
 }
 
-const mapState = ({}: RootState) => ({});
+const mapState = ({ options }: RootState) => ({
+  showHints: options.showHints,
+});
 
 const mapDispatch = (dispatch: AppDispatch) => ({
   dispatch,

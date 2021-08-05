@@ -6,39 +6,40 @@ import {
   RootState,
   updateSelectedCellForGame,
 } from '../../storage/store';
-import { blue, white } from '../../styles';
+import { cellColorThemes } from '../../styles';
 import { SUDOKU_EMPTY_CELL } from '../../sudoku';
 import { CellEntity } from '.././../types';
 import Cell from './Cell';
 
 function SudokuCell({
   id,
+  userId,
   sudokuCell,
   col,
   row,
-  userId,
   cellSize,
   isPressable = true,
-  backgroundColor,
-  opacityColor,
-  textColor,
-  pressTextColor,
   style,
   isSelected,
-  noSelectedColor = false,
+  hideSelectedColor = false,
   dispatch,
 }: Props) {
-  let bgColor = backgroundColor;
-  let txtColor = textColor;
+  const cellColors = cellColorThemes.default;
+
+  let bgColor = cellColors.background;
+  let opColor = cellColors.opacityBackground;
+  let txtColor = cellColors.text;
 
   if (isSelected) {
-    bgColor = blue;
-    txtColor = white;
+    bgColor = cellColors.selectedBackground;
+    opColor = cellColors.selectedOpacity;
+    txtColor = cellColors.selectedTextColor;
   }
 
-  if (noSelectedColor) {
-    bgColor = backgroundColor;
-    txtColor = textColor;
+  if (hideSelectedColor) {
+    bgColor = cellColors.background;
+    txtColor = cellColors.text;
+    opColor = cellColors.opacityBackground;
   }
 
   if (
@@ -46,8 +47,9 @@ function SudokuCell({
     sudokuCell.mutable &&
     sudokuCell.value !== SUDOKU_EMPTY_CELL
   ) {
-    bgColor = blue;
-    txtColor = white;
+    bgColor = cellColors.selectedBackground;
+    opColor = cellColors.selectedOpacity;
+    txtColor = cellColors.selectedTextColor;
   }
 
   const onCellPress = () => {
@@ -73,9 +75,8 @@ function SudokuCell({
           isPressable={isPressable && sudokuCell.mutable}
           cellSize={cellSize}
           backgroundColor={bgColor}
-          opacityColor={opacityColor}
+          opacityColor={opColor}
           textColor={txtColor}
-          pressTextColor={pressTextColor}
           onPress={onCellPress}
         />
       )}
@@ -90,11 +91,7 @@ interface OwnProps {
   row: number;
   cellSize: number;
   isPressable: boolean;
-  backgroundColor?: string;
-  opacityColor?: string;
-  textColor?: string;
-  pressTextColor?: string;
-  noSelectedColor?: boolean;
+  hideSelectedColor?: boolean;
   style?: StyleProp<any>;
 }
 
