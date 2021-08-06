@@ -65,6 +65,7 @@ function Controller({
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
+    const rootSize = Math.sqrt(boardSize);
     const { width, height } = Dimensions.get('window');
     const dimension = Math.min(width, height);
     const cellSize = getCellSize(
@@ -168,6 +169,9 @@ function Controller({
                   cellStyles.cellBottomAndRight,
                   cellStyles.cellTop,
                   index === 0 ? cellStyles.cellLeft : null,
+                  index !== boardSize - 1 &&
+                    index % rootSize == 2 &&
+                    cellStyles.cellSepRight,
                 ]}
                 onPress={() => onCellPress(cell.value)}
               />
