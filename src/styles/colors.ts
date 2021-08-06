@@ -5,3 +5,4 @@ export const lightgray = '#f5f5f5';
 export const green = '#4caf50';
 export const red = '#f44336';
 export const white = '#ffffff';
+export const yellow = '#ffc107';

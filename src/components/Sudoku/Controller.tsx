@@ -35,6 +35,7 @@ import {
   SUDOKU_CELL_NORMAL_MARGIN,
   black,
   gray,
+  yellow,
 } from '../../styles';
 import ControllerCell from './ControllerCell';
 
@@ -72,9 +73,14 @@ function Controller({
       SUDOKU_CELL_NORMAL_MARGIN
     );
     const isComplete = sudoku.userScore === boardSize * boardSize;
+
     const rows = EMPTY_BOARDS[boardSize][0];
     const isValidIndices =
       col > -1 && col < boardSize && row > -1 && row < boardSize;
+
+    let selectedValue = 0;
+    if (isValidIndices)
+      selectedValue = sudoku.board[selectedCell.row][selectedCell.col].value;
 
     let unique = new Set<number>();
     let sudokuCells: ControllCellEntity[] = [];
@@ -167,59 +173,59 @@ function Controller({
               />
             ))}
         </View>
-        <View style={[styles.control]}>
-          <View style={{ width: 1, height: cellSize }}></View>
-          {isValidIndices && (
-            <>
-              <TouchableOpacity
-                onPress={onCellClear}
-                style={styles.btn}
-                disabled={!isValidIndices}
-              >
-                <AntDesign
-                  name='closesquareo'
-                  size={cellSize * 1.2}
-                  color={red}
-                />
-              </TouchableOpacity>
-              <View style={{ width: cellSize, height: cellSize }}></View>
-              <TouchableOpacity
-                onPress={toggleShowHints}
-                style={styles.btn}
-                disabled={!appShowHints}
-              >
-                <MaterialCommunityIcons
-                  name={hintsIconName as any}
-                  size={cellSize * 1.2}
-                  color={appShowHints ? black : gray}
-                />
-              </TouchableOpacity>
-              <View style={{ width: cellSize, height: cellSize }}></View>
-              <Pressable
-                onPressIn={() => setReveal(true)}
-                onPressOut={() => setReveal(false)}
-                style={styles.btn}
-                disabled={!sudoku.hasSolution}
-              >
-                <Ionicons
-                  name={eyeIconName as any}
-                  size={cellSize * 1.2}
-                  color={sudoku.hasSolution ? black : gray}
-                />
-              </Pressable>
-              <View style={{ width: cellSize, height: cellSize }}></View>
-            </>
-          )}
-
+        <View style={[styles.control, !isValidIndices && styles.noDisplay]}>
+          <TouchableOpacity
+            onPress={onCellClear}
+            style={styles.btn}
+            disabled={!isValidIndices || selectedValue === SUDOKU_EMPTY_CELL}
+          >
+            <AntDesign
+              name='closesquareo'
+              size={cellSize * 1.2}
+              color={
+                isValidIndices && selectedValue !== SUDOKU_EMPTY_CELL
+                  ? blue
+                  : gray
+              }
+            />
+          </TouchableOpacity>
+          <View style={{ width: cellSize, height: cellSize }}></View>
+          <TouchableOpacity
+            onPress={toggleShowHints}
+            style={styles.btn}
+            disabled={!isValidIndices || !appShowHints}
+          >
+            <MaterialCommunityIcons
+              name={hintsIconName as any}
+              size={cellSize * 1.2}
+              color={appShowHints && showHints ? yellow : gray}
+            />
+          </TouchableOpacity>
+          <View style={{ width: cellSize, height: cellSize }}></View>
+          <Pressable
+            onPressIn={() => setReveal(true)}
+            onPressOut={() => setReveal(false)}
+            style={styles.btn}
+            disabled={!isValidIndices || !sudoku.hasSolution}
+          >
+            <Ionicons
+              name={eyeIconName as any}
+              size={cellSize * 1.2}
+              color={sudoku.hasSolution && reveal ? red : gray}
+            />
+          </Pressable>
+          <View style={{ width: cellSize, height: cellSize }}></View>
           <TouchableOpacity
             onPress={onReset}
             style={styles.btn}
-            disabled={false}
+            disabled={
+              !isValidIndices || sudoku.defaultScore == sudoku.userScore
+            }
           >
             <MaterialCommunityIcons
               name='restart'
               size={cellSize * 1.2}
-              color={blue}
+              color={sudoku.defaultScore === sudoku.userScore ? gray : blue}
             />
           </TouchableOpacity>
         </View>
