@@ -195,7 +195,6 @@ function Controller({
                 />
               </TouchableOpacity>
               <View style={{ width: cellSize, height: cellSize }}></View>
-              {/* TODO: Pressable does not work for web. Use HTML button code for web */}
               <Pressable
                 onPressIn={() => setReveal(true)}
                 onPressOut={() => setReveal(false)}
