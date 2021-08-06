@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { CellColors } from '../sudoku';
-import { black, blue, white } from './colors';
+import { black, blue, red, white } from './colors';
 
 export const SUDOKU_CELL_NORMAL_MARGIN = 1;
 export const SUDOKU_CELL_SEP_MARGIN = 3;
@@ -13,7 +13,10 @@ const cellColorThemes: Record<string, CellColors> = {
     margin: black,
     selectedBackground: blue,
     selectedOpacity: white,
-    selectedTextColor: white,
+    selectedText: white,
+    revealBackground: red,
+    revealOpacityBackground: red,
+    revealText: white,
   },
 };
 cellColorThemes['default'] = cellColorThemes.blue;

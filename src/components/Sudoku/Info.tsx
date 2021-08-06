@@ -31,7 +31,7 @@ function Info({
           <Text style={styles.completed}>Completed!</Text>
         ) : (
           <Text style={styles.score}>
-            Score: {userScore} / {total}
+            {userScore} / {total}
           </Text>
         )}
       </View>

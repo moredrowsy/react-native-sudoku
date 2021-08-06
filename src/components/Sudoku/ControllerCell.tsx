@@ -11,6 +11,9 @@ function SudokuCell({
   value,
   cellSize,
   isPressable = true,
+  isReveal = false,
+  isAnswer,
+  appShowHints,
   showHints,
   style,
   onPress,
@@ -22,10 +25,16 @@ function SudokuCell({
   let opColor = cellColors.opacityBackground;
   let txtColor = cellColors.text;
 
-  if (isPressable && showHints) {
+  if (isPressable && appShowHints && showHints) {
     bgColor = cellColors.selectedBackground;
     opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedTextColor;
+    txtColor = cellColors.selectedText;
+  }
+
+  if (isReveal && isAnswer) {
+    bgColor = cellColors.revealBackground;
+    opColor = cellColors.revealOpacityBackground;
+    txtColor = cellColors.revealText;
   }
 
   return (
@@ -44,18 +53,35 @@ function SudokuCell({
 }
 
 interface OwnProps {
+  id: string;
+  userId?: string | null;
   col: number;
   row: number;
   value: number;
   cellSize: number;
   isPressable: boolean;
+  isReveal: boolean;
   onPress?: () => void;
   style?: StyleProp<any>;
 }
 
-const mapState = ({ options }: RootState) => ({
-  showHints: options.showHints,
-});
+const mapState = (
+  { options, users }: RootState,
+  { id, col, row, isReveal, userId, value }: OwnProps
+) => {
+  let isAnswer = false;
+  let showHints = false;
+  if (userId && id in users[userId].sudokus) {
+    isAnswer = users[userId].sudokus[id].board[row][col].answer === value;
+    showHints = users[userId].sudokus[id].showHints;
+  }
+
+  return {
+    isAnswer,
+    appShowHints: options.showHints,
+    showHints,
+  };
+};
 
 const mapDispatch = (dispatch: AppDispatch) => ({
   dispatch,

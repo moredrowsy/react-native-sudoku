@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import {
   SudokuCellEntity,
   SudokuGameEntity,
@@ -40,6 +39,7 @@ export function createSudokuGame(
     hasSolution: solution ? true : false,
     userScore: score,
     selectedCell: { col: -1, row: -1 },
+    showHints: false,
   };
 
   return sudoku;

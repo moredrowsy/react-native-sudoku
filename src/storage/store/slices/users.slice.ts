@@ -123,6 +123,20 @@ const users = createSlice({
         return state;
       }
     },
+    updateShowHintsForGame: (
+      state,
+      action: PayloadAction<{
+        sudokuId: string;
+        userId: string | null;
+        showHints: boolean;
+      }>
+    ) => {
+      const { sudokuId, userId } = action.payload;
+      if (userId && userId in state && sudokuId in state[userId].sudokus) {
+        state[userId].sudokus[sudokuId].showHints = action.payload.showHints;
+        return state;
+      }
+    },
   },
 });
 
@@ -137,6 +151,7 @@ export const {
   saveSudokuGameToUser,
   updateSudokuGameValue,
   updateSelectedCellForGame,
+  updateShowHintsForGame,
 } = users.actions;
 
 // SELECTOR

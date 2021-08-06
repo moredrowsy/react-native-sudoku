@@ -1,11 +1,22 @@
-import React from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   AppDispatch,
   resetSudokuGameFromUserAsync,
   RootState,
+  updateShowHintsForGame,
   updateSudokuGameValueAsync,
 } from '../../storage/store';
 import {
@@ -22,10 +33,28 @@ import {
   cellColorThemes,
   cellStyles,
   SUDOKU_CELL_NORMAL_MARGIN,
+  black,
+  gray,
 } from '../../styles';
 import ControllerCell from './ControllerCell';
 
-function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
+function Controller({
+  id,
+  selectedCell,
+  appShowHints,
+  showHints,
+  sudoku,
+  userId,
+  dispatch,
+}: Props) {
+  const [reveal, setReveal] = useState(false);
+
+  // Icon names
+  let eyeIconName = reveal ? 'eye' : 'eye-off';
+  if (!sudoku?.hasSolution) eyeIconName = 'eye-outline';
+  let hintsIconName = showHints ? 'lightbulb-on' : 'lightbulb-off';
+  if (!appShowHints) hintsIconName = 'lightbulb-off-outline';
+
   const cellColors = cellColorThemes.default;
   const cellMarginStyle = {
     backgroundColor: cellColors.margin,
@@ -52,8 +81,8 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
     if (isValidIndices) {
       unique = getAvailableCells(col, row, board);
       sudokuCells = rows.map((value) => ({
-        value,
-        unique: unique.has(value),
+        value: value + 1,
+        unique: unique.has(value + 1),
       }));
     }
 
@@ -97,6 +126,16 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
         dispatch(resetSudokuGameFromUserAsync({ userId, sudokuId: sudoku.id }));
     };
 
+    const toggleShowHints = () => {
+      dispatch(
+        updateShowHintsForGame({
+          sudokuId: id,
+          userId: userId,
+          showHints: !showHints,
+        })
+      );
+    };
+
     return (
       <View style={[styles.container]}>
         <View
@@ -111,11 +150,14 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
             sudokuCells.map((cell, index) => (
               <ControllerCell
                 key={index}
+                id={id}
+                userId={userId}
                 col={col}
                 row={row}
                 value={cell.value}
                 cellSize={cellSize}
                 isPressable={cell.unique}
+                isReveal={reveal}
                 style={[
                   cellStyles.cellBottomAndRight,
                   cellStyles.cellTop,
@@ -140,6 +182,32 @@ function Controller({ selectedCell, sudoku, userId, dispatch }: Props) {
                   color={red}
                 />
               </TouchableOpacity>
+              <View style={{ width: cellSize, height: cellSize }}></View>
+              <TouchableOpacity
+                onPress={toggleShowHints}
+                style={styles.btn}
+                disabled={!appShowHints}
+              >
+                <MaterialCommunityIcons
+                  name={hintsIconName as any}
+                  size={cellSize * 1.2}
+                  color={appShowHints ? black : gray}
+                />
+              </TouchableOpacity>
+              <View style={{ width: cellSize, height: cellSize }}></View>
+              {/* TODO: Pressable does not work for web. Use HTML button code for web */}
+              <Pressable
+                onPressIn={() => setReveal(true)}
+                onPressOut={() => setReveal(false)}
+                style={styles.btn}
+                disabled={!sudoku.hasSolution}
+              >
+                <Ionicons
+                  name={eyeIconName as any}
+                  size={cellSize * 1.2}
+                  color={sudoku.hasSolution ? black : gray}
+                />
+              </Pressable>
               <View style={{ width: cellSize, height: cellSize }}></View>
             </>
           )}
@@ -189,7 +257,7 @@ interface OwnProps {
   userId: string | null;
 }
 
-const mapState = ({ users }: RootState, { id, userId }: OwnProps) => {
+const mapState = ({ options, users }: RootState, { id, userId }: OwnProps) => {
   let selectedCell: CellEntity = { col: -1, row: -1 };
   let sudoku = null;
 
@@ -199,6 +267,9 @@ const mapState = ({ users }: RootState, { id, userId }: OwnProps) => {
   }
 
   return {
+    id,
+    appShowHints: options.showHints,
+    showHints: sudoku ? sudoku.showHints : false,
     selectedCell,
     sudoku,
     userId,

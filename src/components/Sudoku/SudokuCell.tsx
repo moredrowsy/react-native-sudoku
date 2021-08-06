@@ -33,7 +33,7 @@ function SudokuCell({
   if (isSelected) {
     bgColor = cellColors.selectedBackground;
     opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedTextColor;
+    txtColor = cellColors.selectedText;
   }
 
   if (hideSelectedColor) {
@@ -49,7 +49,7 @@ function SudokuCell({
   ) {
     bgColor = cellColors.selectedBackground;
     opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedTextColor;
+    txtColor = cellColors.selectedText;
   }
 
   const onCellPress = () => {

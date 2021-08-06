@@ -27,6 +27,7 @@ export interface SudokuGameEntity {
   hasSolution: boolean;
   userScore: number;
   selectedCell: CellEntity;
+  showHints: boolean;
 }
 
 export interface CellColors {
@@ -36,5 +37,8 @@ export interface CellColors {
   margin: string;
   selectedBackground: string;
   selectedOpacity: string;
-  selectedTextColor: string;
+  selectedText: string;
+  revealBackground: string;
+  revealOpacityBackground: string;
+  revealText: string;
 }
