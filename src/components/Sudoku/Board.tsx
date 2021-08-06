@@ -33,32 +33,42 @@ function Board({
   const cellSize = getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN);
 
   return (
-    <View>
+    <View
+      // NOTE: Board top and left margin is controlled by outer container
+      // using padding to simply cell styles
+      style={{
+        paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
+        paddingLeft: 1,
+        backgroundColor: cellColors.margin,
+      }}
+    >
       {emptyBoard.map((rows, row) => (
         <View key={row} style={[styles.cellRow, cellMarginStyle]}>
-          {rows.map((_, col) => (
-            <SudokuCell
-              key={col}
-              id={id}
-              userId={hasUserBoard ? userId : null}
-              col={col}
-              row={row}
-              cellSize={cellSize}
-              isPressable={isPressable}
-              style={[
-                cellStyles.cellBottomAndRight,
-                col === 0 ? cellStyles.cellLeft : null,
-                row === 0 ? cellStyles.cellTop : null,
-                col !== boardSize - 1 && col % rootSize == 2
-                  ? cellStyles.cellSepRight
-                  : null,
-                row !== boardSize - 1 && row % rootSize == 2
-                  ? cellStyles.cellSepBottom
-                  : null,
-              ]}
-              hideSelectedColor={hideSelectedColor}
-            />
-          ))}
+          {rows.map((_, col) => {
+            // Calculate subgrid seperation magins
+            const isSepRight = col !== boardSize - 1 && col % rootSize == 2;
+            const isSepBottom = row !== boardSize - 1 && row % rootSize == 2;
+
+            let cstyle = cellStyles.cellNormBottomRight;
+            if (isSepBottom && isSepRight)
+              cstyle = cellStyles.cellSepBottomRight;
+            else if (isSepBottom) cstyle = cellStyles.cellSepBottomNormRight;
+            else if (isSepRight) cstyle = cellStyles.cellSepRightNormBottom;
+
+            return (
+              <SudokuCell
+                key={col}
+                id={id}
+                userId={hasUserBoard ? userId : null}
+                col={col}
+                row={row}
+                cellSize={cellSize}
+                isPressable={isPressable}
+                style={cstyle}
+                hideSelectedColor={hideSelectedColor}
+              />
+            );
+          })}
         </View>
       ))}
     </View>

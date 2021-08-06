@@ -154,28 +154,33 @@ function Controller({
           ]}
         >
           {unique &&
-            sudokuCells.map((cell, index) => (
-              <ControllerCell
-                key={index}
-                id={id}
-                userId={userId}
-                col={col}
-                row={row}
-                value={cell.value}
-                cellSize={cellSize}
-                isPressable={cell.unique}
-                isReveal={reveal}
-                style={[
-                  cellStyles.cellBottomAndRight,
-                  cellStyles.cellTop,
-                  index === 0 ? cellStyles.cellLeft : null,
-                  index !== boardSize - 1 &&
-                    index % rootSize == 2 &&
-                    cellStyles.cellSepRight,
-                ]}
-                onPress={() => onCellPress(cell.value)}
-              />
-            ))}
+            sudokuCells.map((cell, index) => {
+              // Calculate subgrid seperation magins
+              const isSepRight =
+                index !== boardSize - 1 && index % rootSize == 2;
+
+              let cstyle = cellStyles.cellNormTopBottomRight;
+
+              if (index === 0) cstyle = cellStyles.cellNormBox;
+              else if (isSepRight)
+                cstyle = cellStyles.cellNormTopBottomSepRight;
+
+              return (
+                <ControllerCell
+                  key={index}
+                  id={id}
+                  userId={userId}
+                  col={col}
+                  row={row}
+                  value={cell.value}
+                  cellSize={cellSize}
+                  isPressable={cell.unique}
+                  isReveal={reveal}
+                  style={cstyle}
+                  onPress={() => onCellPress(cell.value)}
+                />
+              );
+            })}
         </View>
         <View style={[styles.control, !isValidIndices && styles.noDisplay]}>
           <TouchableOpacity
