@@ -31,6 +31,11 @@ export const themes: Record<ThemeNames, Theme> = {
     landscape: createCellStylesLandscape('cyan'),
     portrait: createCellStylesPortrait('cyan'),
   },
+  deepPurple: {
+    colors: cellColorTheme['deepPurple'],
+    landscape: createCellStylesLandscape('deepPurple'),
+    portrait: createCellStylesPortrait('deepPurple'),
+  },
   green: {
     colors: cellColorTheme['green'],
     landscape: createCellStylesLandscape('green'),
@@ -45,6 +50,21 @@ export const themes: Record<ThemeNames, Theme> = {
     colors: cellColorTheme['pink'],
     landscape: createCellStylesLandscape('pink'),
     portrait: createCellStylesPortrait('pink'),
+  },
+  purple: {
+    colors: cellColorTheme['purple'],
+    landscape: createCellStylesLandscape('purple'),
+    portrait: createCellStylesPortrait('purple'),
+  },
+  red: {
+    colors: cellColorTheme['red'],
+    landscape: createCellStylesLandscape('red'),
+    portrait: createCellStylesPortrait('red'),
+  },
+  teal: {
+    colors: cellColorTheme['teal'],
+    landscape: createCellStylesLandscape('teal'),
+    portrait: createCellStylesPortrait('teal'),
   },
 };
 

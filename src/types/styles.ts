@@ -59,6 +59,10 @@ export type ThemeNames =
   | 'blue'
   | 'blueGrey'
   | 'cyan'
+  | 'deepPurple'
   | 'green'
   | 'indigo'
-  | 'pink';
+  | 'pink'
+  | 'purple'
+  | 'red'
+  | 'teal';
