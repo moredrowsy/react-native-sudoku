@@ -16,14 +16,14 @@ import { AppDispatch, RootState } from '../storage/store';
 
 import { SudokuGameEntity } from '../types';
 import Board from './Sudoku/Board';
-import { blue } from '../styles';
 
 const FLAT_LIST_MARGIN_SIZE = 30;
 
 function SudokuListForUser({
+  loading,
+  theme,
   userId,
   userSudokus,
-  loading,
   navigation,
   dispatch,
 }: Props) {
@@ -77,7 +77,7 @@ function SudokuListForUser({
   } else {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size='large' color={blue} />
+        <ActivityIndicator size='large' color={theme.colors.primary} />
       </View>
     );
   }
@@ -104,8 +104,9 @@ interface OwnProps {
   navigation: any;
 }
 
-const mapState = ({ status, users }: RootState) => ({
+const mapState = ({ status, theme, users }: RootState) => ({
   loading: status.loading,
+  theme,
   userId: status.userId,
   userSudokus:
     status.userId && status.userId in users

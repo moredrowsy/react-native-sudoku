@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { black, blue, white } from '../../styles';
 import { SUDOKU_EMPTY_CELL } from '../../sudoku';
 
 function Cell({

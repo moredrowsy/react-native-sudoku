@@ -2,7 +2,7 @@ import React from 'react';
 import { Platform, View } from 'react-native';
 import NativeCheckBox from '@react-native-community/checkbox';
 import { StyleProp } from 'react-native';
-import { blue, gray } from '../styles';
+import { indigo, gray } from '../styles';
 
 function CheckBox({
   disabled,
@@ -25,7 +25,7 @@ function CheckBox({
           onValueChange={onValueChange}
           style={style}
           tintColors={{
-            true: onColor ? onColor : blue,
+            true: onColor ? onColor : indigo,
             false: offColor ? offColor : gray,
           }}
         />

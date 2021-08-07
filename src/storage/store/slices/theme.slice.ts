@@ -4,7 +4,7 @@ import * as LocalStorage from '../../local-storage';
 import { Theme, ThemeNames, themes } from '../../../styles';
 
 const sliceName = 'theme';
-const initialState: Theme = themes['blue'];
+const initialState: Theme = themes['indigo'];
 
 // SLICE
 const theme = createSlice({

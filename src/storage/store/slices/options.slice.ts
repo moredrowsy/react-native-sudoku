@@ -8,7 +8,7 @@ import { setThemeType } from './theme.slice';
 const sliceName = 'options';
 const initialState: AppOptions = {
   showHints: true,
-  themeName: 'blue',
+  themeName: 'indigo',
 };
 
 // SLICE

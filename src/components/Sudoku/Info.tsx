@@ -6,16 +6,17 @@ import {
   RootState,
   updateGameWithSolutionAsync,
 } from '../../storage/store';
-import { black, blue, green } from '../../styles';
+import { black, green } from '../../styles';
 
 export const INFO_FONT_SIZE = 20;
 
 function Info({
   id,
   userId,
-  total,
   defaultHasSolution,
   defaultScore,
+  theme,
+  total,
   userScore,
   dispatch,
 }: Props) {
@@ -39,7 +40,7 @@ function Info({
       </View>
     );
   } else {
-    return <ActivityIndicator size='large' color={blue} />;
+    return <ActivityIndicator size='large' color={theme.colors.primary} />;
   }
 }
 
@@ -64,7 +65,10 @@ interface OwnProps {
   userId: string;
 }
 
-const mapState = ({ users, sudokus }: RootState, { id, userId }: OwnProps) => {
+const mapState = (
+  { users, sudokus, theme }: RootState,
+  { id, userId }: OwnProps
+) => {
   let defaultScore = null;
   let userScore = null;
   let total = null;
@@ -81,6 +85,7 @@ const mapState = ({ users, sudokus }: RootState, { id, userId }: OwnProps) => {
     userId,
     defaultHasSolution: id in sudokus ? sudokus[id].hasSolution : null,
     defaultScore,
+    theme,
     total,
     userScore,
   };
