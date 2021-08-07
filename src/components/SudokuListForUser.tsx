@@ -8,13 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
-
-// Redux
 import { connect, ConnectedProps } from 'react-redux';
+
+import { CommonActions, RouteProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { TabsParamList } from './Navigators/Tabs';
+
 import { AppDispatch, RootState } from '../storage/store';
 
 import { SudokuGameEntity } from '../types';
+
 import Board from './Sudoku/Board';
 
 const FLAT_LIST_MARGIN_SIZE = 30;
@@ -100,9 +103,16 @@ const styles = StyleSheet.create({
   },
 });
 
-interface OwnProps {
-  navigation: any;
-}
+type HomeScreenNavigationProp = BottomTabNavigationProp<
+  TabsParamList,
+  'SudokuListForUser'
+>;
+type HomeScreenRouteProp = RouteProp<TabsParamList, 'SudokuListForUser'>;
+
+type OwnProps = {
+  navigation: HomeScreenNavigationProp;
+  route: HomeScreenRouteProp;
+};
 
 const mapState = ({ status, theme, users }: RootState) => ({
   loading: status.loading,

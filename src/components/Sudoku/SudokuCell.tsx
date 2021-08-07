@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
+
 import {
   AppDispatch,
   RootState,
@@ -8,6 +9,7 @@ import {
 } from '../../storage/store';
 import { SUDOKU_EMPTY_CELL } from '../../sudoku';
 import { CellEntity } from '.././../types';
+
 import Cell from './Cell';
 
 function SudokuCell({

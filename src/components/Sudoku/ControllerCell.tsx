@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
+
 import Cell from './Cell';
 
 function SudokuCell({

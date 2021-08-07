@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
+
+import { RouteProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { TabsParamList } from './Navigators/Tabs';
+
 import {
   AppDispatch,
   RootState,
@@ -10,6 +15,7 @@ import {
 } from '../storage/store';
 import { themeNames } from '../styles';
 import { ThemeNames } from '../types';
+
 import CheckBox from './CheckBox';
 
 function AppOptions({ options, theme, dispatch }: Props) {
@@ -124,7 +130,16 @@ const styles = StyleSheet.create({
   },
 });
 
-interface OwnProps {}
+type HomeScreenNavigationProp = BottomTabNavigationProp<
+  TabsParamList,
+  'AppOptions'
+>;
+type HomeScreenRouteProp = RouteProp<TabsParamList, 'AppOptions'>;
+
+type OwnProps = {
+  navigation: HomeScreenNavigationProp;
+  route: HomeScreenRouteProp;
+};
 
 const mapState = ({ options, theme }: RootState) => ({
   options,

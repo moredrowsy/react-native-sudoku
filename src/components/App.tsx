@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-
-// Redux
 import { connect, ConnectedProps } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+
 import {
   AppDispatch,
   RootState,
@@ -11,9 +11,8 @@ import {
   initAppOptionsAsync,
 } from '../storage/store';
 
-import { NavigationContainer } from '@react-navigation/native';
 import StatusBar from './StatusBar';
-import StackNavigator from './StackNavigator';
+import RootStack from './Navigators';
 
 function App({ status, theme, dispatch }: Props) {
   useEffect(() => {
@@ -28,7 +27,7 @@ function App({ status, theme, dispatch }: Props) {
         <StatusBar backgroundColor={theme.colors.primary} />
       </View>
       <NavigationContainer>
-        <StackNavigator theme={theme} />
+        <RootStack />
       </NavigationContainer>
     </View>
   );

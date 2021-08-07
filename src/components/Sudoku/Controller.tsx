@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, Pressable, TouchableOpacity, View } from 'react-native';
+import { connect, ConnectedProps } from 'react-redux';
 import Consants from 'expo-constants';
 import {
   AntDesign,
@@ -7,7 +8,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import { debounce } from 'lodash';
-import { connect, ConnectedProps } from 'react-redux';
+
 import {
   AppDispatch,
   resetSudokuGameFromUserAsync,
@@ -16,17 +17,19 @@ import {
   updateSudokuGameValueAsync,
 } from '../../storage/store';
 import {
+  NAVIGATION_HEADER_HEIGHT,
+  SUDOKU_CELL_NORMAL_MARGIN,
+} from '../../styles';
+import {
   getAvailableCells,
   getCellSize,
   EMPTY_BOARDS,
   SUDOKU_EMPTY_CELL,
   DEBOUNCE_WAIT,
 } from '../../sudoku';
-import {
-  NAVIGATION_HEADER_HEIGHT,
-  SUDOKU_CELL_NORMAL_MARGIN,
-} from '../../styles';
+
 import { CellEntity } from '../../types';
+
 import ControllerCell from './ControllerCell';
 
 function Controller({

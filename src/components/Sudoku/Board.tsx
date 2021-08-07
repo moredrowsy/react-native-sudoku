@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { Dimensions, View } from 'react-native';
+import { connect, ConnectedProps } from 'react-redux';
 import Consants from 'expo-constants';
 import { debounce } from 'lodash';
 
-// Redux
-import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
 import {
   NAVIGATION_HEADER_HEIGHT,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
 import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
+
 import SudokuCell from './SudokuCell';
 
 function Board({

@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { Dimensions, View } from 'react-native';
+import { connect, ConnectedProps } from 'react-redux';
 import Consants from 'expo-constants';
 import { debounce } from 'lodash';
+
 import { AppDispatch, RootState } from '../../storage/store';
-import Board from './Board';
-import Controller from './Controller';
-import Info, { INFO_FONT_SIZE } from './Info';
-import { DEBOUNCE_WAIT, getCellSize } from '../../sudoku';
 import {
   GAP_BETWEEN_COMPONENTS,
   NAVIGATION_HEADER_HEIGHT,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
+import { DEBOUNCE_WAIT, getCellSize } from '../../sudoku';
+
+import Board from './Board';
+import Controller from './Controller';
+import Info, { INFO_FONT_SIZE } from './Info';
 
 function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
   if (hasSudokuGameForUser && userId) {
