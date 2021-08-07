@@ -1,5 +1,4 @@
 import { ViewStyle } from 'react-native';
-import { themes } from '../themes';
 
 export interface CellColors {
   primary: string;
@@ -53,3 +52,13 @@ export interface Theme {
   portrait: CellStyles;
   landscape: CellStyles;
 }
+
+export type ThemeNames =
+  | 'amber'
+  | 'black'
+  | 'blue'
+  | 'blueGrey'
+  | 'cyan'
+  | 'green'
+  | 'indigo'
+  | 'pink';

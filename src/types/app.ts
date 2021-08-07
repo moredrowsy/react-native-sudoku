@@ -1,4 +1,4 @@
-import { ThemeNames } from '../styles';
+import { ThemeNames } from '../types';
 
 export interface AppStatus {
   isLoggedIn: boolean;

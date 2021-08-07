@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserStorageKey } from './users.local-storage';
 import {
   restoreSudokuGameUser,
-  SudokuGameEntity,
   updateSudokuCellValueAndScore,
 } from '../../../sudoku';
+import { SudokuGameEntity } from '../../../types';
+import { getUserStorageKey } from './users.local-storage';
 
 const storageName = 'games';
 

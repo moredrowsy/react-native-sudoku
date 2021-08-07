@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { CellColors } from '../styles';
+import { CellColors } from '../types';
 import {
   black,
   indigo,

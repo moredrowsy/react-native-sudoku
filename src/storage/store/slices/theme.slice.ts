@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '..';
 import * as LocalStorage from '../../local-storage';
-import { Theme, ThemeNames, themes } from '../../../styles';
+import { themes } from '../../../styles';
+import { Theme, ThemeNames } from '../../../types';
 
 const sliceName = 'theme';
 const initialState: Theme = themes['indigo'];

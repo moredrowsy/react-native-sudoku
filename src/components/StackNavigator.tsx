@@ -4,9 +4,9 @@ import {
   black,
   NAVIGATION_HEADER_FONT_SIZE,
   NAVIGATION_HEADER_HEIGHT,
-  Theme,
   white,
 } from '../styles';
+import { Theme } from '../types';
 import Sudoku from './Sudoku';
 import TabsNavigator from './TabsNavigator';
 

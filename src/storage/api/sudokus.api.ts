@@ -1,4 +1,5 @@
-import { createSudokuGame, SudokuGameEntity } from '../../sudoku';
+import { createSudokuGame } from '../../sudoku';
+import { SudokuGameEntity } from '../../types';
 import DATA from './_DATA';
 
 // TODO: Data is mocked. Make backend api endpoints to fetch new sudoku games

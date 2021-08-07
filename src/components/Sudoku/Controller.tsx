@@ -16,7 +16,6 @@ import {
   updateSudokuGameValueAsync,
 } from '../../storage/store';
 import {
-  CellEntity,
   getAvailableCells,
   getCellSize,
   EMPTY_BOARDS,
@@ -27,6 +26,7 @@ import {
   NAVIGATION_HEADER_HEIGHT,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
+import { CellEntity } from '../../types';
 import ControllerCell from './ControllerCell';
 
 function Controller({

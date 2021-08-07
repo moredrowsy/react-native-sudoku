@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SudokuGameEntity } from '../../sudoku';
+import { SudokuGameEntity } from '../../types';
 
 const storageName = 'sudokus';
 const SUDOKUS_STORAGE_KEY = `Sudoku:${storageName}`;

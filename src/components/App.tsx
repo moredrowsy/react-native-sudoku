@@ -15,7 +15,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import StatusBar from './StatusBar';
 import StackNavigator from './StackNavigator';
 
-function App({ dispatch, status, theme }: Props) {
+function App({ status, theme, dispatch }: Props) {
   useEffect(() => {
     dispatch(initSudokuUserAsync());
     dispatch(initSudokuGameDataAsync());

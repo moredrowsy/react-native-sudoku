@@ -1,7 +1,6 @@
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, StyleProp, View } from 'react-native';
 import NativeCheckBox from '@react-native-community/checkbox';
-import { StyleProp } from 'react-native';
 import { indigo, gray } from '../styles';
 
 function CheckBox({

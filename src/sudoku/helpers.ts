@@ -3,7 +3,7 @@ import {
   SudokuGameEntity,
   SudokuUserEntity,
   UserEntity,
-} from './types';
+} from '../types';
 import { SUDOKU_EMPTY_CELL } from './constants';
 
 export function copySudokuGameSolution(

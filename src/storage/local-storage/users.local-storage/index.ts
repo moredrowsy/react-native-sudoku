@@ -1,4 +1,5 @@
-import { getUserFromSudokuUser, SudokuUserEntity } from '../../../sudoku';
+import { getUserFromSudokuUser } from '../../../sudoku';
+import { SudokuUserEntity } from '../../../types';
 import { addUser, saveUser } from './users.local-storage';
 import {
   addSudokuGameToUser,

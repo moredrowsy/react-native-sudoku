@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Theme } from '../styles';
+import { Theme } from '../types';
 import SudokuList from './SudokuList';
 import SudokuListForUser from './SudokuListForUser';
 import AppOptions from './AppOptions';

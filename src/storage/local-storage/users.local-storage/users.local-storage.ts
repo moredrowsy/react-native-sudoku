@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserEntity } from '../../../sudoku';
+import { UserEntity } from '../../../types';
 
 const storageName = 'users';
 const USERS_STORAGE_KEY = `Sudoku:${storageName}`;

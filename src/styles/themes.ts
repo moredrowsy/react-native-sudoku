@@ -3,7 +3,7 @@ import {
   createCellStylesLandscape,
   createCellStylesPortrait,
 } from './sudoku';
-import { Theme } from './types';
+import { Theme, ThemeNames } from '../types';
 
 export const themes: Record<ThemeNames, Theme> = {
   amber: {
@@ -48,23 +48,4 @@ export const themes: Record<ThemeNames, Theme> = {
   },
 };
 
-export const themeNames: ThemeNames[] = [
-  'amber',
-  'black',
-  'blue',
-  'blueGrey',
-  'cyan',
-  'green',
-  'indigo',
-  'pink',
-];
-
-export type ThemeNames =
-  | 'amber'
-  | 'black'
-  | 'blue'
-  | 'blueGrey'
-  | 'cyan'
-  | 'green'
-  | 'indigo'
-  | 'pink';
+export const themeNames = Object.keys(themes) as ThemeNames[];

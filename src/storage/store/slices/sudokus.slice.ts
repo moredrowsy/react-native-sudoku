@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '..';
 import * as API from '../../api';
 import * as LocalStorage from '../../local-storage';
-import { SudokuGameEntity } from '../../../sudoku';
+import { SudokuGameEntity } from '../../../types';
 
 const sliceName = 'sudokus';
 const initialState: Record<string, SudokuGameEntity> = {};

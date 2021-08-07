@@ -3,7 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState, setThemeNameAsync } from '../storage/store';
 import { setShowHintsAsync } from '../storage/store';
-import { ThemeNames, themeNames } from '../styles';
+import { themeNames } from '../styles';
+import { ThemeNames } from '../types';
 import CheckBox from './CheckBox';
 
 function AppOptions({ options, theme, dispatch }: Props) {

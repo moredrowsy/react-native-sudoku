@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '..';
 import * as LocalStorage from '../../local-storage';
-import { AppOptions } from '../../../types/app';
-import { ThemeNames } from '../../../styles';
+import { AppOptions, ThemeNames } from '../../../types';
 import { setThemeType } from './theme.slice';
 
 const sliceName = 'options';

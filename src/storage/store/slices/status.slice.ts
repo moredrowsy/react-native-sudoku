@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '..';
 import * as LocalStorage from '../../local-storage';
-import {} from '../../../sudoku';
-import { AppStatus } from '../../../types/app';
+import { AppStatus } from '../../../types';
 
 const sliceName = 'status';
 const initialState: AppStatus = {

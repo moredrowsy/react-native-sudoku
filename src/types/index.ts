@@ -1,3 +1,4 @@
 export * from './app';
-export * from '../sudoku/types';
-export * from '../styles/types';
+export * from './styles';
+export * from './sudoku';
+export * from './users';

@@ -1,11 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as common from './common.local-storage';
 import * as options from './options.local-storage';
 import * as status from './status.local-storage';
 import * as sudokus from './sudokus.local-storage';
-import * as users from './users';
+import * as users from './users.local-storage';
 
-export { options, status, sudokus, users };
-
-export function clearAll() {
-  return AsyncStorage.clear();
-}
+export { common, options, status, sudokus, users };

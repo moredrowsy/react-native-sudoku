@@ -8,11 +8,15 @@ import { setStatus } from '../slices/status.slice';
 import {
   getUserFromSudokuUser,
   restoreSudokuGameUser,
-  SudokuUserEntity,
   updateSudokuCellValueAndScore,
-  UserEntity,
 } from '../../../sudoku';
-import { AppStatus, CellEntity, SudokuGameEntity } from '../../../types';
+import {
+  AppStatus,
+  CellEntity,
+  SudokuGameEntity,
+  SudokuUserEntity,
+  UserEntity,
+} from '../../../types';
 
 const sliceName = 'users';
 const initialState: Record<string, SudokuUserEntity> = {};

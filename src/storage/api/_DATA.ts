@@ -1,4 +1,4 @@
-import { SudokuRawData } from '../../sudoku';
+import { SudokuRawData } from '../../types';
 
 const DATA: Record<string, SudokuRawData> = {
   '1': {
