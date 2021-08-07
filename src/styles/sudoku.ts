@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { CellColors } from '../styles';
-import { GAP_BETWEEN_COMPONENTS } from '../sudoku';
 import { black, blue, gray, red, white, yellow } from './colors';
 
 export const SUDOKU_CELL_NORMAL_MARGIN = 1;
 export const SUDOKU_CELL_SEP_MARGIN = 3;
+export const GAP_BETWEEN_COMPONENTS = 20;
 
 const cellColorTheme: Record<string, CellColors> = {
   black: {
@@ -122,15 +122,15 @@ export function createCellStylesLandscape(themeName: string) {
       justifyContent: 'space-evenly',
       alignItems: 'center',
     },
+    sudokuContainerForInfo: {
+      marginLeft: GAP_BETWEEN_COMPONENTS,
+    },
     sudokuContainerForBoard: {
       marginLeft: GAP_BETWEEN_COMPONENTS,
       marginRight: GAP_BETWEEN_COMPONENTS,
     },
     sudokuContainerForController: {
       marginRight: GAP_BETWEEN_COMPONENTS,
-    },
-    sudokuContainerForInfo: {
-      marginLeft: GAP_BETWEEN_COMPONENTS,
     },
     board: {
       paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
@@ -147,30 +147,24 @@ export function createCellStylesLandscape(themeName: string) {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: cellColorTheme[themeName].cellMargin,
-      marginLeft: 10,
-      marginRight: 10,
     },
     controlCellsContainerHide: {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: cellColorTheme[themeName].cellMargin,
-      marginLeft: 10,
-      marginRight: 10,
       opacity: 0,
     },
     controlBtnContainer: {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: 10,
     },
     controlBtnContainerHide: {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       opacity: 0,
-      marginRight: 10,
     },
   });
 
@@ -189,15 +183,15 @@ export function createCellStylesPortrait(themeName: string) {
       justifyContent: 'space-evenly',
       alignItems: 'center',
     },
+    sudokuContainerForInfo: {
+      marginTop: GAP_BETWEEN_COMPONENTS,
+    },
     sudokuContainerForBoard: {
       marginTop: GAP_BETWEEN_COMPONENTS,
       marginBottom: GAP_BETWEEN_COMPONENTS,
     },
     sudokuContainerForController: {
       marginBottom: GAP_BETWEEN_COMPONENTS,
-    },
-    sudokuContainerForInfo: {
-      marginTop: GAP_BETWEEN_COMPONENTS,
     },
     board: {
       paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
@@ -214,30 +208,24 @@ export function createCellStylesPortrait(themeName: string) {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: cellColorTheme[themeName].cellMargin,
-      marginTop: 10,
-      marginBottom: 10,
     },
     controlCellsContainerHide: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: cellColorTheme[themeName].cellMargin,
-      marginTop: 10,
-      marginBottom: 10,
       opacity: 0,
     },
     controlBtnContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 10,
     },
     controlBtnContainerHide: {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
       opacity: 0,
-      marginBottom: 10,
     },
   });
 

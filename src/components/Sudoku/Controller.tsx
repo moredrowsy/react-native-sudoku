@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, Pressable, TouchableOpacity, View } from 'react-native';
+import Consants from 'expo-constants';
 import {
   AntDesign,
   Ionicons,
@@ -16,7 +17,6 @@ import {
 } from '../../storage/store';
 import {
   CellEntity,
-  ControllCellEntity,
   getAvailableCells,
   getCellSize,
   EMPTY_BOARDS,
@@ -24,12 +24,8 @@ import {
   DEBOUNCE_WAIT,
 } from '../../sudoku';
 import {
-  blue,
-  red,
-  cellColorTheme,
+  NAVIGATION_HEADER_HEIGHT,
   SUDOKU_CELL_NORMAL_MARGIN,
-  gray,
-  yellow,
 } from '../../styles';
 import ControllerCell from './ControllerCell';
 
@@ -39,12 +35,20 @@ function Controller({
   appShowHints,
   showHints,
   boardDimension,
+  cellSize,
   sudoku,
   userId,
   theme,
   dispatch,
 }: Props) {
   if (sudoku) {
+    // Get screen orientation
+    const screen = Dimensions.get('window');
+    const isPortrait = screen.width <= screen.height;
+
+    // Set screenStyles theme based on screen type
+    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+
     const [reveal, setReveal] = useState(false);
     const [dimensions, setDimensions] = React.useState({
       height: Dimensions.get('window').height,
@@ -77,17 +81,20 @@ function Controller({
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
-    const rootSize = Math.sqrt(boardSize);
 
-    // Get cell dimensions
-    const dimension = boardDimension
-      ? boardDimension
-      : Math.min(dimensions.height, dimensions.width);
-    const cellSize = getCellSize(
-      dimension,
-      boardSize,
-      SUDOKU_CELL_NORMAL_MARGIN
-    );
+    // Get cell dimensions if not provided
+    const rootSize = Math.sqrt(boardSize);
+    if (!cellSize) {
+      let effectiveHeight =
+        dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
+      let effectiveWidth = dimensions.width;
+      let dimension = Math.min(effectiveHeight, effectiveWidth);
+      if (boardDimension) dimension = boardDimension;
+
+      cellSize = Math.floor(
+        getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN)
+      );
+    }
 
     // Check if current selected col and row is valid
     const isValidIndices =
@@ -159,13 +166,6 @@ function Controller({
       );
     };
 
-    // Get screen orientation
-    const screen = Dimensions.get('window');
-    const isPortrait = screen.width <= screen.height;
-
-    // Set screenStyles theme based on screen type
-    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
-
     return (
       <View style={screenStyles.controllContainer}>
         <View
@@ -202,7 +202,7 @@ function Controller({
                 col={col}
                 row={row}
                 value={controlValue + 1}
-                cellSize={cellSize}
+                cellSize={cellSize ? cellSize : 30}
                 isPressable={isValidIndices && unique.has(controlValue + 1)}
                 isReveal={reveal}
                 style={cstyle}
@@ -211,6 +211,9 @@ function Controller({
             );
           })}
         </View>
+        <View
+          style={isPortrait ? { height: cellSize } : { width: cellSize }}
+        ></View>
         <View
           style={
             !isValidIndices
@@ -228,7 +231,7 @@ function Controller({
               color={
                 isValidIndices && selectedValue !== SUDOKU_EMPTY_CELL
                   ? theme.colors.remove
-                  : gray
+                  : theme.colors.inactive
               }
             />
           </TouchableOpacity>
@@ -245,7 +248,7 @@ function Controller({
               size={cellSize * 1.2}
               color={
                 sudoku.defaultScore === sudoku.userScore
-                  ? gray
+                  ? theme.colors.inactive
                   : theme.colors.reset
               }
             />
@@ -259,7 +262,11 @@ function Controller({
             <Ionicons
               name={eyeIconName as any}
               size={cellSize * 1.2}
-              color={sudoku.hasSolution && reveal ? theme.colors.reveal : gray}
+              color={
+                sudoku.hasSolution && reveal
+                  ? theme.colors.reveal
+                  : theme.colors.inactive
+              }
             />
           </Pressable>
           <View style={{ width: cellSize, height: cellSize }}></View>
@@ -270,7 +277,11 @@ function Controller({
             <MaterialCommunityIcons
               name={hintsIconName as any}
               size={cellSize * 1.2}
-              color={appShowHints && showHints ? theme.colors.showHints : gray}
+              color={
+                appShowHints && showHints
+                  ? theme.colors.showHints
+                  : theme.colors.inactive
+              }
             />
           </TouchableOpacity>
         </View>
@@ -285,6 +296,7 @@ interface OwnProps {
   id: string;
   userId: string | null;
   boardDimension?: number;
+  cellSize?: number;
 }
 
 const mapState = (

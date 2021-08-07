@@ -13,25 +13,15 @@ function Cell({
   onPress,
   hideZero = true,
 }: Props) {
-  const outerContainer = opacityColor
-    ? { backgroundColor: opacityColor }
-    : null;
-  const innerContainer = backgroundColor
-    ? { backgroundColor: backgroundColor }
-    : null;
-  const textContainr = textColor ? { color: textColor } : null;
+  const outerContainer = { backgroundColor: opacityColor };
+  const innerContainer = { backgroundColor: backgroundColor };
+  const textContainr = { color: textColor };
 
   return (
-    <View
-      style={[
-        styles.outerContainer,
-        outerContainer && outerContainer,
-        { height: cellSize, width: cellSize },
-      ]}
-    >
+    <View style={[outerContainer, { height: cellSize, width: cellSize }]}>
       {isPressable ? (
         <TouchableOpacity
-          style={[styles.innerContainer, innerContainer && innerContainer]}
+          style={[styles.innerContainer, innerContainer]}
           onPress={onPress}
         >
           <Text
@@ -45,16 +35,11 @@ function Cell({
           </Text>
         </TouchableOpacity>
       ) : (
-        <View
-          style={[
-            styles.innerContainer,
-            backgroundColor ? { backgroundColor: backgroundColor } : {},
-          ]}
-        >
+        <View style={[styles.innerContainer, innerContainer]}>
           <Text
             style={[
               styles.text,
-              textColor ? { color: textColor } : {},
+              textContainr && textContainr,
               { fontSize: 0.75 * cellSize },
             ]}
           >
@@ -73,23 +58,20 @@ interface Props {
   value: number;
   isPressable: boolean;
   cellSize: number;
-  backgroundColor?: string;
-  opacityColor?: string;
-  textColor?: string;
+  backgroundColor: string;
+  opacityColor: string;
+  textColor: string;
   onPress: () => void;
   hideZero?: boolean;
 }
 
 const styles = StyleSheet.create({
-  outerContainer: { backgroundColor: blue },
   innerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: white,
   },
   text: {
-    color: black,
     fontWeight: 'bold',
   },
 });

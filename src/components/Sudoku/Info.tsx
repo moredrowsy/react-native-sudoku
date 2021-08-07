@@ -8,6 +8,8 @@ import {
 } from '../../storage/store';
 import { black, blue, green } from '../../styles';
 
+export const INFO_FONT_SIZE = 20;
+
 function Info({
   id,
   userId,
@@ -46,13 +48,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   score: {
-    fontSize: 20,
+    fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
     color: black,
   },
   completed: {
     color: green,
-    fontSize: 20,
+    fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
   },
 });

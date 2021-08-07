@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
+import Consants from 'expo-constants';
 import { debounce } from 'lodash';
 
 // Redux
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
-import { SUDOKU_CELL_NORMAL_MARGIN } from '../../styles';
+import {
+  NAVIGATION_HEADER_HEIGHT,
+  SUDOKU_CELL_NORMAL_MARGIN,
+} from '../../styles';
 import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 import SudokuCell from './SudokuCell';
 
@@ -13,12 +17,20 @@ function Board({
   id,
   boardSize,
   boardDimension,
+  cellSize,
   isPressable,
   userId,
   hasUserBoard,
   hideSelectedColor = false,
   theme,
 }: Props) {
+  // Get screen orientation
+  const screen = Dimensions.get('window');
+  const isPortrait = screen.width <= screen.height;
+
+  // Set screenStyles theme based on screen type
+  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+
   const [dimensions, setDimensions] = React.useState({
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
@@ -45,19 +57,19 @@ function Board({
   // rerenders. Only the states in Cells should know if it needs to rerender
   const emptyBoard = EMPTY_BOARDS[boardSize];
 
-  // Get cell dimensions
+  // Get cell dimensions if not provided
   const rootSize = Math.sqrt(boardSize);
-  const dimension = boardDimension
-    ? boardDimension
-    : Math.min(dimensions.height, dimensions.width);
-  const cellSize = getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN);
+  if (!cellSize) {
+    let effectiveHeight =
+      dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
+    let effectiveWidth = dimensions.width;
+    let dimension = Math.min(effectiveHeight, effectiveWidth);
+    if (boardDimension) dimension = boardDimension;
 
-  // Get screen orientation
-  const screen = Dimensions.get('window');
-  const isPortrait = screen.width <= screen.height;
-
-  // Set screenStyles theme based on screen type
-  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+    cellSize = Math.floor(
+      getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN)
+    );
+  }
 
   return (
     <View
@@ -85,7 +97,7 @@ function Board({
                 userId={hasUserBoard ? userId : null}
                 col={col}
                 row={row}
-                cellSize={cellSize}
+                cellSize={cellSize ? cellSize : 30}
                 isPressable={isPressable}
                 style={cstyle}
                 hideSelectedColor={hideSelectedColor}
@@ -102,6 +114,7 @@ interface OwnProps {
   id: string;
   userId?: string | null;
   boardDimension?: number;
+  cellSize?: number;
   isPressable: boolean;
   hideSelectedColor?: boolean;
 }
