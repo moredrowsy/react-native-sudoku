@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -34,21 +34,24 @@ function SudokuList({
 }: Props) {
   const sudokusForFlatList = sudokus ? Object.values(sudokus) : [];
 
-  const onPressSudoku = (id: string) => {
-    if (userId && userSudokus && !(id in userSudokus)) {
-      dispatch(addSudokuGameToUserAsync({ userId, sudoku: sudokus[id] }));
-    }
+  const onPressSudoku = useCallback(
+    (id: string) => {
+      if (userId && userSudokus && !(id in userSudokus)) {
+        dispatch(addSudokuGameToUserAsync({ userId, sudoku: sudokus[id] }));
+      }
 
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'Sudoku',
-        params: {
-          title: `Sudoku ${id}`,
-          id,
-        },
-      })
-    );
-  };
+      navigation.dispatch(
+        CommonActions.navigate({
+          name: 'Sudoku',
+          params: {
+            title: `Sudoku ${id}`,
+            id,
+          },
+        })
+      );
+    },
+    [navigation, userId, userSudokus, sudokus]
+  );
 
   const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
     item,

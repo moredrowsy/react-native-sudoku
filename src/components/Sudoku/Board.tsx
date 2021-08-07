@@ -1,15 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
+import { debounce } from 'lodash';
 
 // Redux
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
-import {
-  cellColorThemes,
-  cellStyles,
-  SUDOKU_CELL_NORMAL_MARGIN,
-} from '../../styles';
-import { getCellSize, EMPTY_BOARDS } from '../../sudoku';
+import { SUDOKU_CELL_NORMAL_MARGIN } from '../../styles';
+import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 import SudokuCell from './SudokuCell';
 
 function Board({
@@ -20,40 +17,66 @@ function Board({
   userId,
   hasUserBoard,
   hideSelectedColor = false,
+  theme,
 }: Props) {
-  const cellColors = cellColorThemes.default;
-  const cellMarginStyle = {
-    backgroundColor: cellColors.margin,
-  };
+  const [dimensions, setDimensions] = React.useState({
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+  });
 
-  const rootSize = Math.sqrt(boardSize);
+  // Listens for window size changes
+  useEffect(() => {
+    const debouncedHandleResize = debounce(function handleResize() {
+      const { height, width } = Dimensions.get('window');
+      setDimensions({
+        height: height,
+        width: width,
+      });
+    }, DEBOUNCE_WAIT);
+    Dimensions.addEventListener('change', debouncedHandleResize);
+
+    return () => {
+      debouncedHandleResize.cancel();
+      Dimensions.removeEventListener('change', debouncedHandleResize);
+    };
+  }, []);
+
+  // Board is presentational. It should be as stateless as possible to avoid
+  // rerenders. Only the states in Cells should know if it needs to rerender
   const emptyBoard = EMPTY_BOARDS[boardSize];
-  const { width, height } = Dimensions.get('window');
-  const dimension = boardDimension ? boardDimension : Math.min(width, height);
+
+  // Get cell dimensions
+  const rootSize = Math.sqrt(boardSize);
+  const dimension = boardDimension
+    ? boardDimension
+    : Math.min(dimensions.height, dimensions.width);
   const cellSize = getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN);
+
+  // Get screen orientation
+  const screen = Dimensions.get('window');
+  const isPortrait = screen.width <= screen.height;
+
+  // Set screenStyles theme based on screen type
+  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
 
   return (
     <View
       // NOTE: Board top and left margin is controlled by outer container
-      // using padding to simply cell styles
-      style={{
-        paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
-        paddingLeft: 1,
-        backgroundColor: cellColors.margin,
-      }}
+      // using padding to simplify individual cell styles
+      style={screenStyles.board}
     >
       {emptyBoard.map((rows, row) => (
-        <View key={row} style={[styles.cellRow, cellMarginStyle]}>
+        <View key={row} style={screenStyles.cellRows}>
           {rows.map((_, col) => {
             // Calculate subgrid seperation magins
             const isSepRight = col !== boardSize - 1 && col % rootSize == 2;
             const isSepBottom = row !== boardSize - 1 && row % rootSize == 2;
 
-            let cstyle = cellStyles.cellNormBottomRight;
+            let cstyle = screenStyles.cellNormBottomRight;
             if (isSepBottom && isSepRight)
-              cstyle = cellStyles.cellSepBottomRight;
-            else if (isSepBottom) cstyle = cellStyles.cellSepBottomNormRight;
-            else if (isSepRight) cstyle = cellStyles.cellSepRightNormBottom;
+              cstyle = screenStyles.cellSepBottomRight;
+            else if (isSepBottom) cstyle = screenStyles.cellSepBottomNormRight;
+            else if (isSepRight) cstyle = screenStyles.cellSepRightNormBottom;
 
             return (
               <SudokuCell
@@ -83,11 +106,15 @@ interface OwnProps {
   hideSelectedColor?: boolean;
 }
 
-const mapState = ({ sudokus, users }: RootState, { id, userId }: OwnProps) => {
+const mapState = (
+  { theme, sudokus, users }: RootState,
+  { id, userId }: OwnProps
+) => {
   return {
     boardSize: sudokus[id].board.length,
     hasUserBoard:
       userId && userId in users && id in users[userId].sudokus ? true : false,
+    theme,
   };
 };
 
@@ -101,9 +128,3 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = OwnProps & PropsFromRedux;
 
 export default connect(mapState)(Board);
-
-const styles = StyleSheet.create({
-  cellRow: {
-    flexDirection: 'row',
-  },
-});

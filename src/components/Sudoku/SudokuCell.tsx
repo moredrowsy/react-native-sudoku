@@ -6,7 +6,6 @@ import {
   RootState,
   updateSelectedCellForGame,
 } from '../../storage/store';
-import { cellColorThemes } from '../../styles';
 import { SUDOKU_EMPTY_CELL } from '../../sudoku';
 import { CellEntity } from '.././../types';
 import Cell from './Cell';
@@ -22,24 +21,23 @@ function SudokuCell({
   style,
   isSelected,
   hideSelectedColor = false,
+  theme,
   dispatch,
 }: Props) {
-  const cellColors = cellColorThemes.default;
-
-  let bgColor = cellColors.background;
-  let opColor = cellColors.opacityBackground;
-  let txtColor = cellColors.text;
+  let bgColor = theme.colors.cellBackground;
+  let opColor = theme.colors.cellOpacityBackground;
+  let txtColor = theme.colors.cellText;
 
   if (isSelected) {
-    bgColor = cellColors.selectedBackground;
-    opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedText;
+    bgColor = theme.colors.cellSelectedBackground;
+    opColor = theme.colors.cellSelectedOpacity;
+    txtColor = theme.colors.cellSelectedText;
   }
 
   if (hideSelectedColor) {
-    bgColor = cellColors.background;
-    txtColor = cellColors.text;
-    opColor = cellColors.opacityBackground;
+    bgColor = theme.colors.cellBackground;
+    opColor = theme.colors.cellOpacityBackground;
+    txtColor = theme.colors.cellText;
   }
 
   if (
@@ -47,16 +45,16 @@ function SudokuCell({
     sudokuCell.mutable &&
     sudokuCell.value !== SUDOKU_EMPTY_CELL
   ) {
-    bgColor = cellColors.selectedBackground;
-    opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedText;
+    bgColor = theme.colors.cellSelectedBackground;
+    opColor = theme.colors.cellSelectedOpacity;
+    txtColor = theme.colors.cellSelectedText;
   }
 
   const onCellPress = () => {
-    if (id && userId) {
+    if (id && userId && sudokuCell) {
       // Unselect cell if it is already selected
       // Otherwise, set selected cell as this row, col
-      const cell = isSelected ? { col: -1, row: -1 } : { col, row };
+      const cell = isSelected ? { col: -1, row: -1, value: -1 } : sudokuCell;
 
       const payload: { userId: string; sudokuId: string; cell: CellEntity } = {
         userId: userId,
@@ -96,7 +94,7 @@ interface OwnProps {
 }
 
 const mapState = (
-  { sudokus, users }: RootState,
+  { sudokus, theme, users }: RootState,
   { id, userId, col, row }: OwnProps
 ) => {
   if (userId && userId in users && id in users[userId].sudokus) {
@@ -105,11 +103,13 @@ const mapState = (
     return {
       sudokuCell: sudokuCell,
       isSelected: col === selectedCell.col && row === selectedCell.row,
+      theme,
     };
   } else {
     return {
       sudokuCell: id in sudokus ? sudokus[id].board[row][col] : null,
       isSelected: false,
+      theme,
     };
   }
 };

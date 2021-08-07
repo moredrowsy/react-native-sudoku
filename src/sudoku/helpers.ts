@@ -55,7 +55,7 @@ export function createSudokuGame(
     defaultScore: score,
     hasSolution: solution ? true : false,
     userScore: score,
-    selectedCell: { col: -1, row: -1 },
+    selectedCell: { col: -1, row: -1, value: -1 },
     showHints: false,
   };
 
@@ -129,7 +129,7 @@ export function restoreSudokuGameUser(sudoku: SudokuGameEntity) {
     }
   }
   sudoku.userScore = sudoku.defaultScore;
-  sudoku.selectedCell = { col: -1, row: -1 };
+  sudoku.selectedCell = { col: -1, row: -1, value: -1 };
 
   return sudoku;
 }

@@ -21,7 +21,7 @@ import AppOptions from './AppOptions';
 import StatusBar from './StatusBar';
 import Sudoku from './Sudoku';
 import SudokuList from './SudokuList';
-import { blue, gray, white } from '../styles';
+import { black, white, Theme } from '../styles';
 import SudokuListForUser from './SudokuListForUser';
 
 type StackParamList = {
@@ -29,74 +29,84 @@ type StackParamList = {
   Sudoku: { name: string; title: string; id: string };
 };
 
+interface NavigatorProps {
+  theme?: Theme;
+}
+
 const Stack = createStackNavigator<StackParamList>();
 const Tabs = createBottomTabNavigator();
 
-const TabsNavigator = () => (
-  <Tabs.Navigator
-    screenOptions={{
-      tabBarActiveTintColor: blue,
-      tabBarInactiveTintColor: gray,
-      headerShown: false,
-      tabBarLabelStyle: [{ fontSize: 14, fontWeight: 'bold' }],
-    }}
-  >
-    <Tabs.Screen
-      name='SudokuList'
-      component={SudokuList}
-      options={{
-        title: 'Sudoku List',
-        tabBarIcon: ({ color }) => (
-          <MaterialCommunityIcons
-            name='view-dashboard'
-            color={color}
-            size={30}
-          />
-        ),
+const TabsNavigator = ({ extraData }: any) => {
+  const { theme }: { theme: Theme } = extraData;
+  return (
+    <Tabs.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: theme.colors.cellSelectedBackground,
+        tabBarInactiveTintColor: theme.colors.inactive,
+        headerShown: false,
+        tabBarLabelStyle: [{ fontSize: 14, fontWeight: 'bold' }],
       }}
-    ></Tabs.Screen>
-    <Tabs.Screen
-      name='SudokuListForUser'
-      component={SudokuListForUser}
-      options={{
-        title: 'My List',
-        tabBarIcon: ({ color }) => (
-          <MaterialCommunityIcons
-            name='view-dashboard-outline'
-            color={color}
-            size={30}
-          />
-        ),
-      }}
-    ></Tabs.Screen>
-    <Tabs.Screen
-      name='AppOptions'
-      component={AppOptions}
-      options={{
-        title: 'Options',
-        tabBarIcon: ({ color }) => (
-          <Ionicons name='options' color={color} size={30} />
-        ),
-      }}
-    ></Tabs.Screen>
-  </Tabs.Navigator>
-);
+    >
+      <Tabs.Screen
+        name='SudokuList'
+        component={SudokuList}
+        options={{
+          title: 'Sudoku List',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name='view-dashboard'
+              color={color}
+              size={30}
+            />
+          ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name='SudokuListForUser'
+        component={SudokuListForUser}
+        options={{
+          title: 'My List',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name='view-dashboard-outline'
+              color={color}
+              size={30}
+            />
+          ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name='AppOptions'
+        component={AppOptions}
+        options={{
+          title: 'Options',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='options' color={color} size={30} />
+          ),
+        }}
+      ></Tabs.Screen>
+    </Tabs.Navigator>
+  );
+};
 
-const StackNavigator = () => (
+const StackNavigator = ({ theme }: NavigatorProps) => (
   <Stack.Navigator
     screenOptions={{
       headerTitleAlign: 'center',
-      headerTintColor: white,
+      headerTintColor: theme ? theme.colors.cellSelectedText : white,
       headerStyle: {
-        backgroundColor: blue,
+        backgroundColor: theme ? theme.colors.cellSelectedBackground : black,
       },
     }}
   >
     <Stack.Screen
       name='TabsNavigator'
-      component={TabsNavigator}
-      options={{ headerShown: false }}
-    />
+      options={{
+        headerShown: false,
+      }}
+    >
+      {(props) => <TabsNavigator {...props} extraData={{ theme: theme }} />}
+    </Stack.Screen>
     <Stack.Screen
       name='Sudoku'
       component={Sudoku}
@@ -109,7 +119,7 @@ const StackNavigator = () => (
   </Stack.Navigator>
 );
 
-function App({ dispatch, status }: Props) {
+function App({ dispatch, status, theme }: Props) {
   useEffect(() => {
     dispatch(initSudokuUserAsync());
     dispatch(initSudokuGameDataAsync());
@@ -119,10 +129,10 @@ function App({ dispatch, status }: Props) {
   return (
     <View style={styles.container}>
       <View>
-        <StatusBar backgroundColor={blue} />
+        <StatusBar backgroundColor={theme.colors.primary} />
       </View>
       <NavigationContainer>
-        <StackNavigator />
+        <StackNavigator theme={theme} />
       </NavigationContainer>
     </View>
   );
@@ -136,7 +146,8 @@ const styles = StyleSheet.create({
 
 interface OwnProps {}
 
-const mapState = ({ status }: RootState) => ({
+const mapState = ({ status, theme }: RootState) => ({
+  theme,
   status,
 });
 

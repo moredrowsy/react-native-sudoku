@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
-import { cellColorThemes } from '../../styles';
 import Cell from './Cell';
 
 function SudokuCell({
@@ -17,24 +16,23 @@ function SudokuCell({
   showHints,
   style,
   onPress,
+  theme,
   dispatch,
 }: Props) {
-  const cellColors = cellColorThemes.default;
-
-  let bgColor = cellColors.background;
-  let opColor = cellColors.opacityBackground;
-  let txtColor = cellColors.text;
+  let bgColor = theme.colors.cellBackground;
+  let opColor = theme.colors.cellOpacityBackground;
+  let txtColor = theme.colors.cellText;
 
   if (isPressable && appShowHints && showHints) {
-    bgColor = cellColors.selectedBackground;
-    opColor = cellColors.selectedOpacity;
-    txtColor = cellColors.selectedText;
+    bgColor = theme.colors.cellSelectedBackground;
+    opColor = theme.colors.cellSelectedOpacity;
+    txtColor = theme.colors.cellSelectedText;
   }
 
   if (isReveal && isAnswer) {
-    bgColor = cellColors.revealBackground;
-    opColor = cellColors.revealOpacityBackground;
-    txtColor = cellColors.revealText;
+    bgColor = theme.colors.cellRevealBackground;
+    opColor = theme.colors.cellRevealOpacityBackground;
+    txtColor = theme.colors.cellRevealText;
   }
 
   return (
@@ -66,12 +64,12 @@ interface OwnProps {
 }
 
 const mapState = (
-  { options, users }: RootState,
-  { id, col, row, isReveal, userId, value }: OwnProps
+  { options, theme, users }: RootState,
+  { id, col, row, userId, value }: OwnProps
 ) => {
   let isAnswer = false;
   let showHints = false;
-  if (userId && id in users[userId].sudokus) {
+  if (col > -1 && row > -1 && userId && id in users[userId].sudokus) {
     isAnswer = users[userId].sudokus[id].board[row][col].answer === value;
     showHints = users[userId].sudokus[id].showHints;
   }
@@ -80,6 +78,7 @@ const mapState = (
     isAnswer,
     appShowHints: options.showHints,
     showHints,
+    theme,
   };
 };
 

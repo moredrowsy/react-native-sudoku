@@ -13,3 +13,7 @@ export const EMPTY_BOARDS: Record<string | number, number[][]> = {
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
   ],
 };
+
+export const GAP_BETWEEN_COMPONENTS = 30;
+
+export const DEBOUNCE_WAIT = 500;

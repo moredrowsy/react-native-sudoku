@@ -7,10 +7,10 @@ export interface SudokuRawData {
 export interface CellEntity {
   col: number;
   row: number;
+  value: number;
 }
 
 export interface SudokuCellEntity extends CellEntity {
-  value: number;
   mutable: boolean;
   answer: number | undefined;
 }
@@ -28,17 +28,4 @@ export interface SudokuGameEntity {
   userScore: number;
   selectedCell: CellEntity;
   showHints: boolean;
-}
-
-export interface CellColors {
-  background: string;
-  opacityBackground: string;
-  text: string;
-  margin: string;
-  selectedBackground: string;
-  selectedOpacity: string;
-  selectedText: string;
-  revealBackground: string;
-  revealOpacityBackground: string;
-  revealText: string;
 }

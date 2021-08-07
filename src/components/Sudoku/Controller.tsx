@@ -1,16 +1,11 @@
-import React, { useState } from 'react';
-import {
-  Dimensions,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Dimensions, Pressable, TouchableOpacity, View } from 'react-native';
 import {
   AntDesign,
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
+import { debounce } from 'lodash';
 import { connect, ConnectedProps } from 'react-redux';
 import {
   AppDispatch,
@@ -26,14 +21,13 @@ import {
   getCellSize,
   EMPTY_BOARDS,
   SUDOKU_EMPTY_CELL,
+  DEBOUNCE_WAIT,
 } from '../../sudoku';
 import {
   blue,
   red,
-  cellColorThemes,
-  cellStyles,
+  cellColorTheme,
   SUDOKU_CELL_NORMAL_MARGIN,
-  black,
   gray,
   yellow,
 } from '../../styles';
@@ -44,72 +38,94 @@ function Controller({
   selectedCell,
   appShowHints,
   showHints,
+  boardDimension,
   sudoku,
   userId,
+  theme,
   dispatch,
 }: Props) {
-  const [reveal, setReveal] = useState(false);
-
-  // Icon names
-  let eyeIconName = reveal ? 'eye' : 'eye-off';
-  if (!sudoku?.hasSolution) eyeIconName = 'eye-outline';
-  let hintsIconName = showHints ? 'lightbulb-on' : 'lightbulb-off';
-  if (!appShowHints) hintsIconName = 'lightbulb-off-outline';
-
-  const cellColors = cellColorThemes.default;
-  const cellMarginStyle = {
-    backgroundColor: cellColors.margin,
-  };
-
   if (sudoku) {
+    const [reveal, setReveal] = useState(false);
+    const [dimensions, setDimensions] = React.useState({
+      height: Dimensions.get('window').height,
+      width: Dimensions.get('window').width,
+    });
+
+    // Listens for window size changes
+    useEffect(() => {
+      const debouncedHandleResize = debounce(function handleResize() {
+        const { height, width } = Dimensions.get('window');
+        setDimensions({
+          height: height,
+          width: width,
+        });
+      }, DEBOUNCE_WAIT);
+      Dimensions.addEventListener('change', debouncedHandleResize);
+
+      return () => {
+        debouncedHandleResize.cancel();
+        Dimensions.removeEventListener('change', debouncedHandleResize);
+      };
+    }, []);
+
+    // Icon names
+    let eyeIconName = reveal ? 'eye' : 'eye-off';
+    if (!sudoku?.hasSolution) eyeIconName = 'eye-outline';
+    let hintsIconName = showHints ? 'lightbulb' : 'lightbulb-off';
+    if (!appShowHints) hintsIconName = 'lightbulb-off-outline';
+
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
     const rootSize = Math.sqrt(boardSize);
-    const { width, height } = Dimensions.get('window');
-    const dimension = Math.min(width, height);
+
+    // Get cell dimensions
+    const dimension = boardDimension
+      ? boardDimension
+      : Math.min(dimensions.height, dimensions.width);
     const cellSize = getCellSize(
       dimension,
       boardSize,
       SUDOKU_CELL_NORMAL_MARGIN
     );
-    const isComplete = sudoku.userScore === boardSize * boardSize;
 
-    const rows = EMPTY_BOARDS[boardSize][0];
+    // Check if current selected col and row is valid
     const isValidIndices =
       col > -1 && col < boardSize && row > -1 && row < boardSize;
 
+    // Get the selected cell value
     let selectedValue = 0;
-    if (isValidIndices)
-      selectedValue = sudoku.board[selectedCell.row][selectedCell.col].value;
-
-    let unique = new Set<number>();
-    let sudokuCells: ControllCellEntity[] = [];
     if (isValidIndices) {
-      unique = getAvailableCells(col, row, board);
-      sudokuCells = rows.map((value) => ({
-        value: value + 1,
-        unique: unique.has(value + 1),
-      }));
+      selectedValue = sudoku.board[selectedCell.row][selectedCell.col].value;
     }
 
-    // TODO: useCallback, is it pointless to memorize?
-    const onCellPress = (value: number) => {
-      if (isValidIndices && userId) {
-        const cellValue = board[row][col].value;
-        if (cellValue !== value) {
-          dispatch(
-            updateSudokuGameValueAsync({
-              userId,
-              sudokuId: sudoku.id,
-              col,
-              row,
-              value,
-            })
-          );
+    // Produce control cells list and mark cells that have unique value
+    // within col, row, and subgrid
+    const emptyRows = EMPTY_BOARDS[boardSize][0];
+    let unique = new Set<number>();
+    if (isValidIndices) {
+      unique = getAvailableCells(col, row, board);
+    }
+
+    const onCellPress = useCallback(
+      (value: number) => {
+        if (isValidIndices && userId) {
+          const cellValue = board[row][col].value;
+          if (cellValue !== value) {
+            dispatch(
+              updateSudokuGameValueAsync({
+                userId,
+                sudokuId: sudoku.id,
+                col,
+                row,
+                value,
+              })
+            );
+          }
         }
-      }
-    };
+      },
+      [selectedCell]
+    );
 
     const onCellClear = () => {
       if (isValidIndices && userId) {
@@ -143,49 +159,67 @@ function Controller({
       );
     };
 
+    // Get screen orientation
+    const screen = Dimensions.get('window');
+    const isPortrait = screen.width <= screen.height;
+
+    // Set screenStyles theme based on screen type
+    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+
     return (
-      <View style={[styles.container]}>
+      <View style={screenStyles.controllContainer}>
         <View
-          style={[
-            styles.control,
-            { height: cellSize + SUDOKU_CELL_NORMAL_MARGIN * 2 },
-
-            cellMarginStyle,
-          ]}
+          style={
+            isValidIndices
+              ? screenStyles.controlCellsContainer
+              : screenStyles.controlCellsContainerHide
+          }
         >
-          {unique &&
-            sudokuCells.map((cell, index) => {
-              // Calculate subgrid seperation magins
-              const isSepRight =
-                index !== boardSize - 1 && index % rootSize == 2;
+          {emptyRows.map((controlValue, index) => {
+            // Calculate subgrid seperation magins
+            const isSeperation =
+              index !== boardSize - 1 && index % rootSize == 2;
 
-              let cstyle = cellStyles.cellNormTopBottomRight;
+            let cstyle = isPortrait
+              ? screenStyles.cellNormTopBottomRight
+              : screenStyles.cellNormLeftRightBottom;
 
-              if (index === 0) cstyle = cellStyles.cellNormBox;
-              else if (isSepRight)
-                cstyle = cellStyles.cellNormTopBottomSepRight;
+            if (isPortrait) {
+              if (index === 0) cstyle = screenStyles.cellNormBox;
+              else if (isSeperation)
+                cstyle = screenStyles.cellNormTopBottomSepRight;
+            } else {
+              if (index === 0) cstyle = screenStyles.cellNormBox;
+              else if (isSeperation)
+                cstyle = screenStyles.cellNormLeftRightSepBottom;
+            }
 
-              return (
-                <ControllerCell
-                  key={index}
-                  id={id}
-                  userId={userId}
-                  col={col}
-                  row={row}
-                  value={cell.value}
-                  cellSize={cellSize}
-                  isPressable={cell.unique}
-                  isReveal={reveal}
-                  style={cstyle}
-                  onPress={() => onCellPress(cell.value)}
-                />
-              );
-            })}
+            return (
+              <ControllerCell
+                key={index}
+                id={id}
+                userId={userId}
+                col={col}
+                row={row}
+                value={controlValue + 1}
+                cellSize={cellSize}
+                isPressable={isValidIndices && unique.has(controlValue + 1)}
+                isReveal={reveal}
+                style={cstyle}
+                onPress={() => onCellPress(controlValue + 1)}
+              />
+            );
+          })}
         </View>
-        <View style={[styles.control, !isValidIndices && styles.noDisplay]}>
+        <View
+          style={
+            !isValidIndices
+              ? screenStyles.controlBtnContainerHide
+              : screenStyles.controlBtnContainer
+          }
+        >
           <TouchableOpacity
             onPress={onCellClear}
-            style={styles.btn}
             disabled={!isValidIndices || selectedValue === SUDOKU_EMPTY_CELL}
           >
             <AntDesign
@@ -193,40 +227,15 @@ function Controller({
               size={cellSize * 1.2}
               color={
                 isValidIndices && selectedValue !== SUDOKU_EMPTY_CELL
-                  ? blue
+                  ? theme.colors.remove
                   : gray
               }
             />
           </TouchableOpacity>
           <View style={{ width: cellSize, height: cellSize }}></View>
-          <TouchableOpacity
-            onPress={toggleShowHints}
-            style={styles.btn}
-            disabled={!isValidIndices || !appShowHints}
-          >
-            <MaterialCommunityIcons
-              name={hintsIconName as any}
-              size={cellSize * 1.2}
-              color={appShowHints && showHints ? yellow : gray}
-            />
-          </TouchableOpacity>
-          <View style={{ width: cellSize, height: cellSize }}></View>
-          <Pressable
-            onPressIn={() => setReveal(true)}
-            onPressOut={() => setReveal(false)}
-            style={styles.btn}
-            disabled={!isValidIndices || !sudoku.hasSolution}
-          >
-            <Ionicons
-              name={eyeIconName as any}
-              size={cellSize * 1.2}
-              color={sudoku.hasSolution && reveal ? red : gray}
-            />
-          </Pressable>
-          <View style={{ width: cellSize, height: cellSize }}></View>
+
           <TouchableOpacity
             onPress={onReset}
-            style={styles.btn}
             disabled={
               !isValidIndices || sudoku.defaultScore == sudoku.userScore
             }
@@ -234,7 +243,34 @@ function Controller({
             <MaterialCommunityIcons
               name='restart'
               size={cellSize * 1.2}
-              color={sudoku.defaultScore === sudoku.userScore ? gray : blue}
+              color={
+                sudoku.defaultScore === sudoku.userScore
+                  ? gray
+                  : theme.colors.reset
+              }
+            />
+          </TouchableOpacity>
+          <View style={{ width: cellSize, height: cellSize }}></View>
+          <Pressable
+            onPressIn={() => setReveal(true)}
+            onPressOut={() => setReveal(false)}
+            disabled={!isValidIndices || !sudoku.hasSolution}
+          >
+            <Ionicons
+              name={eyeIconName as any}
+              size={cellSize * 1.2}
+              color={sudoku.hasSolution && reveal ? theme.colors.reveal : gray}
+            />
+          </Pressable>
+          <View style={{ width: cellSize, height: cellSize }}></View>
+          <TouchableOpacity
+            onPress={toggleShowHints}
+            disabled={!isValidIndices || !appShowHints}
+          >
+            <MaterialCommunityIcons
+              name={hintsIconName as any}
+              size={cellSize * 1.2}
+              color={appShowHints && showHints ? theme.colors.showHints : gray}
             />
           </TouchableOpacity>
         </View>
@@ -245,34 +281,17 @@ function Controller({
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  control: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noDisplay: {
-    opacity: 0,
-  },
-  btn: {
-    marginTop: 10,
-  },
-  cellRow: {
-    flexDirection: 'row',
-  },
-});
-
 interface OwnProps {
   id: string;
   userId: string | null;
+  boardDimension?: number;
 }
 
-const mapState = ({ options, users }: RootState, { id, userId }: OwnProps) => {
-  let selectedCell: CellEntity = { col: -1, row: -1 };
+const mapState = (
+  { options, theme, users }: RootState,
+  { id, userId }: OwnProps
+) => {
+  let selectedCell: CellEntity = { col: -1, row: -1, value: -1 };
   let sudoku = null;
 
   if (id && userId && userId in users && id in users[userId].sudokus) {
@@ -286,6 +305,7 @@ const mapState = ({ options, users }: RootState, { id, userId }: OwnProps) => {
     showHints: sudoku ? sudoku.showHints : false,
     selectedCell,
     sudoku,
+    theme,
     userId,
   };
 };
