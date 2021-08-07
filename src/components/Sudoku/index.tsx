@@ -18,56 +18,10 @@ import Info, { INFO_FONT_SIZE } from './Info';
 
 function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
   if (hasSudokuGameForUser && userId) {
-    // Get screen orientation
-    const screen = Dimensions.get('window');
-    const isPortrait = screen.width <= screen.height;
-
-    // Set screenStyles theme based on screen type
-    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
-
     const [dimensions, setDimensions] = React.useState({
       height: Dimensions.get('window').height,
       width: Dimensions.get('window').width,
     });
-
-    // Get initial cell dimensions based on height
-    const rootSize = Math.sqrt(boardSize);
-    let dimension =
-      dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
-    let cellSize = getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN);
-
-    // Resize again to account for Info & Controller component extra space
-    const extraSpace =
-      cellSize * 3 +
-      SUDOKU_CELL_NORMAL_MARGIN * 2 +
-      GAP_BETWEEN_COMPONENTS * 4 +
-      INFO_FONT_SIZE;
-    if (isPortrait) {
-      // Effective dimension is based on height for portrait
-      let effectiveDimension = dimensions.height - extraSpace;
-
-      // If effectiveDimension is larger than width, readjust
-      effectiveDimension = Math.min(effectiveDimension, dimensions.width);
-
-      cellSize = getCellSize(
-        effectiveDimension,
-        boardSize,
-        SUDOKU_CELL_NORMAL_MARGIN
-      );
-    } else {
-      // Effective dimension is based on width for landscape
-      let effectiveDimension = dimensions.width - extraSpace;
-
-      // If effectiveDimension is larger than height, readjust
-      effectiveDimension = Math.min(effectiveDimension, dimensions.height);
-
-      cellSize = getCellSize(
-        effectiveDimension,
-        boardSize,
-        SUDOKU_CELL_NORMAL_MARGIN
-      );
-    }
-    cellSize = Math.floor(cellSize);
 
     // Listens for window size changes
     useEffect(() => {
@@ -86,22 +40,65 @@ function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
       };
     }, []);
 
+    // Get screen orientation
+    const screen = Dimensions.get('window');
+    const isPortrait = screen.width <= screen.height;
+
+    // Set screenStyles theme based on screen type
+    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+
+    // Get initial cell dimensions based on height
+    let dimension =
+      dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
+    let cellSize = getCellSize(dimension, boardSize);
+
+    // Resize again to account for Info & Controller component extra space
+    const extraSpace =
+      cellSize * 3 +
+      SUDOKU_CELL_NORMAL_MARGIN * 2 +
+      GAP_BETWEEN_COMPONENTS * 4 +
+      INFO_FONT_SIZE;
+    if (isPortrait) {
+      // Effective dimension is based on height for portrait
+      let effectiveDimension = dimensions.height - extraSpace;
+
+      // If effectiveDimension is larger than width, readjust
+      effectiveDimension = Math.min(effectiveDimension, dimensions.width);
+
+      cellSize = getCellSize(effectiveDimension, boardSize);
+    } else {
+      // Effective dimension is based on width for landscape
+      let effectiveDimension = dimensions.width - extraSpace;
+
+      // If effectiveDimension is larger than height, readjust
+      effectiveDimension = Math.min(effectiveDimension, dimensions.height);
+
+      cellSize = getCellSize(effectiveDimension, boardSize);
+    }
+    cellSize = Math.floor(cellSize);
+
     return (
       <View style={screenStyles.sudokuContainer}>
         <View style={screenStyles.sudokuContainerForInfo}>
-          <Info id={id} userId={userId} />
+          <Info id={id} userId={userId} isPortrait={isPortrait} />
         </View>
         <View style={screenStyles.sudokuContainerForBoard}>
           <Board
             id={id}
             userId={userId}
-            isPressable={true}
-            hideSelectedColor={false}
             cellSize={cellSize}
+            isPressable={true}
+            isPortrait={isPortrait}
+            hideSelectedColor={false}
           />
         </View>
         <View style={screenStyles.sudokuContainerForController}>
-          <Controller id={id} userId={userId} cellSize={cellSize} />
+          <Controller
+            id={id}
+            userId={userId}
+            cellSize={cellSize}
+            isPortrait={isPortrait}
+          />
         </View>
       </View>
     );
@@ -113,6 +110,7 @@ function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
 interface OwnProps {
   id: string;
   boardSize: number;
+  isPortrait: boolean;
   route: any; // TODO fix this type
 }
 

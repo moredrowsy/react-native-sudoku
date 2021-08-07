@@ -5,53 +5,25 @@ import Consants from 'expo-constants';
 import { debounce } from 'lodash';
 
 import { AppDispatch, RootState } from '../../storage/store';
-import {
-  NAVIGATION_HEADER_HEIGHT,
-  SUDOKU_CELL_NORMAL_MARGIN,
-} from '../../styles';
+import { NAVIGATION_HEADER_HEIGHT } from '../../styles';
 import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 
 import SudokuCell from './SudokuCell';
 
 function Board({
   id,
+  userId,
   boardSize,
   boardDimension,
   cellSize,
-  isPressable,
-  userId,
-  hasUserBoard,
   hideSelectedColor = false,
+  hasUserBoard,
+  isPressable,
+  isPortrait,
   theme,
 }: Props) {
   // Get screen orientation
   const screen = Dimensions.get('window');
-  const isPortrait = screen.width <= screen.height;
-
-  // Set screenStyles theme based on screen type
-  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
-
-  const [dimensions, setDimensions] = React.useState({
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-  });
-
-  // Listens for window size changes
-  useEffect(() => {
-    const debouncedHandleResize = debounce(function handleResize() {
-      const { height, width } = Dimensions.get('window');
-      setDimensions({
-        height: height,
-        width: width,
-      });
-    }, DEBOUNCE_WAIT);
-    Dimensions.addEventListener('change', debouncedHandleResize);
-
-    return () => {
-      debouncedHandleResize.cancel();
-      Dimensions.removeEventListener('change', debouncedHandleResize);
-    };
-  }, []);
 
   // Board is presentational. It should be as stateless as possible to avoid
   // rerenders. Only the states in Cells should know if it needs to rerender
@@ -59,17 +31,43 @@ function Board({
 
   // Get cell dimensions if not provided
   const rootSize = Math.sqrt(boardSize);
-  if (!cellSize) {
+
+  if (!cellSize || isPortrait === undefined) {
+    const [dimensions, setDimensions] = React.useState({
+      height: Dimensions.get('window').height,
+      width: Dimensions.get('window').width,
+    });
+
+    // Listens for window size changes
+    useEffect(() => {
+      const debouncedHandleResize = debounce(function handleResize() {
+        const { height, width } = Dimensions.get('window');
+        setDimensions({
+          height: height,
+          width: width,
+        });
+      }, DEBOUNCE_WAIT);
+      Dimensions.addEventListener('change', debouncedHandleResize);
+
+      return () => {
+        debouncedHandleResize.cancel();
+        Dimensions.removeEventListener('change', debouncedHandleResize);
+      };
+    }, []);
+
+    isPortrait = screen.width <= screen.height;
+
     let effectiveHeight =
       dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
     let effectiveWidth = dimensions.width;
     let dimension = Math.min(effectiveHeight, effectiveWidth);
     if (boardDimension) dimension = boardDimension;
 
-    cellSize = Math.floor(
-      getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN)
-    );
+    cellSize = Math.floor(getCellSize(dimension, boardSize));
   }
+
+  // Set screenStyles theme based on screen type
+  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
 
   return (
     <View
@@ -115,8 +113,9 @@ interface OwnProps {
   userId?: string | null;
   boardDimension?: number;
   cellSize?: number;
-  isPressable: boolean;
   hideSelectedColor?: boolean;
+  isPressable: boolean;
+  isPortrait?: boolean;
 }
 
 const mapState = (

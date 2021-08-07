@@ -1,4 +1,9 @@
 import {
+  SUDOKU_CELL_NORMAL_MARGIN,
+  SUDOKU_CELL_SEP_MARGIN,
+  WINDOW_PADDING,
+} from '../styles';
+import {
   SudokuCellEntity,
   SudokuGameEntity,
   SudokuUserEntity,
@@ -93,11 +98,17 @@ export function getUserFromSudokuUser(sudokuUser: SudokuUserEntity) {
 export function getCellSize(
   dimension: number,
   boardSize: number,
-  margin: number
+  padding: number = WINDOW_PADDING
 ) {
-  const sepSzie = Math.sqrt(boardSize) - 1;
-  let cellSize = dimension / boardSize;
-  cellSize -= (boardSize - sepSzie + 1) * margin;
+  const numSubgrids = Math.sqrt(boardSize) - 1;
+  const normMarginSapce =
+    SUDOKU_CELL_NORMAL_MARGIN * (boardSize - numSubgrids + 1);
+  const subgridMarginSpace = SUDOKU_CELL_SEP_MARGIN * 2;
+
+  let effectiveDimensions = dimension - (normMarginSapce + subgridMarginSpace);
+  if (padding) effectiveDimensions -= padding * 2;
+
+  const cellSize = effectiveDimensions / boardSize;
 
   return cellSize;
 }

@@ -18,10 +18,11 @@ import {
   white,
   yellow,
 } from './colors';
-
-export const SUDOKU_CELL_NORMAL_MARGIN = 1;
-export const SUDOKU_CELL_SEP_MARGIN = 3;
-export const GAP_BETWEEN_COMPONENTS = 20;
+import {
+  GAP_BETWEEN_COMPONENTS,
+  SUDOKU_CELL_NORMAL_MARGIN,
+  SUDOKU_CELL_SEP_MARGIN,
+} from './constants';
 
 const cellColorTheme: Record<string, CellColors> = {
   amber: {

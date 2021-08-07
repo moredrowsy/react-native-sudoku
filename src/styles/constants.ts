@@ -1,2 +1,6 @@
+export const GAP_BETWEEN_COMPONENTS = 20;
 export const NAVIGATION_HEADER_HEIGHT = 35;
 export const NAVIGATION_HEADER_FONT_SIZE = 20;
+export const SUDOKU_CELL_NORMAL_MARGIN = 2;
+export const SUDOKU_CELL_SEP_MARGIN = 4;
+export const WINDOW_PADDING = 20;

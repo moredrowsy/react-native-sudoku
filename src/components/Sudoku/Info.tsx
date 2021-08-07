@@ -15,6 +15,7 @@ function Info({
   userId,
   defaultHasSolution,
   defaultScore,
+  isPortrait,
   theme,
   total,
   userScore,
@@ -28,14 +29,30 @@ function Info({
       }
     }, [defaultHasSolution, userScore, total]);
 
+    const completeMsg = 'Completed!';
+
     return (
       <View>
         {userScore === total ? (
-          <Text style={styles.completed}>Completed!</Text>
+          <View>
+            {isPortrait ? (
+              <Text style={styles.completed}>{completeMsg}</Text>
+            ) : (
+              <View style={styles.verticalText}>
+                {[...completeMsg].map((c, index) => (
+                  <Text key={`${index}${c}`} style={styles.completed}>
+                    {c}
+                  </Text>
+                ))}
+              </View>
+            )}
+          </View>
         ) : (
-          <Text style={styles.score}>
-            {userScore} / {total}
-          </Text>
+          <View style={isPortrait ? styles.portrait : styles.landscape}>
+            <Text style={styles.score}>{userScore}</Text>
+            <Text style={styles.score}>{isPortrait ? ' / ' : '—'}</Text>
+            <Text style={styles.score}>{total}</Text>
+          </View>
         )}
       </View>
     );
@@ -48,6 +65,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  landscape: {
+    flexDirection: 'column',
+  },
+  portrait: {
+    flexDirection: 'row',
+  },
   score: {
     fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
@@ -58,11 +81,17 @@ const styles = StyleSheet.create({
     fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
   },
+  verticalText: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 interface OwnProps {
   id: string;
   userId: string;
+  isPortrait: boolean;
 }
 
 const mapState = (

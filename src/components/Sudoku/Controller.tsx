@@ -16,10 +16,7 @@ import {
   updateShowHintsForGame,
   updateSudokuGameValueAsync,
 } from '../../storage/store';
-import {
-  NAVIGATION_HEADER_HEIGHT,
-  SUDOKU_CELL_NORMAL_MARGIN,
-} from '../../styles';
+import { NAVIGATION_HEADER_HEIGHT } from '../../styles';
 import {
   getAvailableCells,
   getCellSize,
@@ -34,46 +31,22 @@ import ControllerCell from './ControllerCell';
 
 function Controller({
   id,
-  selectedCell,
-  showHints,
+  userId,
   boardDimension,
   cellSize,
+  isPortrait,
   options,
+  showHints,
+  selectedCell,
   sudoku,
-  userId,
   theme,
   dispatch,
 }: Props) {
   if (sudoku) {
+    const [reveal, setReveal] = useState(false);
+
     // Get screen orientation
     const screen = Dimensions.get('window');
-    const isPortrait = screen.width <= screen.height;
-
-    // Set screenStyles theme based on screen type
-    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
-
-    const [reveal, setReveal] = useState(false);
-    const [dimensions, setDimensions] = React.useState({
-      height: Dimensions.get('window').height,
-      width: Dimensions.get('window').width,
-    });
-
-    // Listens for window size changes
-    useEffect(() => {
-      const debouncedHandleResize = debounce(function handleResize() {
-        const { height, width } = Dimensions.get('window');
-        setDimensions({
-          height: height,
-          width: width,
-        });
-      }, DEBOUNCE_WAIT);
-      Dimensions.addEventListener('change', debouncedHandleResize);
-
-      return () => {
-        debouncedHandleResize.cancel();
-        Dimensions.removeEventListener('change', debouncedHandleResize);
-      };
-    }, []);
 
     // Icon names
     let eyeIconName = reveal ? 'eye' : 'eye-off';
@@ -88,17 +61,42 @@ function Controller({
 
     // Get cell dimensions if not provided
     const rootSize = Math.sqrt(boardSize);
-    if (!cellSize) {
+    if (!cellSize || isPortrait === undefined) {
+      const [dimensions, setDimensions] = React.useState({
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+      });
+
+      // Listens for window size changes
+      useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+          const { height, width } = Dimensions.get('window');
+          setDimensions({
+            height: height,
+            width: width,
+          });
+        }, DEBOUNCE_WAIT);
+        Dimensions.addEventListener('change', debouncedHandleResize);
+
+        return () => {
+          debouncedHandleResize.cancel();
+          Dimensions.removeEventListener('change', debouncedHandleResize);
+        };
+      }, []);
+
+      isPortrait = screen.width <= screen.height;
+
       let effectiveHeight =
         dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
       let effectiveWidth = dimensions.width;
       let dimension = Math.min(effectiveHeight, effectiveWidth);
       if (boardDimension) dimension = boardDimension;
 
-      cellSize = Math.floor(
-        getCellSize(dimension, boardSize, SUDOKU_CELL_NORMAL_MARGIN)
-      );
+      cellSize = Math.floor(getCellSize(dimension, boardSize));
     }
+
+    // Set screenStyles theme based on screen type
+    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
 
     // Check if current selected col and row is valid
     const isValidIndices =
@@ -303,6 +301,7 @@ interface OwnProps {
   userId: string | null;
   boardDimension?: number;
   cellSize?: number;
+  isPortrait: boolean;
 }
 
 const mapState = (
