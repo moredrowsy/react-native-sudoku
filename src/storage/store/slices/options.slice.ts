@@ -7,6 +7,7 @@ import { setThemeType } from './theme.slice';
 const sliceName = 'options';
 const initialState: AppOptions = {
   showHints: true,
+  showReveal: true,
   themeName: 'indigo',
 };
 
@@ -21,13 +22,17 @@ const options = createSlice({
     setShowHints: (state, action: PayloadAction<boolean>) => {
       state.showHints = action.payload;
     },
+    setShowReveal: (state, action: PayloadAction<boolean>) => {
+      state.showReveal = action.payload;
+    },
     setThemeName: (state, action: PayloadAction<ThemeNames>) => {
       state.themeName = action.payload;
     },
   },
 });
 
-export const { setOptions, setShowHints, setThemeName } = options.actions;
+export const { setOptions, setShowHints, setShowReveal, setThemeName } =
+  options.actions;
 
 // SELECTOR
 export const selectOptions = (state: RootState) => state.options;
@@ -44,6 +49,28 @@ export const setShowHintsAsync =
       const options = selectOptions(getState());
       LocalStorage.options.setOptions({ ...options, showHints });
       dispatch(setShowHints(showHints));
+
+      if (onSuccess) onSuccess();
+    } catch (e: unknown) {
+      if (onError) {
+        if (e instanceof Error) onError(e.message);
+        else if (typeof e === 'string') onError(e);
+        else onError('Error');
+      }
+    }
+  };
+
+export const setShowRevealAsync =
+  (
+    showReveal: boolean,
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ): AppThunk =>
+  async (dispatch, getState) => {
+    try {
+      const options = selectOptions(getState());
+      LocalStorage.options.setOptions({ ...options, showReveal });
+      dispatch(setShowReveal(showReveal));
 
       if (onSuccess) onSuccess();
     } catch (e: unknown) {

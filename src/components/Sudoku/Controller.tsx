@@ -32,10 +32,10 @@ import ControllerCell from './ControllerCell';
 function Controller({
   id,
   selectedCell,
-  appShowHints,
   showHints,
   boardDimension,
   cellSize,
+  options,
   sudoku,
   userId,
   theme,
@@ -74,9 +74,10 @@ function Controller({
 
     // Icon names
     let eyeIconName = reveal ? 'eye' : 'eye-off';
-    if (!sudoku?.hasSolution) eyeIconName = 'eye-outline';
+    if (!(sudoku?.hasSolution && options.showReveal))
+      eyeIconName = 'eye-outline';
     let hintsIconName = showHints ? 'lightbulb' : 'lightbulb-off';
-    if (!appShowHints) hintsIconName = 'lightbulb-off-outline';
+    if (!options.showHints) hintsIconName = 'lightbulb-off-outline';
 
     const { col, row } = selectedCell;
     const { board } = sudoku;
@@ -257,13 +258,15 @@ function Controller({
           <Pressable
             onPressIn={() => setReveal(true)}
             onPressOut={() => setReveal(false)}
-            disabled={!isValidIndices || !sudoku.hasSolution}
+            disabled={
+              !isValidIndices || !(sudoku.hasSolution && options.showReveal)
+            }
           >
             <Ionicons
               name={eyeIconName as any}
               size={cellSize * 1.2}
               color={
-                sudoku.hasSolution && reveal
+                sudoku.hasSolution && reveal && options.showReveal
                   ? theme.colors.reveal
                   : theme.colors.inactive
               }
@@ -272,13 +275,13 @@ function Controller({
           <View style={{ width: cellSize, height: cellSize }}></View>
           <TouchableOpacity
             onPress={toggleShowHints}
-            disabled={!isValidIndices || !appShowHints}
+            disabled={!isValidIndices || !(options.showHints || showHints)}
           >
             <MaterialCommunityIcons
               name={hintsIconName as any}
               size={cellSize * 1.2}
               color={
-                appShowHints && showHints
+                options.showHints && showHints
                   ? theme.colors.showHints
                   : theme.colors.inactive
               }
@@ -313,7 +316,7 @@ const mapState = (
 
   return {
     id,
-    appShowHints: options.showHints,
+    options,
     showHints: sudoku ? sudoku.showHints : false,
     selectedCell,
     sudoku,

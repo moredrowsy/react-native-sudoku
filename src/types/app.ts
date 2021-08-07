@@ -8,5 +8,6 @@ export interface AppStatus {
 
 export interface AppOptions {
   showHints: boolean;
+  showReveal: boolean;
   themeName: ThemeNames;
 }

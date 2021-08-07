@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import { AppDispatch, RootState, setThemeNameAsync } from '../storage/store';
-import { setShowHintsAsync } from '../storage/store';
+import {
+  AppDispatch,
+  RootState,
+  setShowHintsAsync,
+  setShowRevealAsync,
+  setThemeNameAsync,
+} from '../storage/store';
 import { themeNames } from '../styles';
 import { ThemeNames } from '../types';
 import CheckBox from './CheckBox';
 
 function AppOptions({ options, theme, dispatch }: Props) {
   const [showHints, setShowHints] = useState(options.showHints);
+  const [showReveal, setShowReveal] = useState(options.showReveal);
 
   const onShowHintsToggle = (newValue: boolean) => {
     setShowHints(newValue);
     dispatch(setShowHintsAsync(newValue));
+  };
+
+  const onShowRevealToggle = (newValue: boolean) => {
+    setShowReveal(newValue);
+    dispatch(setShowRevealAsync(newValue));
   };
 
   const onChangeThemeName = (themeName: ThemeNames) => {
@@ -30,7 +41,21 @@ function AppOptions({ options, theme, dispatch }: Props) {
           offColor={theme.colors.inactive}
         />
         <TouchableOpacity onPress={() => onShowHintsToggle(!showHints)}>
-          <Text style={styles.text}>Show hints</Text>
+          <Text style={styles.text}>Enable show hints</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.option}>
+        <CheckBox
+          disabled={false}
+          value={showReveal}
+          onValueChange={(newValue) => onShowRevealToggle(newValue)}
+          onColor={theme.colors.primary}
+          offColor={theme.colors.inactive}
+        />
+        <TouchableOpacity onPress={() => onShowRevealToggle(!showReveal)}>
+          <Text style={styles.text}>
+            Enable show reveal answers (if exists)
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.optionList}>
