@@ -45,6 +45,10 @@ export interface CellStyles {
   controllContainer: ViewStyle;
   controlBtnContainer: ViewStyle;
   controlBtnContainerHide: ViewStyle;
+  flatListItem: ViewStyle;
+  flatListFirstItem: ViewStyle;
+  flatListItemSelected: ViewStyle;
+  flatListFirstItemSelected: ViewStyle;
 }
 
 export interface Theme {

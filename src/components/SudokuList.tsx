@@ -26,7 +26,7 @@ import Board from './Sudoku/Board';
 
 const FLAT_LIST_MARGIN_SIZE = 30;
 
-function SudokuList({
+const SudokuList: React.FC<Props> = ({
   sudokus,
   userId,
   loading,
@@ -34,7 +34,7 @@ function SudokuList({
   userSudokus,
   navigation,
   dispatch,
-}: Props) {
+}) => {
   const sudokusForFlatList = sudokus ? Object.values(sudokus) : [];
 
   const onPressSudoku = useCallback(
@@ -59,18 +59,26 @@ function SudokuList({
   const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
     item,
     index,
-  }) => (
-    <View style={[styles.flatListItem, index == 0 && styles.flatListFirstItem]}>
-      <TouchableOpacity onPress={() => onPressSudoku(item.id)}>
-        <Board
-          id={item.id}
-          userId={userId}
-          isPressable={false}
-          hideSelectedColor={true}
-        />
-      </TouchableOpacity>
-    </View>
-  );
+  }) => {
+    return (
+      <View
+        style={
+          index !== 0
+            ? theme.portrait.flatListItem
+            : theme.portrait.flatListFirstItem
+        }
+      >
+        <TouchableOpacity onPress={() => onPressSudoku(item.id)}>
+          <Board
+            id={item.id}
+            userId={userId}
+            isPressable={false}
+            hideSelectedColor={true}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   if (!loading)
     return (
@@ -96,7 +104,7 @@ function SudokuList({
       </View>
     );
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -106,12 +114,6 @@ const styles = StyleSheet.create({
   },
   flatList: {
     alignSelf: 'stretch',
-  },
-  flatListItem: { alignSelf: 'center', marginBottom: FLAT_LIST_MARGIN_SIZE },
-  flatListFirstItem: {
-    alignSelf: 'center',
-    marginTop: FLAT_LIST_MARGIN_SIZE,
-    marginBottom: FLAT_LIST_MARGIN_SIZE,
   },
 });
 

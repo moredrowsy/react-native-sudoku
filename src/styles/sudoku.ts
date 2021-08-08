@@ -19,6 +19,7 @@ import {
   yellow,
 } from './colors';
 import {
+  FLAT_LIST_MARGIN_SIZE,
   GAP_BETWEEN_COMPONENTS,
   SUDOKU_CELL_NORMAL_MARGIN,
   SUDOKU_CELL_SEP_MARGIN,
@@ -316,6 +317,16 @@ export const cellMargins = StyleSheet.create({
     marginRight: SUDOKU_CELL_SEP_MARGIN,
     marginBottom: SUDOKU_CELL_SEP_MARGIN,
   },
+  // Flatlist
+  flatListItem: {
+    alignSelf: 'center',
+    marginBottom: FLAT_LIST_MARGIN_SIZE,
+  },
+  flatListFirstItem: {
+    alignSelf: 'center',
+    marginTop: FLAT_LIST_MARGIN_SIZE,
+    marginBottom: FLAT_LIST_MARGIN_SIZE,
+  },
 });
 
 export function createCellStylesLandscape(themeName: string) {
@@ -373,6 +384,19 @@ export function createCellStylesLandscape(themeName: string) {
       justifyContent: 'center',
       alignItems: 'center',
       opacity: 0,
+    },
+    // Flatlist
+    flatListItemSelected: {
+      alignSelf: 'center',
+      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      backgroundColor: cellColorTheme[themeName].primary,
+      opacity: 0.3,
+    },
+    flatListFirstItemSelected: {
+      alignSelf: 'center',
+      marginTop: FLAT_LIST_MARGIN_SIZE,
+      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      opacity: 0.3,
     },
   });
 
@@ -434,6 +458,19 @@ export function createCellStylesPortrait(themeName: string) {
       justifyContent: 'center',
       alignItems: 'center',
       opacity: 0,
+    },
+    // Flatlist
+    flatListItemSelected: {
+      alignSelf: 'center',
+      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      backgroundColor: cellColorTheme[themeName].primary,
+      opacity: 0.3,
+    },
+    flatListFirstItemSelected: {
+      alignSelf: 'center',
+      marginTop: FLAT_LIST_MARGIN_SIZE,
+      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      opacity: 0.3,
     },
   });
 

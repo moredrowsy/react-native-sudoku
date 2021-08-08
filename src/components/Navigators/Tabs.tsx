@@ -11,11 +11,15 @@ import { AppDispatch, RootState } from '../../storage/store';
 
 import AppOptions from '../AppOptions';
 import SudokuList from '../SudokuList';
-import SudokuListForUser from '../SudokuListForUser';
+import UserSudokus from '../UserSudokus';
+import {
+  NAVIGATION_HEADER_FONT_SIZE,
+  NAVIGATION_HEADER_HEIGHT,
+} from '../../styles';
 
 const Tab = createBottomTabNavigator<TabsParamList>();
 
-function Tabs({ theme }: Props) {
+const Tabs: React.FC<Props> = ({ theme }) => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -23,6 +27,15 @@ function Tabs({ theme }: Props) {
         tabBarInactiveTintColor: theme.colors.inactive,
         headerShown: false,
         tabBarLabelStyle: [{ fontSize: 14, fontWeight: 'bold' }],
+        headerTitleAlign: 'center',
+        headerTintColor: theme.colors.cellSelectedText,
+        headerStyle: {
+          backgroundColor: theme.colors.cellSelectedBackground,
+          height: NAVIGATION_HEADER_HEIGHT,
+        },
+        headerTitleStyle: {
+          fontSize: NAVIGATION_HEADER_FONT_SIZE,
+        },
       }}
     >
       <Tab.Screen
@@ -40,8 +53,8 @@ function Tabs({ theme }: Props) {
         }}
       />
       <Tab.Screen
-        name='SudokuListForUser'
-        component={SudokuListForUser}
+        name='UserSudokus'
+        component={UserSudokus}
         options={{
           title: 'My Sudoku',
           tabBarIcon: ({ color }) => (
@@ -65,11 +78,11 @@ function Tabs({ theme }: Props) {
       />
     </Tab.Navigator>
   );
-}
+};
 
 export type TabsParamList = {
   SudokuList: { title: string };
-  SudokuListForUser: { title: string };
+  UserSudokus: { title: string };
   AppOptions: { title: string };
 };
 

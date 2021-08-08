@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from '../../storage/store';
 
 import Cell from './Cell';
 
-function SudokuCell({
+const SudokuCell: React.FC<Props> = ({
   col,
   row,
   value,
@@ -19,7 +19,7 @@ function SudokuCell({
   onPress,
   theme,
   dispatch,
-}: Props) {
+}) => {
   let bgColor = theme.colors.cellBackground;
   let opColor = theme.colors.cellOpacityBackground;
   let txtColor = theme.colors.cellText;
@@ -49,7 +49,7 @@ function SudokuCell({
       />
     </View>
   );
-}
+};
 
 interface OwnProps {
   id: string;

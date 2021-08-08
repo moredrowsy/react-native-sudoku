@@ -14,7 +14,7 @@ import {
 import StatusBar from './StatusBar';
 import RootStack from './Navigators';
 
-function App({ status, theme, dispatch }: Props) {
+const App: React.FC<Props> = ({ status, theme, dispatch }) => {
   useEffect(() => {
     dispatch(initSudokuUserAsync());
     dispatch(initSudokuGameDataAsync());
@@ -31,7 +31,7 @@ function App({ status, theme, dispatch }: Props) {
       </NavigationContainer>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

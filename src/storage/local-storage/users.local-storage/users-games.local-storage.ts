@@ -66,7 +66,17 @@ export async function removeSudokuGameFromUser(
   return AsyncStorage.removeItem(key);
 }
 
-export async function removeSudokuGamesFromUser(userId: string) {
+export async function removeSudokuGamesFromUser(
+  userId: string,
+  sudokuIds: string[] | Set<string>
+) {
+  for (const sudokuId of sudokuIds) {
+    const key = getUserGameStorageKey(userId, sudokuId);
+    AsyncStorage.removeItem(key);
+  }
+}
+
+export async function removeAllSudokuGamesFromUser(userId: string) {
   const key = getUserGameStorageKey(userId);
   const gameKeys = await AsyncStorage.getAllKeys();
   for (const gameKey of gameKeys) {

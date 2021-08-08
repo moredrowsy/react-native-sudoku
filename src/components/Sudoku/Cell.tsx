@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SUDOKU_EMPTY_CELL } from '../../sudoku';
 
-function Cell({
+const Cell: React.FC<Props> = ({
   value,
   isPressable,
   cellSize,
@@ -11,7 +11,7 @@ function Cell({
   textColor,
   onPress,
   hideZero = true,
-}: Props) {
+}) => {
   const outerContainer = { backgroundColor: opacityColor };
   const innerContainer = { backgroundColor: backgroundColor };
   const textContainr = { color: textColor };
@@ -48,7 +48,7 @@ function Cell({
       )}
     </View>
   );
-}
+};
 
 export default Cell;
 export type CellType = ReturnType<typeof Cell>;

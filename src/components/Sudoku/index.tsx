@@ -16,7 +16,13 @@ import Board from './Board';
 import Controller from './Controller';
 import Info, { INFO_FONT_SIZE } from './Info';
 
-function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
+const Sudoku: React.FC<Props> = ({
+  id,
+  userId,
+  hasSudokuGameForUser,
+  boardSize,
+  theme,
+}) => {
   if (hasSudokuGameForUser && userId) {
     const [dimensions, setDimensions] = React.useState({
       height: Dimensions.get('window').height,
@@ -103,9 +109,9 @@ function Sudoku({ id, userId, hasSudokuGameForUser, boardSize, theme }: Props) {
       </View>
     );
   } else {
-    return <View></View>;
+    return <></>;
   }
-}
+};
 
 interface OwnProps {
   id: string;

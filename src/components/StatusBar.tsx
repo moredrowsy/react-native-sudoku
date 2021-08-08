@@ -4,10 +4,10 @@ import { StatusBar as ExpoStatusBar, StatusBarStyle } from 'expo-status-bar';
 import Consants from 'expo-constants';
 import { black } from '../styles';
 
-export default function StatusBar({
+const StatusBar: React.FC<Props> = ({
   backgroundColor = black,
   theme = 'light',
-}: Props) {
+}) => {
   return (
     <View
       style={{
@@ -18,7 +18,9 @@ export default function StatusBar({
       <ExpoStatusBar translucent style={theme} />
     </View>
   );
-}
+};
+
+export default StatusBar;
 
 interface Props {
   backgroundColor?: string;

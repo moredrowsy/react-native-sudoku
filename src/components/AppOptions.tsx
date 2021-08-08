@@ -18,7 +18,7 @@ import { ThemeNames } from '../types';
 
 import CheckBox from './CheckBox';
 
-function AppOptions({ options, theme, dispatch }: Props) {
+const AppOptions: React.FC<Props> = ({ options, theme, dispatch }) => {
   const [showHints, setShowHints] = useState(options.showHints);
   const [showReveal, setShowReveal] = useState(options.showReveal);
 
@@ -98,7 +98,7 @@ function AppOptions({ options, theme, dispatch }: Props) {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

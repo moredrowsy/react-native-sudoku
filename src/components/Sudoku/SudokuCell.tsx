@@ -12,7 +12,7 @@ import { CellEntity } from '.././../types';
 
 import Cell from './Cell';
 
-function SudokuCell({
+const SudokuCell: React.FC<Props> = ({
   id,
   userId,
   sudokuCell,
@@ -25,7 +25,7 @@ function SudokuCell({
   hideSelectedColor = false,
   theme,
   dispatch,
-}: Props) {
+}) => {
   let bgColor = theme.colors.cellBackground;
   let opColor = theme.colors.cellOpacityBackground;
   let txtColor = theme.colors.cellText;
@@ -82,7 +82,7 @@ function SudokuCell({
       )}
     </View>
   );
-}
+};
 
 interface OwnProps {
   id: string;

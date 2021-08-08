@@ -71,6 +71,26 @@ const users = createSlice({
       if (userId in state && sudokuId in state[userId].sudokus)
         delete state[userId].sudokus[sudokuId];
     },
+    removeSudokuGamesFromUser: (
+      state,
+      action: PayloadAction<{
+        userId: string;
+        sudokuIds: string[] | Set<string>;
+      }>
+    ) => {
+      const { userId, sudokuIds } = action.payload;
+
+      if (userId in state) {
+        for (const sudokuId of sudokuIds) {
+          console.log('sudokuId', sudokuId);
+          if (sudokuId in state[userId].sudokus) {
+            delete state[userId].sudokus[sudokuId];
+          }
+        }
+      }
+
+      return state;
+    },
     // Reset game to default values and score
     resetSudokuGameFromUser: (
       state,
@@ -150,6 +170,7 @@ export const {
   addSudokuGameToUser,
   removeSudokuUser,
   removeSudokuGameFromUser,
+  removeSudokuGamesFromUser,
   resetSudokuGameFromUser,
   saveSudokuUser,
   saveSudokuGameToUser,
@@ -233,7 +254,7 @@ export const removeSudokuUserAsync =
   ): AppThunk =>
   async (dispatch) => {
     LocalStorage.users.removeUser(id);
-    LocalStorage.users.removeSudokuGamesFromUser(id);
+    LocalStorage.users.removeAllSudokuGamesFromUser(id);
     dispatch(removeSudokuUser(id));
 
     try {
@@ -256,6 +277,30 @@ export const removeSudokuGameFromUserAsync =
   async (dispatch) => {
     LocalStorage.users.removeSudokuGameFromUser(userId, sudokuId);
     dispatch(removeSudokuGameFromUser({ userId, sudokuId }));
+
+    try {
+      if (onSuccess) onSuccess();
+    } catch (e: unknown) {
+      if (onError) {
+        if (e instanceof Error) onError(e.message);
+        else if (typeof e === 'string') onError(e);
+        else onError('Error');
+      }
+    }
+  };
+
+export const removeSudokuGamesFromUserAsync =
+  (
+    {
+      userId,
+      sudokuIds,
+    }: { userId: string; sudokuIds: string[] | Set<string> },
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ): AppThunk =>
+  async (dispatch) => {
+    LocalStorage.users.removeSudokuGamesFromUser(userId, sudokuIds);
+    dispatch(removeSudokuGamesFromUser({ userId, sudokuIds }));
 
     try {
       if (onSuccess) onSuccess();

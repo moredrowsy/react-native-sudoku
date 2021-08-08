@@ -3,14 +3,14 @@ import { Platform, StyleProp, View } from 'react-native';
 import NativeCheckBox from '@react-native-community/checkbox';
 import { indigo, gray } from '../styles';
 
-function CheckBox({
+const CheckBox: React.FC<Props> = ({
   disabled,
   onColor,
   offColor,
   onValueChange,
   style,
   value,
-}: Props) {
+}) => {
   if (
     Platform.OS === 'ios' ||
     Platform.OS === 'android' ||
@@ -41,9 +41,9 @@ function CheckBox({
     );
   } else {
     // macOS is not yet supported
-    return <View></View>;
+    return <></>;
   }
-}
+};
 
 export default CheckBox;
 

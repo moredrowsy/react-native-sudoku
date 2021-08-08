@@ -10,7 +10,7 @@ import { black, green } from '../../styles';
 
 export const INFO_FONT_SIZE = 20;
 
-function Info({
+const Info: React.FC<Props> = ({
   id,
   userId,
   defaultHasSolution,
@@ -20,7 +20,7 @@ function Info({
   total,
   userScore,
   dispatch,
-}: Props) {
+}) => {
   if (defaultScore && userScore && total) {
     // Update default game data with user's solution if it does not have any
     useEffect(() => {
@@ -59,7 +59,7 @@ function Info({
   } else {
     return <ActivityIndicator size='large' color={theme.colors.primary} />;
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {

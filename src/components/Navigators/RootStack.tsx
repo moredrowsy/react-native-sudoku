@@ -13,7 +13,7 @@ import Sudoku from '../Sudoku';
 
 const Stack = createStackNavigator<RootStackParamsList>();
 
-function RootStack({ theme }: Props) {
+const RootStack: React.FC<Props> = ({ theme }) => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -48,7 +48,7 @@ function RootStack({ theme }: Props) {
       />
     </Stack.Navigator>
   );
-}
+};
 
 export type RootStackParamsList = {
   Tabs: undefined; // { theme: Theme }; <-- Can pass additional props via initialParams to Tabs component

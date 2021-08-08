@@ -10,7 +10,7 @@ import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 
 import SudokuCell from './SudokuCell';
 
-function Board({
+const Board: React.FC<Props> = ({
   id,
   userId,
   boardSize,
@@ -21,7 +21,7 @@ function Board({
   isPressable,
   isPortrait,
   theme,
-}: Props) {
+}) => {
   // Get screen orientation
   const screen = Dimensions.get('window');
 
@@ -106,7 +106,7 @@ function Board({
       ))}
     </View>
   );
-}
+};
 
 interface OwnProps {
   id: string;

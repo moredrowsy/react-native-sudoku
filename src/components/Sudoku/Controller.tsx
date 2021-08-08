@@ -29,7 +29,7 @@ import { CellEntity } from '../../types';
 
 import ControllerCell from './ControllerCell';
 
-function Controller({
+const Controller: React.FC<Props> = ({
   id,
   userId,
   boardDimension,
@@ -41,7 +41,7 @@ function Controller({
   sudoku,
   theme,
   dispatch,
-}: Props) {
+}) => {
   if (sudoku) {
     const [reveal, setReveal] = useState(false);
 
@@ -292,9 +292,9 @@ function Controller({
       </View>
     );
   } else {
-    return <View></View>;
+    return <></>;
   }
-}
+};
 
 interface OwnProps {
   id: string;
