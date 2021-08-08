@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
-import { Dimensions, View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import Consants from 'expo-constants';
-import { debounce } from 'lodash';
 
 import { AppDispatch, RootState } from '../../storage/store';
 import {
@@ -12,9 +11,13 @@ import {
 } from '../../styles';
 import { DEBOUNCE_WAIT, getCellSize } from '../../sudoku';
 
+import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import Board from './Board';
 import Controller from './Controller';
 import Info, { INFO_FONT_SIZE } from './Info';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamsList } from '../Navigators/RootStack';
+import { RouteProp } from '@react-navigation/native';
 
 const Sudoku: React.FC<Props> = ({
   id,
@@ -24,31 +27,7 @@ const Sudoku: React.FC<Props> = ({
   theme,
 }) => {
   if (hasSudokuGameForUser && userId) {
-    const [dimensions, setDimensions] = React.useState({
-      height: Dimensions.get('window').height,
-      width: Dimensions.get('window').width,
-    });
-
-    // Listens for window size changes
-    useEffect(() => {
-      const debouncedHandleResize = debounce(function handleResize() {
-        const { height, width } = Dimensions.get('window');
-        setDimensions({
-          height: height,
-          width: width,
-        });
-      }, DEBOUNCE_WAIT);
-      Dimensions.addEventListener('change', debouncedHandleResize);
-
-      return () => {
-        debouncedHandleResize.cancel();
-        Dimensions.removeEventListener('change', debouncedHandleResize);
-      };
-    }, []);
-
-    // Get screen orientation
-    const screen = Dimensions.get('window');
-    const isPortrait = screen.width <= screen.height;
+    const { dimensions, isPortrait } = useDebounceDimensions(DEBOUNCE_WAIT);
 
     // Set screenStyles theme based on screen type
     const screenStyles = isPortrait ? theme.portrait : theme.landscape;
@@ -112,28 +91,27 @@ const Sudoku: React.FC<Props> = ({
     return <></>;
   }
 };
+type HomeScreenNavigationProp = StackNavigationProp<
+  RootStackParamsList,
+  'Sudoku'
+>;
+type HomeScreenRouteProp = RouteProp<RootStackParamsList, 'Sudoku'>;
 
 interface OwnProps {
   id: string;
   boardSize: number;
   isPortrait: boolean;
-  route: any; // TODO fix this type
+  navigation: HomeScreenNavigationProp;
+  route: HomeScreenRouteProp;
 }
 
 const mapState = ({ status, theme, users }: RootState, { route }: OwnProps) => {
-  let hasSudokuGameForUser = false;
-  let boardSize = 0;
-
   const id = route.params.id;
   const { userId } = status;
-  if (userId && userId in users) {
-    const { sudokus } = users[userId];
 
-    if (id in sudokus) {
-      hasSudokuGameForUser = true;
-      boardSize = sudokus[id].board.length;
-    }
-  }
+  const hasSudokuGameForUser =
+    userId && users[userId]?.sudokus[id] ? true : false;
+  const boardSize = (userId && users[userId]?.sudokus[id]?.board?.length) || 9;
 
   return {
     id,

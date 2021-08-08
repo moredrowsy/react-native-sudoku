@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleProp, View } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
 
@@ -20,20 +20,20 @@ const SudokuCell: React.FC<Props> = ({
   theme,
   dispatch,
 }) => {
-  let bgColor = theme.colors.cellBackground;
-  let opColor = theme.colors.cellOpacityBackground;
-  let txtColor = theme.colors.cellText;
+  let bgColor = theme.colors.background;
+  let opColor = theme.colors.opacityBackground;
+  let txtColor = theme.colors.text;
 
   if (isPressable && appShowHints && showHints) {
-    bgColor = theme.colors.cellSelectedBackground;
-    opColor = theme.colors.cellSelectedOpacity;
-    txtColor = theme.colors.cellSelectedText;
+    bgColor = theme.colors.selectedBackground;
+    opColor = theme.colors.selectedOpacity;
+    txtColor = theme.colors.selectedText;
   }
 
   if (isReveal && isAnswer) {
-    bgColor = theme.colors.cellRevealBackground;
-    opColor = theme.colors.cellRevealOpacityBackground;
-    txtColor = theme.colors.cellRevealText;
+    bgColor = theme.colors.revealBackground;
+    opColor = theme.colors.revealOpacityBackground;
+    txtColor = theme.colors.revealText;
   }
 
   return (
@@ -45,7 +45,7 @@ const SudokuCell: React.FC<Props> = ({
         backgroundColor={bgColor}
         opacityColor={opColor}
         textColor={txtColor}
-        onPress={onPress ? onPress : () => {}}
+        onPress={onPress}
       />
     </View>
   );
@@ -61,7 +61,7 @@ interface OwnProps {
   isPressable: boolean;
   isReveal: boolean;
   onPress?: () => void;
-  style?: StyleProp<any>;
+  style?: StyleProp<ViewStyle>;
 }
 
 const mapState = (
@@ -93,4 +93,3 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = OwnProps & PropsFromRedux;
 
 export default connect(mapState)(SudokuCell);
-export type SudokuCellType = ReturnType<typeof connect>;

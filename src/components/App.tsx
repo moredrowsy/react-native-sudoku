@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -11,7 +11,6 @@ import {
   initAppOptionsAsync,
 } from '../storage/store';
 
-import StatusBar from './StatusBar';
 import RootStack from './Navigators';
 
 const App: React.FC<Props> = ({ status, theme, dispatch }) => {
@@ -24,7 +23,10 @@ const App: React.FC<Props> = ({ status, theme, dispatch }) => {
   return (
     <View style={styles.container}>
       <View>
-        <StatusBar backgroundColor={theme.colors.primary} />
+        <StatusBar
+          backgroundColor={theme.colors.primary}
+          barStyle={theme.colors.barStyle}
+        />
       </View>
       <NavigationContainer>
         <RootStack />

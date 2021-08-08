@@ -28,9 +28,9 @@ const Tabs: React.FC<Props> = ({ theme }) => {
         headerShown: false,
         tabBarLabelStyle: [{ fontSize: 14, fontWeight: 'bold' }],
         headerTitleAlign: 'center',
-        headerTintColor: theme.colors.cellSelectedText,
+        headerTintColor: theme.colors.selectedText,
         headerStyle: {
-          backgroundColor: theme.colors.cellSelectedBackground,
+          backgroundColor: theme.colors.selectedBackground,
           height: NAVIGATION_HEADER_HEIGHT,
         },
         headerTitleStyle: {

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Dimensions, Pressable, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import Consants from 'expo-constants';
 import {
@@ -7,7 +7,6 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import { debounce } from 'lodash';
 
 import {
   AppDispatch,
@@ -27,6 +26,7 @@ import {
 
 import { CellEntity } from '../../types';
 
+import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import ControllerCell from './ControllerCell';
 
 const Controller: React.FC<Props> = ({
@@ -45,12 +45,9 @@ const Controller: React.FC<Props> = ({
   if (sudoku) {
     const [reveal, setReveal] = useState(false);
 
-    // Get screen orientation
-    const screen = Dimensions.get('window');
-
     // Icon names
     let eyeIconName = reveal ? 'eye' : 'eye-off';
-    if (!(sudoku?.hasSolution && options.showReveal))
+    if (!(sudoku.hasSolution && options.showReveal))
       eyeIconName = 'eye-outline';
     let hintsIconName = showHints ? 'lightbulb' : 'lightbulb-off';
     if (!options.showHints) hintsIconName = 'lightbulb-off-outline';
@@ -62,29 +59,9 @@ const Controller: React.FC<Props> = ({
     // Get cell dimensions if not provided
     const rootSize = Math.sqrt(boardSize);
     if (!cellSize || isPortrait === undefined) {
-      const [dimensions, setDimensions] = React.useState({
-        height: Dimensions.get('window').height,
-        width: Dimensions.get('window').width,
-      });
-
-      // Listens for window size changes
-      useEffect(() => {
-        const debouncedHandleResize = debounce(function handleResize() {
-          const { height, width } = Dimensions.get('window');
-          setDimensions({
-            height: height,
-            width: width,
-          });
-        }, DEBOUNCE_WAIT);
-        Dimensions.addEventListener('change', debouncedHandleResize);
-
-        return () => {
-          debouncedHandleResize.cancel();
-          Dimensions.removeEventListener('change', debouncedHandleResize);
-        };
-      }, []);
-
-      isPortrait = screen.width <= screen.height;
+      const { dimensions, isPortrait: dIsPortrait } =
+        useDebounceDimensions(DEBOUNCE_WAIT);
+      isPortrait = dIsPortrait;
 
       let effectiveHeight =
         dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
@@ -298,7 +275,7 @@ const Controller: React.FC<Props> = ({
 
 interface OwnProps {
   id: string;
-  userId: string | null;
+  userId: string;
   boardDimension?: number;
   cellSize?: number;
   isPortrait: boolean;
@@ -308,13 +285,13 @@ const mapState = (
   { options, theme, users }: RootState,
   { id, userId }: OwnProps
 ) => {
-  let selectedCell: CellEntity = { col: -1, row: -1, value: -1 };
-  let sudoku = null;
-
-  if (id && userId && userId in users && id in users[userId].sudokus) {
-    selectedCell = users[userId].sudokus[id].selectedCell;
-    sudoku = users[userId].sudokus[id];
-  }
+  const selectedCell = users[userId]?.sudokus[id]?.selectedCell ?? {
+    col: -1,
+    row: -1,
+    value: -1,
+  };
+  const sudoku =
+    userId && userId in users ? users[userId].sudokus[id] : undefined;
 
   return {
     id,

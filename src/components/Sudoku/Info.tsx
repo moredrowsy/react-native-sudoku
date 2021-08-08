@@ -98,25 +98,17 @@ const mapState = (
   { users, sudokus, theme }: RootState,
   { id, userId }: OwnProps
 ) => {
-  let defaultScore = null;
-  let userScore = null;
-  let total = null;
-
-  if (userId && userId in users && id in users[userId].sudokus) {
-    const sudoku = users[userId].sudokus[id];
-    total = sudoku.board.length * sudoku.board.length;
-    defaultScore = sudoku.defaultScore;
-    userScore = sudoku.userScore;
-  }
+  const boardSize = users[userId].sudokus[id]?.board.length;
+  const total = boardSize * boardSize;
 
   return {
     id,
     userId,
-    defaultHasSolution: id in sudokus ? sudokus[id].hasSolution : null,
-    defaultScore,
+    defaultHasSolution: sudokus[id]?.hasSolution,
+    defaultScore: users[userId].sudokus[id]?.defaultScore,
     theme,
     total,
-    userScore,
+    userScore: users[userId].sudokus[id]?.userScore,
   };
 };
 

@@ -2,7 +2,7 @@ import { ThemeNames } from '../types';
 
 export interface AppStatus {
   isLoggedIn: boolean;
-  userId: string | null;
+  userId?: string;
   loading: boolean;
 }
 

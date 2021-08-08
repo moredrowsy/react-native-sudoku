@@ -18,9 +18,9 @@ const RootStack: React.FC<Props> = ({ theme }) => {
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
-        headerTintColor: theme.colors.cellSelectedText,
+        headerTintColor: theme.colors.selectedText,
         headerStyle: {
-          backgroundColor: theme.colors.cellSelectedBackground,
+          backgroundColor: theme.colors.selectedBackground,
           height: NAVIGATION_HEADER_HEIGHT,
         },
         headerTitleStyle: {

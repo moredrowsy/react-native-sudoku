@@ -26,20 +26,20 @@ const SudokuCell: React.FC<Props> = ({
   theme,
   dispatch,
 }) => {
-  let bgColor = theme.colors.cellBackground;
-  let opColor = theme.colors.cellOpacityBackground;
-  let txtColor = theme.colors.cellText;
+  let bgColor = theme.colors.background;
+  let opColor = theme.colors.opacityBackground;
+  let txtColor = theme.colors.text;
 
   if (isSelected) {
-    bgColor = theme.colors.cellSelectedBackground;
-    opColor = theme.colors.cellSelectedOpacity;
-    txtColor = theme.colors.cellSelectedText;
+    bgColor = theme.colors.selectedBackground;
+    opColor = theme.colors.selectedOpacity;
+    txtColor = theme.colors.selectedText;
   }
 
   if (hideSelectedColor) {
-    bgColor = theme.colors.cellBackground;
-    opColor = theme.colors.cellOpacityBackground;
-    txtColor = theme.colors.cellText;
+    bgColor = theme.colors.background;
+    opColor = theme.colors.opacityBackground;
+    txtColor = theme.colors.text;
   }
 
   if (
@@ -47,9 +47,9 @@ const SudokuCell: React.FC<Props> = ({
     sudokuCell.mutable &&
     sudokuCell.value !== SUDOKU_EMPTY_CELL
   ) {
-    bgColor = theme.colors.cellSelectedBackground;
-    opColor = theme.colors.cellSelectedOpacity;
-    txtColor = theme.colors.cellSelectedText;
+    bgColor = theme.colors.selectedBackground;
+    opColor = theme.colors.selectedOpacity;
+    txtColor = theme.colors.selectedText;
   }
 
   const onCellPress = () => {
@@ -86,7 +86,7 @@ const SudokuCell: React.FC<Props> = ({
 
 interface OwnProps {
   id: string;
-  userId: string | undefined | null;
+  userId?: string;
   col: number;
   row: number;
   cellSize: number;
@@ -99,7 +99,7 @@ const mapState = (
   { sudokus, theme, users }: RootState,
   { id, userId, col, row }: OwnProps
 ) => {
-  if (userId && userId in users && id in users[userId].sudokus) {
+  if (userId && users[userId]?.sudokus[id]) {
     const sudokuCell = users[userId].sudokus[id].board[row][col];
     const selectedCell = users[userId].sudokus[id].selectedCell;
     return {
@@ -109,7 +109,7 @@ const mapState = (
     };
   } else {
     return {
-      sudokuCell: id in sudokus ? sudokus[id].board[row][col] : null,
+      sudokuCell: sudokus[id]?.board[row][col],
       isSelected: false,
       theme,
     };
@@ -126,4 +126,3 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = OwnProps & PropsFromRedux;
 
 export default connect(mapState)(SudokuCell);
-export type SudokuCellType = ReturnType<typeof connect>;

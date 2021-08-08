@@ -1,23 +1,24 @@
-import { ViewStyle } from 'react-native';
+import { StatusBarStyle, ViewStyle } from 'react-native';
 
 export interface CellColors {
   primary: string;
   secondary: string;
   inactive: string;
-  cellText: string;
-  cellMargin: string;
-  cellBackground: string;
-  cellOpacityBackground: string;
-  cellSelectedBackground: string;
-  cellSelectedOpacity: string;
-  cellSelectedText: string;
-  cellRevealBackground: string;
-  cellRevealOpacityBackground: string;
-  cellRevealText: string;
+  text: string;
+  margin: string;
+  background: string;
+  opacityBackground: string;
+  selectedBackground: string;
+  selectedOpacity: string;
+  selectedText: string;
+  revealBackground: string;
+  revealOpacityBackground: string;
+  revealText: string;
   remove: string;
   reset: string;
   reveal: string;
   showHints: string;
+  barStyle: StatusBarStyle;
 }
 
 export interface CellStyles {

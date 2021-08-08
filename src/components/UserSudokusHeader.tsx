@@ -15,7 +15,7 @@ const LongPressHeader: React.FC<Props> = ({ onCancel, onRemove, theme }) => {
             <MaterialCommunityIcons
               name='trash-can'
               size={HEADER_ICON_SIZE}
-              color={theme.colors.cellSelectedText}
+              color={theme.colors.selectedText}
             />
           </TouchableOpacity>
           <View style={styles.seperator}></View>
@@ -25,7 +25,7 @@ const LongPressHeader: React.FC<Props> = ({ onCancel, onRemove, theme }) => {
         <MaterialIcons
           name='cancel'
           size={HEADER_ICON_SIZE}
-          color={theme.colors.cellSelectedText}
+          color={theme.colors.selectedText}
         />
       </TouchableOpacity>
     </View>

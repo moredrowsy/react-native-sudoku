@@ -51,7 +51,6 @@ const Cell: React.FC<Props> = ({
 };
 
 export default Cell;
-export type CellType = ReturnType<typeof Cell>;
 
 interface Props {
   value: number;
@@ -60,7 +59,7 @@ interface Props {
   backgroundColor: string;
   opacityColor: string;
   textColor: string;
-  onPress: () => void;
+  onPress?: () => void;
   hideZero?: boolean;
 }
 

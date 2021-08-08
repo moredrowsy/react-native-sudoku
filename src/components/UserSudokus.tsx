@@ -54,6 +54,7 @@ const UserSudokus: React.FC<Props> = ({
         showNavigationHeader();
       } else if (sudokusForFlatList.length == 0) {
         setIsLongPressed(false);
+        hideNavigationHeader();
       } else {
         hideNavigationHeader();
       }
@@ -223,10 +224,7 @@ const mapState = ({ status, theme, users }: RootState) => ({
   loading: status.loading,
   theme,
   userId: status.userId,
-  userSudokus:
-    status.userId && status.userId in users
-      ? users[status.userId].sudokus
-      : null,
+  userSudokus: status.userId ? users[status.userId]?.sudokus : undefined,
 });
 
 const mapDispatch = (dispatch: AppDispatch) => ({
