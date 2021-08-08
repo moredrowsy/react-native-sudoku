@@ -82,7 +82,6 @@ const users = createSlice({
 
       if (userId in state) {
         for (const sudokuId of sudokuIds) {
-          console.log('sudokuId', sudokuId);
           if (sudokuId in state[userId].sudokus) {
             delete state[userId].sudokus[sudokuId];
           }

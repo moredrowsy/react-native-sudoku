@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -38,42 +38,71 @@ const UserSudokus: React.FC<Props> = ({
     const [isLongPressed, setIsLongPressed] = useState(false);
     const [toRemoveSet, setToRemoveSet] = useState(new Set<string>());
 
+    // Reset screen when screen is swipe back
+    useEffect(() => {
+      navigation.addListener('blur', onGobackEvent);
+
+      return () => {
+        navigation.removeListener('blur', onGobackEvent);
+      };
+    }, [navigation]);
+
+    // Show/hide screen header whenever it is long presssed or has set items
     useLayoutEffect(() => {
+      // Show header when long pressed and exist items in toRemove set
       if (isLongPressed && sudokusForFlatList.length > 0) {
-        navigation.setOptions({
-          headerTitle: '',
-          headerShown: true,
-          headerRightContainerStyle: {
-            paddingRight: 10,
-          },
-          headerRight: () => (
-            <LongPressHeader
-              onCancel={() => setIsLongPressed(false)}
-              onRemove={toRemoveSet.size > 0 ? onRemoveUserSudokus : undefined}
-            />
-          ),
-        });
-      } else {
-        navigation.setOptions({
-          headerTitle: '',
-          headerShown: false,
-          headerRightContainerStyle: {
-            paddingRight: 10,
-          },
-          headerRight: () => <></>,
-        });
+        showNavigationHeader();
+      } else if (sudokusForFlatList.length == 0) {
         setIsLongPressed(false);
+      } else {
+        hideNavigationHeader();
       }
     }, [navigation, isLongPressed, sudokusForFlatList]);
 
+    const hideNavigationHeader = () => {
+      navigation.setOptions({
+        headerTitle: '',
+        headerShown: false,
+        headerRightContainerStyle: {
+          paddingRight: 10,
+        },
+        headerRight: () => <></>,
+      });
+    };
+
+    const showNavigationHeader = () => {
+      navigation.setOptions({
+        headerTitle: '',
+        headerShown: true,
+        headerRightContainerStyle: {
+          paddingRight: 10,
+        },
+        headerRight: () => (
+          <LongPressHeader
+            onCancel={() => setIsLongPressed(false)}
+            onRemove={toRemoveSet.size > 0 ? onRemoveUserSudokus : undefined}
+          />
+        ),
+      });
+    };
+
+    // Reset screen header, selection, etc when going back to another screen
+    const onGobackEvent = () => {
+      setIsLongPressed(false);
+      setToRemoveSet(new Set());
+    };
+
     const onPressSudoku = (id: string) => {
       if (isLongPressed) {
+        // Deselect by removing id from set
         if (toRemoveSet.has(id)) {
           setToRemoveSet((prevSet) => {
             prevSet.delete(id);
             return new Set([...prevSet]);
           });
-        } else {
+        }
+        // Select by add id to set
+        else {
           setToRemoveSet(new Set([...toRemoveSet, id]));
         }
       } else {
@@ -90,9 +119,12 @@ const UserSudokus: React.FC<Props> = ({
     };
 
     const onLongPressSudoku = (id: string) => {
+      // Long press in
       if (!isLongPressed) {
         setToRemoveSet(new Set([id]));
-      } else {
+      }
+      // Long press out
+      else {
         // CLear toRemoveSet when exiting isLongPressed
         if (toRemoveSet.size > 0) setToRemoveSet(new Set());
       }
@@ -112,13 +144,15 @@ const UserSudokus: React.FC<Props> = ({
     }) => {
       let itemStyle;
       if (index !== 0) {
-        itemStyle = toRemoveSet.has(item.id)
-          ? theme.portrait.flatListItemSelected
-          : theme.portrait.flatListItem;
+        itemStyle =
+          toRemoveSet.has(item.id) && isLongPressed
+            ? theme.portrait.flatListItemSelected
+            : theme.portrait.flatListItem;
       } else {
-        itemStyle = toRemoveSet.has(item.id)
-          ? theme.portrait.flatListFirstItemSelected
-          : theme.portrait.flatListFirstItem;
+        itemStyle =
+          toRemoveSet.has(item.id) && isLongPressed
+            ? theme.portrait.flatListFirstItemSelected
+            : theme.portrait.flatListFirstItem;
       }
 
       return (
