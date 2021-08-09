@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import Consants from 'expo-constants';
 import {
   AntDesign,
   Ionicons,
@@ -12,10 +11,10 @@ import {
   AppDispatch,
   resetSudokuGameFromUserAsync,
   RootState,
-  updateShowHintsForGame,
+  updateShowHintsForGameAsync,
   updateSudokuGameValueAsync,
 } from '../../storage/store';
-import { NAVIGATION_HEADER_HEIGHT } from '../../styles';
+import { NAVIGATION_HEADER_HEIGHT, NAVIGATION_TAB_HEIGHT } from '../../styles';
 import {
   getAvailableCells,
   getCellSize,
@@ -23,8 +22,6 @@ import {
   SUDOKU_EMPTY_CELL,
   DEBOUNCE_WAIT,
 } from '../../sudoku';
-
-import { CellEntity } from '../../types';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import ControllerCell from './ControllerCell';
@@ -55,21 +52,24 @@ const Controller: React.FC<Props> = ({
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
+    const rootSize = Math.sqrt(boardSize);
 
     // Get cell dimensions if not provided
-    const rootSize = Math.sqrt(boardSize);
     if (!cellSize || isPortrait === undefined) {
-      const { dimensions, isPortrait: dIsPortrait } =
-        useDebounceDimensions(DEBOUNCE_WAIT);
-      isPortrait = dIsPortrait;
+      if (!boardDimension) {
+        const headerHeight = NAVIGATION_HEADER_HEIGHT;
+        const tabBarHeight = NAVIGATION_TAB_HEIGHT;
 
-      let effectiveHeight =
-        dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
-      let effectiveWidth = dimensions.width;
-      let dimension = Math.min(effectiveHeight, effectiveWidth);
-      if (boardDimension) dimension = boardDimension;
+        const { dimensions, isPortrait: dIsPortrait } =
+          useDebounceDimensions(DEBOUNCE_WAIT);
+        isPortrait = dIsPortrait;
 
-      cellSize = Math.floor(getCellSize(dimension, boardSize));
+        let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
+        let effectiveWidth = dimensions.width;
+        boardDimension = Math.min(effectiveHeight, effectiveWidth);
+      }
+
+      cellSize = Math.floor(getCellSize(boardDimension, boardSize));
     }
 
     // Set screenStyles theme based on screen type
@@ -93,25 +93,22 @@ const Controller: React.FC<Props> = ({
       unique = getAvailableCells(col, row, board);
     }
 
-    const onCellPress = useCallback(
-      (value: number) => {
-        if (isValidIndices && userId) {
-          const cellValue = board[row][col].value;
-          if (cellValue !== value) {
-            dispatch(
-              updateSudokuGameValueAsync({
-                userId,
-                sudokuId: sudoku.id,
-                col,
-                row,
-                value,
-              })
-            );
-          }
+    const onCellPress = (value: number) => {
+      if (isValidIndices && userId) {
+        const cellValue = board[row][col].value;
+        if (cellValue !== value) {
+          dispatch(
+            updateSudokuGameValueAsync({
+              userId,
+              sudokuId: sudoku.id,
+              col,
+              row,
+              value,
+            })
+          );
         }
-      },
-      [selectedCell]
-    );
+      }
+    };
 
     const onCellClear = () => {
       if (isValidIndices && userId) {
@@ -137,7 +134,7 @@ const Controller: React.FC<Props> = ({
 
     const toggleShowHints = () => {
       dispatch(
-        updateShowHintsForGame({
+        updateShowHintsForGameAsync({
           sudokuId: id,
           userId: userId,
           showHints: !showHints,
@@ -272,6 +269,14 @@ const Controller: React.FC<Props> = ({
     return <></>;
   }
 };
+
+interface OwnProps {
+  id: string;
+  userId: string;
+  boardDimension?: number;
+  cellSize?: number;
+  isPortrait: boolean;
+}
 
 interface OwnProps {
   id: string;

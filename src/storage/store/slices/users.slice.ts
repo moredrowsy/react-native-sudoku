@@ -116,6 +116,34 @@ const users = createSlice({
 
       if (userId in state) state[userId].sudokus[sudoku.id] = sudoku;
     },
+    updateSelectedCellForGame: (
+      state,
+      action: PayloadAction<{
+        cell: CellEntity;
+        userId: string;
+        sudokuId: string;
+      }>
+    ) => {
+      const { cell, sudokuId, userId } = action.payload;
+      if (userId in state && sudokuId in state[userId].sudokus) {
+        state[userId].sudokus[sudokuId].selectedCell = cell;
+        return state;
+      }
+    },
+    updateShowHintsForGame: (
+      state,
+      action: PayloadAction<{
+        userId: string;
+        sudokuId: string;
+        showHints: boolean;
+      }>
+    ) => {
+      const { sudokuId, userId } = action.payload;
+      if (userId && userId in state && sudokuId in state[userId].sudokus) {
+        state[userId].sudokus[sudokuId].showHints = action.payload.showHints;
+        return state;
+      }
+    },
     updateSudokuGameValue: (
       state,
       action: PayloadAction<{
@@ -130,34 +158,6 @@ const users = createSlice({
       if (userId in state && sudokuId in state[userId].sudokus) {
         const sudoku = state[userId].sudokus[sudokuId];
         updateSudokuCellValueAndScore(sudoku, col, row, value);
-      }
-    },
-    updateSelectedCellForGame: (
-      state,
-      action: PayloadAction<{
-        cell: CellEntity;
-        sudokuId: string;
-        userId: string;
-      }>
-    ) => {
-      const { cell, sudokuId, userId } = action.payload;
-      if (userId in state && sudokuId in state[userId].sudokus) {
-        state[userId].sudokus[sudokuId].selectedCell = cell;
-        return state;
-      }
-    },
-    updateShowHintsForGame: (
-      state,
-      action: PayloadAction<{
-        sudokuId: string;
-        userId: string | null;
-        showHints: boolean;
-      }>
-    ) => {
-      const { sudokuId, userId } = action.payload;
-      if (userId && userId in state && sudokuId in state[userId].sudokus) {
-        state[userId].sudokus[sudokuId].showHints = action.payload.showHints;
-        return state;
       }
     },
   },
@@ -375,6 +375,23 @@ export const saveSudokuGameToUserAsync =
     }
   };
 
+export const setDefaultUsersAsync =
+  (status: AppStatus): AppThunk =>
+  async (dispatch, getState) => {
+    const username = 'Default';
+    const defaultUser: UserEntity = { name: username, username };
+    LocalStorage.users.addUser(defaultUser);
+
+    const defaultSudokuUser: SudokuUserEntity = {
+      ...defaultUser,
+      sudokus: {},
+    };
+    dispatch(addSudokuUser(defaultSudokuUser));
+
+    status.loading = false;
+    status.userId = username;
+  };
+
 export const updateSudokuGameValueAsync =
   (
     {
@@ -416,21 +433,19 @@ export const updateSudokuGameValueAsync =
     }
   };
 
-export const setDefaultUsersAsync =
-  (status: AppStatus): AppThunk =>
+export const updateShowHintsForGameAsync =
+  ({
+    userId,
+    sudokuId,
+    showHints,
+  }: {
+    userId: string;
+    sudokuId: string;
+    showHints: boolean;
+  }): AppThunk =>
   async (dispatch, getState) => {
-    const username = 'Default';
-    const defaultUser: UserEntity = { name: username, username };
-    LocalStorage.users.addUser(defaultUser);
-
-    const defaultSudokuUser: SudokuUserEntity = {
-      ...defaultUser,
-      sudokus: {},
-    };
-    dispatch(addSudokuUser(defaultSudokuUser));
-
-    status.loading = false;
-    status.userId = username;
+    LocalStorage.users.updateShowHintsForGame(userId, sudokuId, showHints);
+    dispatch(updateShowHintsForGame({ userId, sudokuId, showHints }));
   };
 
 export const initSudokuUserAsync =
@@ -440,7 +455,7 @@ export const initSudokuUserAsync =
       const status: AppStatus = {
         isLoggedIn: false,
         loading: false,
-        userId: null,
+        userId: undefined,
       };
 
       const localStoageStatus = await LocalStorage.status.getStatus();

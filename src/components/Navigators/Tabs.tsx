@@ -15,6 +15,7 @@ import UserSudokus from '../UserSudokus';
 import {
   NAVIGATION_HEADER_FONT_SIZE,
   NAVIGATION_HEADER_HEIGHT,
+  NAVIGATION_TAB_HEIGHT,
 } from '../../styles';
 
 const Tab = createBottomTabNavigator<TabsParamList>();
@@ -25,6 +26,9 @@ const Tabs: React.FC<Props> = ({ theme }) => {
       screenOptions={{
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.inactive,
+        tabBarStyle: {
+          height: NAVIGATION_TAB_HEIGHT,
+        },
         headerShown: false,
         tabBarLabelStyle: [{ fontSize: 14, fontWeight: 'bold' }],
         headerTitleAlign: 'center',

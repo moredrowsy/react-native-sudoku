@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
     color: black,
+    textAlign: 'center',
   },
   completed: {
     color: green,

@@ -106,6 +106,18 @@ export async function saveSudokuGameToUser(
   return AsyncStorage.setItem(key, JSON.stringify(sudoku));
 }
 
+export async function updateShowHintsForGame(
+  userId: string,
+  sudokuId: string,
+  showHints: boolean
+) {
+  const { key, game } = await getUserGame(userId, sudokuId);
+  if (game) {
+    game.showHints = showHints;
+    return AsyncStorage.setItem(key, JSON.stringify(game));
+  }
+}
+
 export async function updateSudokuGameValue(
   userId: string,
   sudokuId: string,

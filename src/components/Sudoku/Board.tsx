@@ -1,10 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import Consants from 'expo-constants';
 
 import { AppDispatch, RootState } from '../../storage/store';
-import { NAVIGATION_HEADER_HEIGHT } from '../../styles';
+import { NAVIGATION_HEADER_HEIGHT, NAVIGATION_TAB_HEIGHT } from '../../styles';
 import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
@@ -17,7 +16,6 @@ const Board: React.FC<Props> = ({
   boardDimension,
   cellSize,
   hideSelectedColor = false,
-  hasUserBoard,
   isPressable,
   isPortrait,
   theme,
@@ -25,22 +23,24 @@ const Board: React.FC<Props> = ({
   // Board is presentational. It should be as stateless as possible to avoid
   // rerenders. Only the states in Cells should know if it needs to rerender
   const emptyBoard = EMPTY_BOARDS[boardSize];
-
-  // Get cell dimensions if not provided
   const rootSize = Math.sqrt(boardSize);
 
+  // Get cell dimensions if not provided
   if (!cellSize || isPortrait === undefined) {
-    const { dimensions, isPortrait: dIsPortrait } =
-      useDebounceDimensions(DEBOUNCE_WAIT);
-    isPortrait = dIsPortrait;
+    if (!boardDimension) {
+      const headerHeight = NAVIGATION_HEADER_HEIGHT;
+      const tabBarHeight = NAVIGATION_TAB_HEIGHT;
 
-    let effectiveHeight =
-      dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
-    let effectiveWidth = dimensions.width;
-    let dimension = Math.min(effectiveHeight, effectiveWidth);
-    if (boardDimension) dimension = boardDimension;
+      const { dimensions, isPortrait: dIsPortrait } =
+        useDebounceDimensions(DEBOUNCE_WAIT);
+      isPortrait = dIsPortrait;
 
-    cellSize = Math.floor(getCellSize(dimension, boardSize));
+      let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
+      let effectiveWidth = dimensions.width;
+      boardDimension = Math.min(effectiveHeight, effectiveWidth);
+    }
+
+    cellSize = Math.floor(getCellSize(boardDimension, boardSize));
   }
 
   // Set screenStyles theme based on screen type
@@ -101,7 +101,6 @@ const mapState = (
 ) => {
   return {
     boardSize: sudokus[id].board.length,
-    hasUserBoard: userId && users[userId]?.sudokus[id] ? true : false,
     theme,
   };
 };

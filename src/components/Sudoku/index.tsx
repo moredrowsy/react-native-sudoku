@@ -1,7 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import Consants from 'expo-constants';
+
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamsList } from '../Navigators/RootStack';
 
 import { AppDispatch, RootState } from '../../storage/store';
 import {
@@ -15,9 +18,6 @@ import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import Board from './Board';
 import Controller from './Controller';
 import Info, { INFO_FONT_SIZE } from './Info';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamsList } from '../Navigators/RootStack';
-import { RouteProp } from '@react-navigation/native';
 
 const Sudoku: React.FC<Props> = ({
   id,
@@ -33,9 +33,9 @@ const Sudoku: React.FC<Props> = ({
     const screenStyles = isPortrait ? theme.portrait : theme.landscape;
 
     // Get initial cell dimensions based on height
-    let dimension =
-      dimensions.height - Consants.statusBarHeight - NAVIGATION_HEADER_HEIGHT;
-    let cellSize = getCellSize(dimension, boardSize);
+    const headerHeight = NAVIGATION_HEADER_HEIGHT;
+    let boardDimension = dimensions.height - headerHeight;
+    let cellSize = getCellSize(boardDimension, boardSize);
 
     // Resize again to account for Info & Controller component extra space
     const extraSpace =
@@ -43,24 +43,19 @@ const Sudoku: React.FC<Props> = ({
       SUDOKU_CELL_NORMAL_MARGIN * 2 +
       GAP_BETWEEN_COMPONENTS * 4 +
       INFO_FONT_SIZE;
+    let effectiveHeight;
+    let effectiveWidth;
     if (isPortrait) {
       // Effective dimension is based on height for portrait
-      let effectiveDimension = dimensions.height - extraSpace;
-
-      // If effectiveDimension is larger than width, readjust
-      effectiveDimension = Math.min(effectiveDimension, dimensions.width);
-
-      cellSize = getCellSize(effectiveDimension, boardSize);
+      effectiveHeight = dimensions.height - headerHeight - extraSpace;
+      effectiveWidth = dimensions.width;
     } else {
       // Effective dimension is based on width for landscape
-      let effectiveDimension = dimensions.width - extraSpace;
-
-      // If effectiveDimension is larger than height, readjust
-      effectiveDimension = Math.min(effectiveDimension, dimensions.height);
-
-      cellSize = getCellSize(effectiveDimension, boardSize);
+      effectiveWidth = dimensions.width - extraSpace;
+      effectiveHeight = dimensions.height - headerHeight;
     }
-    cellSize = Math.floor(cellSize);
+    boardDimension = Math.min(effectiveWidth, effectiveHeight);
+    cellSize = Math.floor(getCellSize(boardDimension, boardSize));
 
     return (
       <View style={screenStyles.sudokuContainer}>
