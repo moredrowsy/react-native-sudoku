@@ -129,7 +129,7 @@ const UserSudokus: React.FC<Props> = ({
         // CLear toRemoveSet when exiting isLongPressed
         if (toRemoveSet.size > 0) setToRemoveSet(new Set());
       }
-      setIsLongPressed((p) => !p);
+      setIsLongPressed(!isLongPressed);
     };
 
     const onRemoveUserSudokus = () => {
