@@ -55,15 +55,15 @@ const Board: React.FC<Props> = ({
       {emptyBoard.map((rows, row) => (
         <View key={row} style={screenStyles.cellRows}>
           {rows.map((_, col) => {
-            // Calculate subgrid seperation magins
-            const isSepRight = col !== boardSize - 1 && col % rootSize == 2;
-            const isSepBottom = row !== boardSize - 1 && row % rootSize == 2;
+            // Calculate subgrid margins
+            const isSubRight = col !== boardSize - 1 && col % rootSize == 2;
+            const isSubBottom = row !== boardSize - 1 && row % rootSize == 2;
 
             let cstyle = screenStyles.cellNormBottomRight;
-            if (isSepBottom && isSepRight)
-              cstyle = screenStyles.cellSepBottomRight;
-            else if (isSepBottom) cstyle = screenStyles.cellSepBottomNormRight;
-            else if (isSepRight) cstyle = screenStyles.cellSepRightNormBottom;
+            if (isSubBottom && isSubRight)
+              cstyle = screenStyles.cellSubBottomRight;
+            else if (isSubBottom) cstyle = screenStyles.cellSubBottomNormRight;
+            else if (isSubRight) cstyle = screenStyles.cellSubRightNormBottom;
 
             return (
               <SudokuCell

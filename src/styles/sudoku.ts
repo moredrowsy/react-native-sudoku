@@ -35,7 +35,7 @@ import {
   FLAT_LIST_MARGIN_SIZE,
   GAP_BETWEEN_COMPONENTS,
   SUDOKU_CELL_NORMAL_MARGIN,
-  SUDOKU_CELL_SEP_MARGIN,
+  SUDOKU_CELL_SUBGRID_MARGIN,
 } from './constants';
 
 const cellColorTheme: Record<string, CellColors> = {
@@ -330,10 +330,10 @@ export const margins = StyleSheet.create({
     marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
     marginRight: SUDOKU_CELL_NORMAL_MARGIN,
   },
-  cellNormTopBottomSepRight: {
+  cellNormTopBottomSubRight: {
     marginTop: SUDOKU_CELL_NORMAL_MARGIN,
     marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_SEP_MARGIN,
+    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
   },
   // End control cells margin for portrait
   // Start control cells margin for landscape
@@ -342,29 +342,29 @@ export const margins = StyleSheet.create({
     marginRight: SUDOKU_CELL_NORMAL_MARGIN,
     marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
   },
-  cellNormLeftRightSepBottom: {
+  cellNormLeftRightSubBottom: {
     marginLeft: SUDOKU_CELL_NORMAL_MARGIN,
     marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_SEP_MARGIN,
+    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
   },
   // End control cells margin for landscape
-  cellSepRight: {
-    marginRight: SUDOKU_CELL_SEP_MARGIN,
+  cellSubRight: {
+    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
   },
-  cellSepRightNormBottom: {
-    marginRight: SUDOKU_CELL_SEP_MARGIN,
+  cellSubRightNormBottom: {
+    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
     marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
   },
-  cellSepBottom: {
-    marginBottom: SUDOKU_CELL_SEP_MARGIN,
+  cellSubBottom: {
+    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
   },
-  cellSepBottomNormRight: {
+  cellSubBottomNormRight: {
     marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_SEP_MARGIN,
+    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
   },
-  cellSepBottomRight: {
-    marginRight: SUDOKU_CELL_SEP_MARGIN,
-    marginBottom: SUDOKU_CELL_SEP_MARGIN,
+  cellSubBottomRight: {
+    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
+    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
   },
   // Flatlist
   flatListItem: {

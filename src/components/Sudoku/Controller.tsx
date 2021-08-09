@@ -152,9 +152,8 @@ const Controller: React.FC<Props> = ({
           }
         >
           {emptyRows.map((controlValue, index) => {
-            // Calculate subgrid seperation magins
-            const isSeperation =
-              index !== boardSize - 1 && index % rootSize == 2;
+            // Calculate subgrid margins
+            const isSubgrid = index !== boardSize - 1 && index % rootSize == 2;
 
             let cstyle = isPortrait
               ? screenStyles.cellNormTopBottomRight
@@ -162,12 +161,12 @@ const Controller: React.FC<Props> = ({
 
             if (isPortrait) {
               if (index === 0) cstyle = screenStyles.cellNormBox;
-              else if (isSeperation)
-                cstyle = screenStyles.cellNormTopBottomSepRight;
+              else if (isSubgrid)
+                cstyle = screenStyles.cellNormTopBottomSubRight;
             } else {
               if (index === 0) cstyle = screenStyles.cellNormBox;
-              else if (isSeperation)
-                cstyle = screenStyles.cellNormLeftRightSepBottom;
+              else if (isSubgrid)
+                cstyle = screenStyles.cellNormLeftRightSubBottom;
             }
 
             return (
