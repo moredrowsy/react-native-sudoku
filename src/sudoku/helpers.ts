@@ -4,6 +4,7 @@ import {
   WINDOW_PADDING,
 } from '../styles';
 import {
+  CellEntity,
   SudokuCellEntity,
   SudokuGameEntity,
   SudokuUserEntity,
@@ -128,6 +129,29 @@ function isInSudokuSubgrid(
       if (board[i][j].value === number) return true;
 
   return false;
+}
+
+export function getIsCellInSelected(
+  cell: CellEntity,
+  selCel: CellEntity,
+  boardSize: number
+) {
+  let isInCol = false;
+  let isInRow = false;
+
+  if (selCel.col > -1 && selCel.row > -1) {
+    const rootSize = Math.sqrt(boardSize);
+    const colIdx = cell.col - (cell.col % rootSize);
+    const rowIdx = cell.row - (cell.row % rootSize);
+    const selColIdx = selCel.col - (selCel.col % rootSize);
+    const selRowIdx = selCel.row - (selCel.row % rootSize);
+    isInCol = colIdx === selColIdx;
+    isInRow = rowIdx === selRowIdx;
+  }
+
+  return (
+    cell.col === selCel.col || cell.row === selCel.row || (isInCol && isInRow)
+  );
 }
 
 export function restoreSudokuGameUser(sudoku: SudokuGameEntity) {

@@ -7,7 +7,7 @@ import {
   RootState,
   updateSelectedCellForGame,
 } from '../../storage/store';
-import { SUDOKU_EMPTY_CELL } from '../../sudoku';
+import { getIsCellInSelected, SUDOKU_EMPTY_CELL } from '../../sudoku';
 import { CellEntity } from '.././../types';
 
 import Cell from './Cell';
@@ -21,6 +21,7 @@ const SudokuCell: React.FC<Props> = ({
   cellSize,
   isPressable = true,
   style,
+  isCellInSelected,
   isSelected,
   hideSelectedColor = false,
   theme,
@@ -34,6 +35,9 @@ const SudokuCell: React.FC<Props> = ({
     bgColor = theme.colors.selectedBackground;
     opColor = theme.colors.selectedOpacity;
     txtColor = theme.colors.selectedText;
+  } else if (isCellInSelected) {
+    bgColor = theme.colors.highlightBackground;
+    txtColor = theme.colors.highlightText;
   }
 
   if (hideSelectedColor) {
@@ -100,16 +104,25 @@ const mapState = (
   { id, userId, col, row }: OwnProps
 ) => {
   if (userId && users[userId]?.sudokus[id]) {
+    const boardSize = users[userId].sudokus[id].board.length;
     const sudokuCell = users[userId].sudokus[id].board[row][col];
     const selectedCell = users[userId].sudokus[id].selectedCell;
+    const isCellInSelected = getIsCellInSelected(
+      sudokuCell,
+      selectedCell,
+      boardSize
+    );
+
     return {
       sudokuCell: sudokuCell,
+      isCellInSelected,
       isSelected: col === selectedCell.col && row === selectedCell.row,
       theme,
     };
   } else {
     return {
       sudokuCell: sudokus[id]?.board[row][col],
+      isCellInSelected: false,
       isSelected: false,
       theme,
     };

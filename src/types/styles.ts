@@ -14,6 +14,8 @@ export interface CellColors {
   revealBackground: string;
   revealOpacityBackground: string;
   revealText: string;
+  highlightBackground: string;
+  highlightText: string;
   remove: string;
   reset: string;
   reveal: string;
