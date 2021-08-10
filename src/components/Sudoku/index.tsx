@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { RouteProp } from '@react-navigation/native';
@@ -16,6 +16,7 @@ import {
   GAP_BETWEEN_COMPONENTS,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
+import { DEBOUNCE_WAIT } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import Board from './Board';
@@ -32,7 +33,9 @@ const Sudoku: React.FC<Props> = ({
   dispatch,
 }) => {
   if (hasSudokuGameForUser && userId) {
-    const dimensions = useDebounceDimensions();
+    const dimensions = useDebounceDimensions(
+      Platform.OS === 'ios' || Platform.OS === 'android' ? 0 : DEBOUNCE_WAIT
+    );
 
     // Landscape: hide status bar and header to increase visual area
     // Portrait: show status bar and header

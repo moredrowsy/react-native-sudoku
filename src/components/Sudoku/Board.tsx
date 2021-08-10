@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { AppDispatch, RootState } from '../../storage/store';
@@ -33,7 +33,9 @@ const Board: React.FC<Props> = ({
     const headerHeight = NAVIGATION_HEADER_HEIGHT;
     const tabBarHeight = NAVIGATION_TAB_HEIGHT;
 
-    const dimensions = useDebounceDimensions(DEBOUNCE_WAIT);
+    const dimensions = useDebounceDimensions(
+      Platform.OS === 'ios' || Platform.OS === 'android' ? 0 : DEBOUNCE_WAIT
+    );
     isPortrait = dimensions.isPortrait;
 
     let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
