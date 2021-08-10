@@ -1,21 +1,18 @@
 import React from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import { AppDispatch, RootState } from '../../storage/store';
 
 import Cell from './Cell';
 
 const SudokuCell: React.FC<Props> = ({
-  col,
-  row,
   value,
-  cellSize,
+  boardDimension,
   isPressable = true,
   isReveal = false,
   isAnswer,
   appShowHints,
   showHints,
-  style,
   onPress,
   theme,
   dispatch,
@@ -37,17 +34,15 @@ const SudokuCell: React.FC<Props> = ({
   }
 
   return (
-    <View style={style}>
-      <Cell
-        value={value}
-        isPressable={isPressable}
-        cellSize={cellSize}
-        backgroundColor={bgColor}
-        opacityColor={opColor}
-        textColor={txtColor}
-        onPress={onPress}
-      />
-    </View>
+    <Cell
+      value={value}
+      backgroundColor={bgColor}
+      opacityColor={opColor}
+      textColor={txtColor}
+      boardDimension={boardDimension}
+      isPressable={isPressable}
+      onPress={onPress}
+    />
   );
 };
 
@@ -57,7 +52,7 @@ interface OwnProps {
   col: number;
   row: number;
   value: number;
-  cellSize: number;
+  boardDimension: number;
   isPressable: boolean;
   isReveal: boolean;
   onPress?: () => void;

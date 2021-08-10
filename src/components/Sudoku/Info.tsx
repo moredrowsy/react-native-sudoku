@@ -1,24 +1,35 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
+import { Ionicons } from '@expo/vector-icons';
+
 import {
   AppDispatch,
   RootState,
   updateGameWithSolutionAsync,
 } from '../../storage/store';
-import { black, green } from '../../styles';
+import { black, BOARD_PADDING, green } from '../../styles';
 
 export const INFO_FONT_SIZE = 20;
 
 const Info: React.FC<Props> = ({
   id,
   userId,
+  boardDimension,
   defaultHasSolution,
   defaultScore,
   isPortrait,
+  onGoBack,
   theme,
   total,
   userScore,
+
   dispatch,
 }) => {
   if (defaultScore && userScore && total) {
@@ -31,29 +42,63 @@ const Info: React.FC<Props> = ({
 
     const completeMsg = 'Completed!';
 
+    const cellSize = boardDimension / 9;
+
+    const dynamicLandscapeStyles = StyleSheet.create({
+      container: {
+        justifyContent: 'flex-start',
+        flex: 1,
+      },
+      backBtnContainer: {},
+      infoContainer: { marginTop: BOARD_PADDING },
+    });
+
+    const dynamicPortraitStyles = StyleSheet.create({
+      container: {},
+      backBtnContainer: { display: 'none' },
+      infoContainer: { marginTop: BOARD_PADDING },
+    });
+
+    const dynamicStyles = isPortrait
+      ? dynamicPortraitStyles
+      : dynamicLandscapeStyles;
+
+    console.log('isPortrait', isPortrait);
+
     return (
-      <View>
-        {userScore === total ? (
-          <View>
-            {isPortrait ? (
-              <Text style={styles.completed}>{completeMsg}</Text>
-            ) : (
-              <View style={styles.verticalText}>
-                {[...completeMsg].map((c, index) => (
-                  <Text key={`${index}${c}`} style={styles.completed}>
-                    {c}
-                  </Text>
-                ))}
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={isPortrait ? styles.portrait : styles.landscape}>
-            <Text style={styles.score}>{userScore}</Text>
-            <Text style={styles.score}>{isPortrait ? ' / ' : '—'}</Text>
-            <Text style={styles.score}>{total}</Text>
-          </View>
-        )}
+      <View style={dynamicStyles.container}>
+        <View style={dynamicStyles.backBtnContainer}>
+          <TouchableOpacity onPress={onGoBack}>
+            <Ionicons
+              name='arrow-back'
+              size={cellSize}
+              color={theme.colors.primary}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={dynamicStyles.infoContainer}>
+          {userScore === total ? (
+            <View>
+              {isPortrait ? (
+                <Text style={styles.completed}>{completeMsg}</Text>
+              ) : (
+                <View style={styles.verticalText}>
+                  {[...completeMsg].map((c, index) => (
+                    <Text key={`${index}${c}`} style={styles.completed}>
+                      {c}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={isPortrait ? styles.portrait : styles.landscape}>
+              <Text style={styles.score}>{userScore}</Text>
+              <Text style={styles.score}>{isPortrait ? ' / ' : '—'}</Text>
+              <Text style={styles.score}>{total}</Text>
+            </View>
+          )}
+        </View>
       </View>
     );
   } else {
@@ -62,9 +107,6 @@ const Info: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   landscape: {
     flexDirection: 'column',
   },
@@ -92,7 +134,9 @@ const styles = StyleSheet.create({
 interface OwnProps {
   id: string;
   userId: string;
+  boardDimension: number;
   isPortrait: boolean;
+  onGoBack: () => void;
 }
 
 const mapState = (

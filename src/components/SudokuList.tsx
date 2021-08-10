@@ -24,8 +24,6 @@ import { SudokuGameEntity } from '../types';
 
 import Board from './Sudoku/Board';
 
-const FLAT_LIST_MARGIN_SIZE = 30;
-
 const SudokuList: React.FC<Props> = ({
   sudokus,
   userId,
@@ -132,7 +130,7 @@ const mapState = ({ status, sudokus, theme, users }: RootState) => ({
   loading: status.loading,
   sudokus,
   theme,
-  userId: status.userId,
+  userId: status.userId || undefined,
   userSudokus: status.userId ? users[status.userId]?.sudokus : undefined,
 });
 

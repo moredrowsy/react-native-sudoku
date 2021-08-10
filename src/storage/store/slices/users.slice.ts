@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import * as API from '../../api';
 import * as LocalStorage from '../../local-storage';
 
-import { setStatus } from '../slices/status.slice';
+import { selectStatus, setStatus } from '../slices/status.slice';
 import {
   getUserFromSudokuUser,
   restoreSudokuGameUser,
@@ -450,13 +450,9 @@ export const updateShowHintsForGameAsync =
 
 export const initSudokuUserAsync =
   (onSuccess?: () => void, onError?: (msg: string) => void): AppThunk =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     try {
-      const status: AppStatus = {
-        isLoggedIn: false,
-        loading: false,
-        userId: undefined,
-      };
+      const status: AppStatus = cloneDeep(selectStatus(getState()));
 
       const localStoageStatus = await LocalStorage.status.getStatus();
       if (localStoageStatus) {

@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import { debounce } from 'lodash';
 import { DEBOUNCE_WAIT } from '../sudoku';
 
-const useDebounceDimensions = (wait: number) => {
+const useDebounceDimensions = (wait: number = DEBOUNCE_WAIT) => {
   const [dimensions, setDimensions] = React.useState({
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
@@ -21,7 +21,7 @@ const useDebounceDimensions = (wait: number) => {
         height: height,
         width: width,
       });
-    }, wait ?? DEBOUNCE_WAIT);
+    }, wait);
     Dimensions.addEventListener('change', debouncedHandleResize);
 
     return () => {
@@ -30,7 +30,7 @@ const useDebounceDimensions = (wait: number) => {
     };
   }, []);
 
-  return { dimensions, isLandscape, isPortrait };
+  return { ...dimensions, isLandscape, isPortrait };
 };
 
 export default useDebounceDimensions;

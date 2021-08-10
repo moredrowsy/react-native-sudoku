@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 import {
@@ -14,23 +14,18 @@ import {
   updateShowHintsForGameAsync,
   updateSudokuGameValueAsync,
 } from '../../storage/store';
-import { NAVIGATION_HEADER_HEIGHT, NAVIGATION_TAB_HEIGHT } from '../../styles';
 import {
   getAvailableCells,
-  getCellSize,
   EMPTY_BOARDS,
   SUDOKU_EMPTY_CELL,
-  DEBOUNCE_WAIT,
 } from '../../sudoku';
 
-import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import ControllerCell from './ControllerCell';
 
 const Controller: React.FC<Props> = ({
   id,
   userId,
   boardDimension,
-  cellSize,
   isPortrait,
   options,
   showHints,
@@ -52,25 +47,7 @@ const Controller: React.FC<Props> = ({
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
-    const rootSize = Math.sqrt(boardSize);
-
-    // Get cell dimensions if not provided
-    if (!cellSize || isPortrait === undefined) {
-      if (!boardDimension) {
-        const headerHeight = NAVIGATION_HEADER_HEIGHT;
-        const tabBarHeight = NAVIGATION_TAB_HEIGHT;
-
-        const { dimensions, isPortrait: dIsPortrait } =
-          useDebounceDimensions(DEBOUNCE_WAIT);
-        isPortrait = dIsPortrait;
-
-        let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
-        let effectiveWidth = dimensions.width;
-        boardDimension = Math.min(effectiveHeight, effectiveWidth);
-      }
-
-      cellSize = Math.floor(getCellSize(boardDimension, boardSize));
-    }
+    const cellSize = boardDimension / 9;
 
     // Set screenStyles theme based on screen type
     const screenStyles = isPortrait ? theme.portrait : theme.landscape;
@@ -151,44 +128,49 @@ const Controller: React.FC<Props> = ({
               : screenStyles.controlCellsContainerHide
           }
         >
-          {emptyRows.map((controlValue, index) => {
-            // Calculate subgrid margins
-            const isSubgrid = index !== boardSize - 1 && index % rootSize == 2;
-
-            let cstyle = isPortrait
-              ? screenStyles.cellNormTopBottomRight
-              : screenStyles.cellNormLeftRightBottom;
-
-            if (isPortrait) {
-              if (index === 0) cstyle = screenStyles.cellNormBox;
-              else if (isSubgrid)
-                cstyle = screenStyles.cellNormTopBottomSubRight;
-            } else {
-              if (index === 0) cstyle = screenStyles.cellNormBox;
-              else if (isSubgrid)
-                cstyle = screenStyles.cellNormLeftRightSubBottom;
+          <View
+            style={
+              isPortrait
+                ? {
+                    height: cellSize,
+                    width: boardDimension,
+                  }
+                : {
+                    height: boardDimension,
+                    width: cellSize,
+                  }
             }
+          >
+            <View style={screenStyles.gridContainer}>
+              <View style={screenStyles.gridRowControllerContainer}>
+                {emptyRows.map((controlValue, index) => {
+                  let cStyle = screenStyles.gridColControllerFirstCell;
 
-            return (
-              <ControllerCell
-                key={index}
-                id={id}
-                userId={userId}
-                col={col}
-                row={row}
-                value={controlValue + 1}
-                cellSize={cellSize ? cellSize : 30}
-                isPressable={isValidIndices && unique.has(controlValue + 1)}
-                isReveal={reveal}
-                style={cstyle}
-                onPress={() => onCellPress(controlValue + 1)}
-              />
-            );
-          })}
+                  if (index !== 0) cStyle = screenStyles.gridColController;
+
+                  return (
+                    <View key={index} style={cStyle}>
+                      <ControllerCell
+                        id={id}
+                        userId={userId}
+                        col={col}
+                        row={row}
+                        value={controlValue + 1}
+                        boardDimension={boardDimension}
+                        isPressable={
+                          isValidIndices && unique.has(controlValue + 1)
+                        }
+                        isReveal={reveal}
+                        onPress={() => onCellPress(controlValue + 1)}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
         </View>
-        <View
-          style={isPortrait ? { height: cellSize } : { width: cellSize }}
-        ></View>
+        <View style={{ width: cellSize, height: cellSize }}></View>
         <View
           style={
             !isValidIndices
@@ -202,7 +184,7 @@ const Controller: React.FC<Props> = ({
           >
             <AntDesign
               name='closesquareo'
-              size={cellSize * 1.2}
+              size={cellSize}
               color={
                 isValidIndices && selectedValue !== SUDOKU_EMPTY_CELL
                   ? theme.colors.remove
@@ -220,7 +202,7 @@ const Controller: React.FC<Props> = ({
           >
             <MaterialCommunityIcons
               name='restart'
-              size={cellSize * 1.2}
+              size={cellSize}
               color={
                 sudoku.defaultScore === sudoku.userScore
                   ? theme.colors.inactive
@@ -238,7 +220,7 @@ const Controller: React.FC<Props> = ({
           >
             <Ionicons
               name={eyeIconName as any}
-              size={cellSize * 1.2}
+              size={cellSize}
               color={
                 sudoku.hasSolution && reveal && options.showReveal
                   ? theme.colors.reveal
@@ -253,7 +235,7 @@ const Controller: React.FC<Props> = ({
           >
             <MaterialCommunityIcons
               name={hintsIconName as any}
-              size={cellSize * 1.2}
+              size={cellSize}
               color={
                 options.showHints && showHints
                   ? theme.colors.showHints
@@ -272,16 +254,7 @@ const Controller: React.FC<Props> = ({
 interface OwnProps {
   id: string;
   userId: string;
-  boardDimension?: number;
-  cellSize?: number;
-  isPortrait: boolean;
-}
-
-interface OwnProps {
-  id: string;
-  userId: string;
-  boardDimension?: number;
-  cellSize?: number;
+  boardDimension: number;
   isPortrait: boolean;
 }
 

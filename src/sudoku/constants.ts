@@ -14,4 +14,4 @@ export const EMPTY_BOARDS: Record<string | number, number[][]> = {
   ],
 };
 
-export const DEBOUNCE_WAIT = 500;
+export const DEBOUNCE_WAIT = 250;

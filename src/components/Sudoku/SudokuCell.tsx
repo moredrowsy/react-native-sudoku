@@ -16,14 +16,11 @@ const SudokuCell: React.FC<Props> = ({
   id,
   userId,
   sudokuCell,
-  col,
-  row,
-  cellSize,
+  boardDimension,
+  hideSelectedColor = false,
   isPressable = true,
-  style,
   isCellInSelected,
   isSelected,
-  hideSelectedColor = false,
   theme,
   dispatch,
 }) => {
@@ -72,19 +69,19 @@ const SudokuCell: React.FC<Props> = ({
   };
 
   return (
-    <View style={style}>
+    <>
       {sudokuCell && (
         <Cell
           value={sudokuCell.value}
-          isPressable={isPressable && sudokuCell.mutable}
-          cellSize={cellSize}
           backgroundColor={bgColor}
           opacityColor={opColor}
           textColor={txtColor}
+          boardDimension={boardDimension}
+          isPressable={isPressable && sudokuCell.mutable}
           onPress={onCellPress}
         />
       )}
-    </View>
+    </>
   );
 };
 
@@ -93,10 +90,9 @@ interface OwnProps {
   userId?: string;
   col: number;
   row: number;
-  cellSize: number;
-  isPressable: boolean;
+  boardDimension: number;
   hideSelectedColor?: boolean;
-  style?: StyleProp<any>;
+  isPressable: boolean;
 }
 
 const mapState = (

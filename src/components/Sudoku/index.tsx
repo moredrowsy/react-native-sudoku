@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -6,13 +6,16 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamsList } from '../Navigators/RootStack';
 
-import { AppDispatch, RootState } from '../../storage/store';
 import {
+  AppDispatch,
+  RootState,
+  setStatusBarVisible,
+} from '../../storage/store';
+import {
+  BOARD_PADDING,
   GAP_BETWEEN_COMPONENTS,
-  NAVIGATION_HEADER_HEIGHT,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
-import { DEBOUNCE_WAIT, getCellSize } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import Board from './Board';
@@ -25,50 +28,90 @@ const Sudoku: React.FC<Props> = ({
   hasSudokuGameForUser,
   boardSize,
   theme,
+  navigation,
+  dispatch,
 }) => {
   if (hasSudokuGameForUser && userId) {
-    const { dimensions, isPortrait } = useDebounceDimensions(DEBOUNCE_WAIT);
+    const dimensions = useDebounceDimensions();
+
+    // Landscape: hide status bar and header to increase visual area
+    // Portrait: show status bar and header
+    useEffect(() => {
+      if (dimensions.isPortrait) {
+        navigation.setOptions({
+          headerShown: true,
+        });
+        dispatch(setStatusBarVisible(true));
+      } else {
+        navigation.setOptions({
+          headerShown: false,
+        });
+        dispatch(setStatusBarVisible(false));
+      }
+    }, [dimensions.isPortrait]);
 
     // Set screenStyles theme based on screen type
-    const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+    const screenStyles = dimensions.isPortrait
+      ? theme.portrait
+      : theme.landscape;
 
     // Get initial cell dimensions based on height
-    const headerHeight = NAVIGATION_HEADER_HEIGHT;
-    let boardDimension = dimensions.height - headerHeight;
-    let cellSize = getCellSize(boardDimension, boardSize);
+    let boardDimension = dimensions.isPortrait
+      ? dimensions.height
+      : Math.min(dimensions.height, dimensions.width);
 
     // Resize again to account for Info & Controller component extra space
     const extraSpace =
-      cellSize * 3 +
+      (boardDimension / boardSize) * 3 +
       SUDOKU_CELL_NORMAL_MARGIN * 2 +
       GAP_BETWEEN_COMPONENTS * 4 +
       INFO_FONT_SIZE;
     let effectiveHeight;
     let effectiveWidth;
-    if (isPortrait) {
+
+    if (dimensions.isPortrait) {
       // Effective dimension is based on height for portrait
-      effectiveHeight = dimensions.height - headerHeight - extraSpace;
+      effectiveHeight = dimensions.height - extraSpace;
       effectiveWidth = dimensions.width;
     } else {
       // Effective dimension is based on width for landscape
+      // Header is turned off in landscape
+      effectiveHeight = dimensions.height;
       effectiveWidth = dimensions.width - extraSpace;
-      effectiveHeight = dimensions.height - headerHeight;
     }
     boardDimension = Math.min(effectiveWidth, effectiveHeight);
-    cellSize = Math.floor(getCellSize(boardDimension, boardSize));
+
+    // Apply some padding
+    boardDimension -= BOARD_PADDING * 2;
+
+    const onGoBack = useCallback(() => {
+      navigation.goBack();
+      dispatch(setStatusBarVisible(true));
+    }, [navigation]);
 
     return (
       <View style={screenStyles.sudokuContainer}>
-        <View style={screenStyles.sudokuContainerForInfo}>
-          <Info id={id} userId={userId} isPortrait={isPortrait} />
+        <View
+          style={[
+            screenStyles.sudokuContainerForInfo,
+            dimensions.isLandscape && { height: boardDimension },
+          ]}
+        >
+          <Info
+            id={id}
+            userId={userId}
+            boardDimension={boardDimension}
+            isPortrait={dimensions.isPortrait}
+            onGoBack={onGoBack}
+          />
         </View>
         <View style={screenStyles.sudokuContainerForBoard}>
           <Board
             id={id}
             userId={userId}
-            cellSize={cellSize}
+            boardDimension={boardDimension}
             isPressable={true}
-            isPortrait={isPortrait}
+            isPortrait={dimensions.isPortrait}
             hideSelectedColor={false}
           />
         </View>
@@ -76,8 +119,8 @@ const Sudoku: React.FC<Props> = ({
           <Controller
             id={id}
             userId={userId}
-            cellSize={cellSize}
-            isPortrait={isPortrait}
+            boardDimension={boardDimension}
+            isPortrait={dimensions.isPortrait}
           />
         </View>
       </View>

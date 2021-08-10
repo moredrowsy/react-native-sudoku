@@ -2,8 +2,9 @@ import { ThemeNames } from '../types';
 
 export interface AppStatus {
   isLoggedIn: boolean;
-  userId?: string;
+  userId?: string | null;
   loading: boolean;
+  statusBarVisible: boolean;
 }
 
 export interface AppOptions {

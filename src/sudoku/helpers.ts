@@ -96,24 +96,6 @@ export function getUserFromSudokuUser(sudokuUser: SudokuUserEntity) {
   return user;
 }
 
-export function getCellSize(
-  dimension: number,
-  boardSize: number,
-  padding: number = WINDOW_PADDING
-) {
-  const numSubgrids = Math.sqrt(boardSize) - 1;
-  const normMarginSapce =
-    SUDOKU_CELL_NORMAL_MARGIN * (boardSize - numSubgrids + 1);
-  const subgridMarginSpace = SUDOKU_CELL_SUBGRID_MARGIN * 2;
-
-  let effectiveDimensions = dimension - (normMarginSapce + subgridMarginSpace);
-  if (padding) effectiveDimensions -= padding * 2;
-
-  const cellSize = effectiveDimensions / boardSize;
-
-  return cellSize;
-}
-
 function isInSudokuSubgrid(
   col: number,
   row: number,

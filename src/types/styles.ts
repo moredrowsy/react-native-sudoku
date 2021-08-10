@@ -24,30 +24,32 @@ export interface CellColors {
 }
 
 export interface CellStyles {
-  cellNormBox: ViewStyle;
-  cellNormLeft: ViewStyle;
-  cellNormTop: ViewStyle;
-  cellNormBottomRight: ViewStyle;
-  cellNormTopBottomRight: ViewStyle;
-  cellNormTopBottomSubRight: ViewStyle;
-  cellNormLeftRightBottom: ViewStyle;
-  cellNormLeftRightSubBottom: ViewStyle;
-  cellSubRight: ViewStyle;
-  cellSubRightNormBottom: ViewStyle;
-  cellSubBottom: ViewStyle;
-  cellSubBottomNormRight: ViewStyle;
-  cellSubBottomRight: ViewStyle;
-  cellRows: ViewStyle;
   sudokuContainer: ViewStyle;
   sudokuContainerForBoard: ViewStyle;
   sudokuContainerForController: ViewStyle;
   sudokuContainerForInfo: ViewStyle;
-  board: ViewStyle;
+  // Grid
+  gridContainer: ViewStyle;
+  gridRowContainer: ViewStyle;
+  gridColContainer: ViewStyle;
+  gridColContainerSubBottom: ViewStyle;
+  gridColContainerSubRight: ViewStyle;
+  gridColFirstCol: ViewStyle;
+  gridColFirstColSubBottom: ViewStyle;
+  gridColFirstRow: ViewStyle;
+  gridColFirstRowSubRight: ViewStyle;
+  gridColTopLeft: ViewStyle;
+  gridColCornerSubRightBottom: ViewStyle;
+  gridRowControllerContainer: ViewStyle;
+  gridColControllerFirstCell: ViewStyle;
+  gridColController: ViewStyle;
+  // Controller.tsx styles
   controlCellsContainer: ViewStyle;
   controlCellsContainerHide: ViewStyle;
   controllContainer: ViewStyle;
   controlBtnContainer: ViewStyle;
   controlBtnContainerHide: ViewStyle;
+  // Flatlist
   flatListItem: ViewStyle;
   flatListFirstItem: ViewStyle;
   flatListItemSelected: ViewStyle;

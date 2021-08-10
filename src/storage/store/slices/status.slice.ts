@@ -8,6 +8,7 @@ const initialState: AppStatus = {
   isLoggedIn: false,
   loading: true,
   userId: null,
+  statusBarVisible: true,
 };
 
 // SLICE
@@ -27,11 +28,19 @@ const status = createSlice({
     setStatus: (state, action: PayloadAction<AppStatus>) => {
       return action.payload;
     },
+    setStatusBarVisible: (state, action: PayloadAction<boolean>) => {
+      state.statusBarVisible = action.payload;
+    },
   },
 });
 
-export const { setCurrentUser, setLoadingStatus, setLogInStatus, setStatus } =
-  status.actions;
+export const {
+  setCurrentUser,
+  setLoadingStatus,
+  setLogInStatus,
+  setStatus,
+  setStatusBarVisible,
+} = status.actions;
 
 // SELECTOR
 export const selectStatus = (state: RootState) => state.status;

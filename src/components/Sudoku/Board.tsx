@@ -3,8 +3,12 @@ import { View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { AppDispatch, RootState } from '../../storage/store';
-import { NAVIGATION_HEADER_HEIGHT, NAVIGATION_TAB_HEIGHT } from '../../styles';
-import { getCellSize, EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
+import {
+  BOARD_PADDING,
+  NAVIGATION_HEADER_HEIGHT,
+  NAVIGATION_TAB_HEIGHT,
+} from '../../styles';
+import { EMPTY_BOARDS, DEBOUNCE_WAIT } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
 import SudokuCell from './SudokuCell';
@@ -14,7 +18,6 @@ const Board: React.FC<Props> = ({
   userId,
   boardSize,
   boardDimension,
-  cellSize,
   hideSelectedColor = false,
   isPressable,
   isPortrait,
@@ -25,62 +28,90 @@ const Board: React.FC<Props> = ({
   const emptyBoard = EMPTY_BOARDS[boardSize];
   const rootSize = Math.sqrt(boardSize);
 
-  // Get cell dimensions if not provided
-  if (!cellSize || isPortrait === undefined) {
-    if (!boardDimension) {
-      const headerHeight = NAVIGATION_HEADER_HEIGHT;
-      const tabBarHeight = NAVIGATION_TAB_HEIGHT;
+  // Get board dimension if not provided
+  if (!boardDimension) {
+    const headerHeight = NAVIGATION_HEADER_HEIGHT;
+    const tabBarHeight = NAVIGATION_TAB_HEIGHT;
 
-      const { dimensions, isPortrait: dIsPortrait } =
-        useDebounceDimensions(DEBOUNCE_WAIT);
-      isPortrait = dIsPortrait;
+    const dimensions = useDebounceDimensions(DEBOUNCE_WAIT);
+    isPortrait = dimensions.isPortrait;
 
-      let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
-      let effectiveWidth = dimensions.width;
-      boardDimension = Math.min(effectiveHeight, effectiveWidth);
-    }
+    let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
+    let effectiveWidth = dimensions.width;
+    boardDimension = Math.min(effectiveHeight, effectiveWidth);
 
-    cellSize = Math.floor(getCellSize(boardDimension, boardSize));
+    // Apply some padding
+    if (isPortrait) boardDimension -= BOARD_PADDING * 2;
   }
 
-  // Set screenStyles theme based on screen type
-  const screenStyles = isPortrait ? theme.portrait : theme.landscape;
+  // Set styles theme based on screen type
+  const styles = isPortrait ? theme.portrait : theme.landscape;
 
   return (
     <View
-      // NOTE: Board top and left margin is controlled by outer container
-      // using padding to simplify individual cell styles
-      style={screenStyles.board}
+      style={{
+        width: boardDimension,
+        height: boardDimension,
+      }}
     >
-      {emptyBoard.map((rows, row) => (
-        <View key={row} style={screenStyles.cellRows}>
-          {rows.map((_, col) => {
-            // Calculate subgrid margins
-            const isSubRight = col !== boardSize - 1 && col % rootSize == 2;
-            const isSubBottom = row !== boardSize - 1 && row % rootSize == 2;
+      <View style={styles.gridContainer}>
+        {emptyBoard.map((rows, row) => {
+          return (
+            <View key={row} style={styles.gridRowContainer}>
+              {rows.map((cols, col) => {
+                const isSubRight = col !== boardSize - 1 && col % rootSize == 2;
+                const isSubBottom =
+                  row !== boardSize - 1 && row % rootSize == 2;
+                let cStyle = styles.gridColContainer;
 
-            let cstyle = screenStyles.cellNormBottomRight;
-            if (isSubBottom && isSubRight)
-              cstyle = screenStyles.cellSubBottomRight;
-            else if (isSubBottom) cstyle = screenStyles.cellSubBottomNormRight;
-            else if (isSubRight) cstyle = screenStyles.cellSubRightNormBottom;
+                // Normal cell
+                if (col !== 0 && row !== 0) {
+                  if (isSubBottom && isSubRight) {
+                    cStyle = styles.gridColCornerSubRightBottom;
+                  } else if (isSubBottom) {
+                    cStyle = styles.gridColContainerSubBottom;
+                  } else if (isSubRight) {
+                    cStyle = styles.gridColContainerSubRight;
+                  } else {
+                    cStyle = styles.gridColContainer;
+                  }
+                }
+                // Top left
+                else if (col === 0 && row === 0) {
+                  cStyle = styles.gridColTopLeft;
+                }
+                // First col
+                else if (col === 0) {
+                  if (!isSubBottom) cStyle = styles.gridColFirstCol;
+                  else cStyle = styles.gridColFirstColSubBottom;
+                }
+                // First row
+                else if (row === 0) {
+                  if (!isSubRight) cStyle = styles.gridColFirstRow;
+                  else cStyle = styles.gridColFirstRowSubRight;
+                } else {
+                  cStyle = styles.gridColContainer;
+                }
 
-            return (
-              <SudokuCell
-                key={col}
-                id={id}
-                userId={userId}
-                col={col}
-                row={row}
-                cellSize={cellSize ? cellSize : 30}
-                isPressable={isPressable}
-                style={cstyle}
-                hideSelectedColor={hideSelectedColor}
-              />
-            );
-          })}
-        </View>
-      ))}
+                return (
+                  <View key={col} style={cStyle}>
+                    <SudokuCell
+                      key={col}
+                      id={id}
+                      userId={userId}
+                      col={col}
+                      row={row}
+                      boardDimension={boardDimension as number}
+                      hideSelectedColor={hideSelectedColor}
+                      isPressable={isPressable}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 };

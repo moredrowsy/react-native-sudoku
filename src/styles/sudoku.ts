@@ -32,7 +32,7 @@ import {
   yellow,
 } from './colors';
 import {
-  FLAT_LIST_MARGIN_SIZE,
+  BOARD_PADDING,
   GAP_BETWEEN_COMPONENTS,
   SUDOKU_CELL_NORMAL_MARGIN,
   SUDOKU_CELL_SUBGRID_MARGIN,
@@ -307,83 +307,8 @@ const cellColorTheme: Record<string, CellColors> = {
 
 export { cellColorTheme };
 
-export const margins = StyleSheet.create({
-  cellNormBox: {
-    marginTop: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginLeft: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellNormLeft: {
-    marginLeft: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellNormTop: {
-    marginTop: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellNormBottomRight: {
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  // Start control cells margin for portrait
-  cellNormTopBottomRight: {
-    marginTop: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellNormTopBottomSubRight: {
-    marginTop: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  // End control cells margin for portrait
-  // Start control cells margin for landscape
-  cellNormLeftRightBottom: {
-    marginLeft: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellNormLeftRightSubBottom: {
-    marginLeft: SUDOKU_CELL_NORMAL_MARGIN,
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  // End control cells margin for landscape
-  cellSubRight: {
-    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  cellSubRightNormBottom: {
-    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
-    marginBottom: SUDOKU_CELL_NORMAL_MARGIN,
-  },
-  cellSubBottom: {
-    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  cellSubBottomNormRight: {
-    marginRight: SUDOKU_CELL_NORMAL_MARGIN,
-    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  cellSubBottomRight: {
-    marginRight: SUDOKU_CELL_SUBGRID_MARGIN,
-    marginBottom: SUDOKU_CELL_SUBGRID_MARGIN,
-  },
-  // Flatlist
-  flatListItem: {
-    alignSelf: 'center',
-    marginBottom: FLAT_LIST_MARGIN_SIZE,
-  },
-  flatListFirstItem: {
-    alignSelf: 'center',
-    marginTop: FLAT_LIST_MARGIN_SIZE,
-    marginBottom: FLAT_LIST_MARGIN_SIZE,
-  },
-});
-
 export function createCellStylesLandscape(themeName: string) {
   const styles = StyleSheet.create({
-    cellRows: {
-      flexDirection: 'row',
-      backgroundColor: cellColorTheme[themeName].margin,
-    },
     sudokuContainer: {
       flex: 1,
       flexDirection: 'row',
@@ -400,11 +325,94 @@ export function createCellStylesLandscape(themeName: string) {
     sudokuContainerForController: {
       marginRight: GAP_BETWEEN_COMPONENTS,
     },
-    board: {
-      paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
-      paddingLeft: SUDOKU_CELL_NORMAL_MARGIN,
-      backgroundColor: cellColorTheme[themeName].margin,
+    // Grid styles
+    gridContainer: {
+      flex: 1,
     },
+    gridRowContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    gridColContainer: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColContainerSubBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColContainerSubRight: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridColFirstCol: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstColSubBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstRow: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstRowSubRight: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridColTopLeft: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColCornerSubRightBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridRowControllerContainer: {
+      flex: 1,
+      flexDirection: 'column',
+    },
+    gridColControllerFirstCell: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColController: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    // Controller.tsx styles
     controllContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -435,29 +443,34 @@ export function createCellStylesLandscape(themeName: string) {
       opacity: 0,
     },
     // Flatlist
+    flatListItem: {
+      alignSelf: 'center',
+      marginBottom: BOARD_PADDING,
+    },
+    flatListFirstItem: {
+      alignSelf: 'center',
+      marginTop: BOARD_PADDING,
+      marginBottom: BOARD_PADDING,
+    },
     flatListItemSelected: {
       alignSelf: 'center',
-      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      marginBottom: BOARD_PADDING,
       backgroundColor: cellColorTheme[themeName].primary,
       opacity: 0.3,
     },
     flatListFirstItemSelected: {
       alignSelf: 'center',
-      marginTop: FLAT_LIST_MARGIN_SIZE,
-      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      marginTop: BOARD_PADDING,
+      marginBottom: BOARD_PADDING,
       opacity: 0.3,
     },
   });
 
-  return { ...margins, ...styles };
+  return styles;
 }
 
 export function createCellStylesPortrait(themeName: string) {
   const styles = StyleSheet.create({
-    cellRows: {
-      flexDirection: 'row',
-      backgroundColor: cellColorTheme[themeName].margin,
-    },
     sudokuContainer: {
       flex: 1,
       flexDirection: 'column',
@@ -474,11 +487,94 @@ export function createCellStylesPortrait(themeName: string) {
     sudokuContainerForController: {
       marginBottom: GAP_BETWEEN_COMPONENTS,
     },
-    board: {
-      paddingTop: SUDOKU_CELL_NORMAL_MARGIN,
-      paddingLeft: SUDOKU_CELL_NORMAL_MARGIN,
-      backgroundColor: cellColorTheme[themeName].margin,
+    // Grid styles
+    gridContainer: {
+      flex: 1,
     },
+    gridRowContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    gridColContainer: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColContainerSubBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColContainerSubRight: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridColFirstCol: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstColSubBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstRow: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColFirstRowSubRight: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridColTopLeft: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColCornerSubRightBottom: {
+      flex: 1,
+      borderColor: 'black',
+      borderBottomWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+      borderRightWidth: SUDOKU_CELL_SUBGRID_MARGIN,
+    },
+    gridRowControllerContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    gridColControllerFirstCell: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderLeftWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    gridColController: {
+      flex: 1,
+      borderColor: 'black',
+      borderTopWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderBottomWidth: SUDOKU_CELL_NORMAL_MARGIN,
+      borderRightWidth: SUDOKU_CELL_NORMAL_MARGIN,
+    },
+    // Controller.tsx styles
     controllContainer: {
       flexDirection: 'column',
       justifyContent: 'center',
@@ -509,19 +605,28 @@ export function createCellStylesPortrait(themeName: string) {
       opacity: 0,
     },
     // Flatlist
+    flatListItem: {
+      alignSelf: 'center',
+      marginBottom: BOARD_PADDING,
+    },
+    flatListFirstItem: {
+      alignSelf: 'center',
+      marginTop: BOARD_PADDING,
+      marginBottom: BOARD_PADDING,
+    },
     flatListItemSelected: {
       alignSelf: 'center',
-      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      marginBottom: BOARD_PADDING,
       backgroundColor: cellColorTheme[themeName].primary,
       opacity: 0.3,
     },
     flatListFirstItemSelected: {
       alignSelf: 'center',
-      marginTop: FLAT_LIST_MARGIN_SIZE,
-      marginBottom: FLAT_LIST_MARGIN_SIZE,
+      marginTop: BOARD_PADDING,
+      marginBottom: BOARD_PADDING,
       opacity: 0.3,
     },
   });
 
-  return { ...margins, ...styles };
+  return styles;
 }
