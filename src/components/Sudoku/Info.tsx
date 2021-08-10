@@ -44,30 +44,19 @@ const Info: React.FC<Props> = ({
 
     const cellSize = boardDimension / 9;
 
-    const dynamicLandscapeStyles = StyleSheet.create({
-      container: {
-        justifyContent: 'flex-start',
-        flex: 1,
-      },
-      backBtnContainer: {},
-      infoContainer: { marginTop: BOARD_PADDING },
-    });
-
-    const dynamicPortraitStyles = StyleSheet.create({
-      container: {},
-      backBtnContainer: { display: 'none' },
-      infoContainer: { marginTop: BOARD_PADDING },
-    });
-
-    const dynamicStyles = isPortrait
-      ? dynamicPortraitStyles
-      : dynamicLandscapeStyles;
-
-    console.log('isPortrait', isPortrait);
-
     return (
-      <View style={dynamicStyles.container}>
-        <View style={dynamicStyles.backBtnContainer}>
+      <View
+        style={
+          isPortrait ? styles.containerPortrait : styles.containerLandscape
+        }
+      >
+        <View
+          style={
+            isPortrait
+              ? styles.backBtnContainerPortrait
+              : styles.backBtnContainerLandscape
+          }
+        >
           <TouchableOpacity onPress={onGoBack}>
             <Ionicons
               name='arrow-back'
@@ -76,7 +65,13 @@ const Info: React.FC<Props> = ({
             />
           </TouchableOpacity>
         </View>
-        <View style={dynamicStyles.infoContainer}>
+        <View
+          style={
+            isPortrait
+              ? styles.infoContainerPortrait
+              : styles.infoContainerLandscape
+          }
+        >
           {userScore === total ? (
             <View>
               {isPortrait ? (
@@ -107,6 +102,19 @@ const Info: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
+  containerLandscape: {
+    justifyContent: 'flex-start',
+    flex: 1,
+  },
+  containerPortrait: {},
+  backBtnContainerLandscape: {},
+  backBtnContainerPortrait: {
+    display: 'none',
+  },
+  infoContainerLandscape: {
+    marginTop: BOARD_PADDING,
+  },
+  infoContainerPortrait: {},
   landscape: {
     flexDirection: 'column',
   },

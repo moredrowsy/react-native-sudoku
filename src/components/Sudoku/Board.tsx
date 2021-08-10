@@ -58,7 +58,7 @@ const Board: React.FC<Props> = ({
         {emptyBoard.map((rows, row) => {
           return (
             <View key={row} style={styles.gridRowContainer}>
-              {rows.map((cols, col) => {
+              {rows.map((_, col) => {
                 const isSubRight = col !== boardSize - 1 && col % rootSize == 2;
                 const isSubBottom =
                   row !== boardSize - 1 && row % rootSize == 2;
