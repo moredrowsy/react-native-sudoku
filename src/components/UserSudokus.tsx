@@ -1,8 +1,14 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,11 +25,19 @@ import {
   removeSudokuGamesFromUserAsync,
   RootState,
 } from '../storage/store';
+import {
+  BOARD_PADDING,
+  NAVIGATION_HEADER_HEIGHT,
+  NAVIGATION_TAB_HEIGHT,
+} from '../styles';
+import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../sudoku';
 
 import { SudokuGameEntity } from '../types';
 
-import Board from './Sudoku/Board';
+import useDebounceDimensions from '../hooks/useDebounceDimensions';
+import Board, { BoardItemProps } from './Sudoku/Board';
 import LongPressHeader from './UserSudokusHeader';
+import SudokuCell from './Sudoku/SudokuCell';
 
 const UserSudokus: React.FC<Props> = ({
   loading,
@@ -59,6 +73,21 @@ const UserSudokus: React.FC<Props> = ({
         hideNavigationHeader();
       }
     }, [navigation, isLongPressed, sudokusForFlatList]);
+
+    // Get dimensions and screen orientation for board
+    const headerHeight = NAVIGATION_HEADER_HEIGHT;
+    const tabBarHeight = NAVIGATION_TAB_HEIGHT;
+
+    const dimensions = useDebounceDimensions(
+      Platform.OS === 'ios' || Platform.OS === 'android' ? 0 : DEBOUNCE_WAIT
+    );
+
+    let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
+    let effectiveWidth = dimensions.width;
+    let boardDimension = Math.min(effectiveHeight, effectiveWidth);
+
+    // Apply some padding
+    if (dimensions.isPortrait) boardDimension -= BOARD_PADDING * 2;
 
     const hideNavigationHeader = () => {
       navigation.setOptions({
@@ -139,6 +168,22 @@ const UserSudokus: React.FC<Props> = ({
       setToRemoveSet(new Set());
     };
 
+    const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
+      ({ id, item, row, col }) => (
+        <SudokuCell
+          key={col}
+          id={id}
+          userId={userId}
+          col={col}
+          row={row}
+          boardDimension={boardDimension}
+          hideSelectedColor={true}
+          isPressable={false}
+        />
+      ),
+      [userId, boardDimension]
+    );
+
     const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
       item,
       index,
@@ -164,9 +209,10 @@ const UserSudokus: React.FC<Props> = ({
           >
             <Board
               id={item.id}
-              userId={userId}
-              isPressable={false}
-              hideSelectedColor={true}
+              boardDimension={boardDimension}
+              isPortrait={true}
+              data={EMPTY_BOARDS[item.board.length]}
+              renderItem={renderBoardItem}
             />
           </TouchableOpacity>
         </View>

@@ -16,12 +16,13 @@ import {
   GAP_BETWEEN_COMPONENTS,
   SUDOKU_CELL_NORMAL_MARGIN,
 } from '../../styles';
-import { DEBOUNCE_WAIT } from '../../sudoku';
+import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
-import Board from './Board';
+import Board, { BoardItemProps } from './Board';
 import Controller from './Controller';
 import Info, { INFO_FONT_SIZE } from './Info';
+import SudokuCell from './SudokuCell';
 
 const Sudoku: React.FC<Props> = ({
   id,
@@ -92,6 +93,20 @@ const Sudoku: React.FC<Props> = ({
       dispatch(setStatusBarVisible(true));
     }, [navigation]);
 
+    const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
+      ({ id, item, row, col }) => (
+        <SudokuCell
+          key={col}
+          id={id}
+          userId={userId}
+          col={col}
+          row={row}
+          boardDimension={boardDimension}
+        />
+      ),
+      [userId, boardDimension]
+    );
+
     return (
       <View style={screenStyles.sudokuContainer}>
         <View
@@ -111,11 +126,10 @@ const Sudoku: React.FC<Props> = ({
         <View style={screenStyles.sudokuContainerForBoard}>
           <Board
             id={id}
-            userId={userId}
             boardDimension={boardDimension}
-            isPressable={true}
-            isPortrait={dimensions.isPortrait}
-            hideSelectedColor={false}
+            isPortrait={true}
+            data={EMPTY_BOARDS[boardSize]}
+            renderItem={renderBoardItem}
           />
         </View>
         <View style={screenStyles.sudokuContainerForController}>

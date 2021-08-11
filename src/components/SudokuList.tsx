@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,10 +20,18 @@ import {
   AppDispatch,
   RootState,
 } from '../storage/store';
+import SudokuCell from './Sudoku/SudokuCell';
+import {
+  BOARD_PADDING,
+  NAVIGATION_HEADER_HEIGHT,
+  NAVIGATION_TAB_HEIGHT,
+} from '../styles';
+import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../sudoku';
 
 import { SudokuGameEntity } from '../types';
 
-import Board from './Sudoku/Board';
+import useDebounceDimensions from '../hooks/useDebounceDimensions';
+import Board, { BoardItemProps } from './Sudoku/Board';
 
 const SudokuList: React.FC<Props> = ({
   sudokus,
@@ -34,6 +43,21 @@ const SudokuList: React.FC<Props> = ({
   dispatch,
 }) => {
   const sudokusForFlatList = sudokus ? Object.values(sudokus) : [];
+
+  // Get dimensions and screen orientation for board
+  const headerHeight = NAVIGATION_HEADER_HEIGHT;
+  const tabBarHeight = NAVIGATION_TAB_HEIGHT;
+
+  const dimensions = useDebounceDimensions(
+    Platform.OS === 'ios' || Platform.OS === 'android' ? 0 : DEBOUNCE_WAIT
+  );
+
+  let effectiveHeight = dimensions.height - tabBarHeight - headerHeight;
+  let effectiveWidth = dimensions.width;
+  let boardDimension = Math.min(effectiveHeight, effectiveWidth);
+
+  // Apply some padding
+  if (dimensions.isPortrait) boardDimension -= BOARD_PADDING * 2;
 
   const onPressSudoku = useCallback(
     (id: string) => {
@@ -54,29 +78,44 @@ const SudokuList: React.FC<Props> = ({
     [navigation, userId, userSudokus, sudokus]
   );
 
+  const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
+    ({ id, item, row, col }) => (
+      <SudokuCell
+        key={col}
+        id={id}
+        userId={userId}
+        col={col}
+        row={row}
+        boardDimension={boardDimension}
+        hideSelectedColor={true}
+        isPressable={false}
+      />
+    ),
+    [userId, boardDimension]
+  );
+
   const renderSudokuGameItem: ListRenderItem<SudokuGameEntity> = ({
     item,
     index,
-  }) => {
-    return (
-      <View
-        style={
-          index !== 0
-            ? theme.portrait.flatListItem
-            : theme.portrait.flatListFirstItem
-        }
-      >
-        <TouchableOpacity onPress={() => onPressSudoku(item.id)}>
-          <Board
-            id={item.id}
-            userId={userId}
-            isPressable={false}
-            hideSelectedColor={true}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  }) => (
+    <View
+      style={
+        index !== 0
+          ? theme.portrait.flatListItem
+          : theme.portrait.flatListFirstItem
+      }
+    >
+      <TouchableOpacity onPress={() => onPressSudoku(item.id)}>
+        <Board
+          id={item.id}
+          boardDimension={boardDimension}
+          isPortrait={true}
+          data={EMPTY_BOARDS[item.board.length]}
+          renderItem={renderBoardItem}
+        />
+      </TouchableOpacity>
+    </View>
+  );
 
   if (!loading)
     return (

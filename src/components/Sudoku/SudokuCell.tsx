@@ -69,19 +69,15 @@ const SudokuCell: React.FC<Props> = ({
   };
 
   return (
-    <>
-      {sudokuCell && (
-        <Cell
-          value={sudokuCell.value}
-          backgroundColor={bgColor}
-          opacityColor={opColor}
-          textColor={txtColor}
-          boardDimension={boardDimension}
-          isPressable={isPressable && sudokuCell.mutable}
-          onPress={onCellPress}
-        />
-      )}
-    </>
+    <Cell
+      value={sudokuCell.value}
+      backgroundColor={bgColor}
+      opacityColor={opColor}
+      textColor={txtColor}
+      boardDimension={boardDimension}
+      isPressable={isPressable && sudokuCell.mutable}
+      onPress={onCellPress}
+    />
   );
 };
 
@@ -92,7 +88,7 @@ interface OwnProps {
   row: number;
   boardDimension: number;
   hideSelectedColor?: boolean;
-  isPressable: boolean;
+  isPressable?: boolean;
 }
 
 const mapState = (

@@ -102,12 +102,12 @@ function isInSudokuSubgrid(
   number: number,
   board: SudokuCellEntity[][]
 ) {
-  const rootSize = Math.sqrt(board.length);
-  const rowIdx = row - (row % rootSize);
-  const colIdx = col - (col % rootSize);
+  const subgridSize = Math.sqrt(board.length);
+  const rowIdx = row - (row % subgridSize);
+  const colIdx = col - (col % subgridSize);
 
-  for (let i = rowIdx; i < rowIdx + rootSize; ++i)
-    for (let j = colIdx; j < colIdx + rootSize; ++j)
+  for (let i = rowIdx; i < rowIdx + subgridSize; ++i)
+    for (let j = colIdx; j < colIdx + subgridSize; ++j)
       if (board[i][j].value === number) return true;
 
   return false;
@@ -122,11 +122,11 @@ export function getIsCellInSelected(
   let isInRow = false;
 
   if (selCel.col > -1 && selCel.row > -1) {
-    const rootSize = Math.sqrt(boardSize);
-    const colIdx = cell.col - (cell.col % rootSize);
-    const rowIdx = cell.row - (cell.row % rootSize);
-    const selColIdx = selCel.col - (selCel.col % rootSize);
-    const selRowIdx = selCel.row - (selCel.row % rootSize);
+    const subgridSize = Math.sqrt(boardSize);
+    const colIdx = cell.col - (cell.col % subgridSize);
+    const rowIdx = cell.row - (cell.row % subgridSize);
+    const selColIdx = selCel.col - (selCel.col % subgridSize);
+    const selRowIdx = selCel.row - (selCel.row % subgridSize);
     isInCol = colIdx === selColIdx;
     isInRow = rowIdx === selRowIdx;
   }
