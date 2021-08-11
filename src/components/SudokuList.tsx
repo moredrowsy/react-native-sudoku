@@ -31,7 +31,7 @@ import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../sudoku';
 import { SudokuGameEntity } from '../types';
 
 import useDebounceDimensions from '../hooks/useDebounceDimensions';
-import Board, { BoardItemProps } from './Sudoku/Board';
+import Grid, { GridItemProps } from './Sudoku/Grid';
 
 const SudokuList: React.FC<Props> = ({
   sudokus,
@@ -78,15 +78,14 @@ const SudokuList: React.FC<Props> = ({
     [navigation, userId, userSudokus, sudokus]
   );
 
-  const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
-    ({ id, item, row, col }) => (
+  const renderGridItem: React.FC<GridItemProps<number>> = useCallback(
+    ({ id, col, row, rowCellDimension }) => (
       <SudokuCell
-        key={col}
         id={id}
         userId={userId}
         col={col}
         row={row}
-        boardDimension={boardDimension}
+        dimension={rowCellDimension}
         hideSelectedColor={true}
         isPressable={false}
       />
@@ -106,12 +105,13 @@ const SudokuList: React.FC<Props> = ({
       }
     >
       <TouchableOpacity onPress={() => onPressSudoku(item.id)}>
-        <Board
+        <Grid
           id={item.id}
-          boardDimension={boardDimension}
-          isPortrait={true}
+          colDimension={boardDimension}
+          rowDimension={boardDimension}
           data={EMPTY_BOARDS[item.board.length]}
-          renderItem={renderBoardItem}
+          isPortrait={true}
+          renderItem={renderGridItem}
         />
       </TouchableOpacity>
     </View>

@@ -19,7 +19,7 @@ import {
 import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../../sudoku';
 
 import useDebounceDimensions from '../../hooks/useDebounceDimensions';
-import Board, { BoardItemProps } from './Board';
+import Grid, { GridItemProps } from './Grid';
 import Controller from './Controller';
 import Info, { INFO_FONT_SIZE } from './Info';
 import SudokuCell from './SudokuCell';
@@ -88,20 +88,21 @@ const Sudoku: React.FC<Props> = ({
     // Apply some padding
     boardDimension -= BOARD_PADDING * 2;
 
+    const cellDimension = boardDimension / boardSize;
+
     const onGoBack = useCallback(() => {
       navigation.goBack();
       dispatch(setStatusBarVisible(true));
     }, [navigation]);
 
-    const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
+    const renderGridItem: React.FC<GridItemProps<number>> = useCallback(
       ({ id, item, row, col }) => (
         <SudokuCell
-          key={col}
           id={id}
           userId={userId}
           col={col}
           row={row}
-          boardDimension={boardDimension}
+          dimension={cellDimension}
         />
       ),
       [userId, boardDimension]
@@ -119,17 +120,19 @@ const Sudoku: React.FC<Props> = ({
             id={id}
             userId={userId}
             boardDimension={boardDimension}
+            boardSize={boardSize}
             isPortrait={dimensions.isPortrait}
             onGoBack={onGoBack}
           />
         </View>
-        <View style={screenStyles.sudokuContainerForBoard}>
-          <Board
+        <View style={screenStyles.sudokuContainerForGrid}>
+          <Grid
             id={id}
-            boardDimension={boardDimension}
-            isPortrait={true}
+            colDimension={boardDimension}
+            rowDimension={boardDimension}
             data={EMPTY_BOARDS[boardSize]}
-            renderItem={renderBoardItem}
+            isPortrait={true}
+            renderItem={renderGridItem}
           />
         </View>
         <View style={screenStyles.sudokuContainerForController}>
@@ -152,13 +155,13 @@ type HomeScreenNavigationProp = StackNavigationProp<
 >;
 type HomeScreenRouteProp = RouteProp<RootStackParamsList, 'Sudoku'>;
 
-interface OwnProps {
+type OwnProps = {
   id: string;
   boardSize: number;
   isPortrait: boolean;
   navigation: HomeScreenNavigationProp;
   route: HomeScreenRouteProp;
-}
+};
 
 const mapState = ({ status, theme, users }: RootState, { route }: OwnProps) => {
   const id = route.params.id;

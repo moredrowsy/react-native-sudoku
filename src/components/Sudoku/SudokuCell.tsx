@@ -16,7 +16,7 @@ const SudokuCell: React.FC<Props> = ({
   id,
   userId,
   sudokuCell,
-  boardDimension,
+  dimension,
   hideSelectedColor = false,
   isPressable = true,
   isCellInSelected,
@@ -74,22 +74,22 @@ const SudokuCell: React.FC<Props> = ({
       backgroundColor={bgColor}
       opacityColor={opColor}
       textColor={txtColor}
-      boardDimension={boardDimension}
+      dimension={dimension}
       isPressable={isPressable && sudokuCell.mutable}
       onPress={onCellPress}
     />
   );
 };
 
-interface OwnProps {
+type OwnProps = {
   id: string;
   userId?: string;
   col: number;
   row: number;
-  boardDimension: number;
+  dimension: number;
   hideSelectedColor?: boolean;
   isPressable?: boolean;
-}
+};
 
 const mapState = (
   { sudokus, theme, users }: RootState,

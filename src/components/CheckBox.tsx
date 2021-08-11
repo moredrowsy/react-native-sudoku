@@ -47,11 +47,11 @@ const CheckBox: React.FC<Props> = ({
 
 export default CheckBox;
 
-interface Props {
+type Props = {
   disabled?: boolean;
   onValueChange: (value: boolean) => void;
   value: boolean;
   style?: StyleProp<any>;
   onColor?: string;
   offColor?: string;
-}
+};

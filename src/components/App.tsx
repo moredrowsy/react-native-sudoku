@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface OwnProps {}
+type OwnProps = {};
 
 const mapState = ({ status, theme }: RootState) => ({
   theme,

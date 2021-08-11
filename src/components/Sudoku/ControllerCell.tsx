@@ -7,7 +7,7 @@ import Cell from './Cell';
 
 const SudokuCell: React.FC<Props> = ({
   value,
-  boardDimension,
+  dimension,
   isPressable = true,
   isReveal = false,
   isAnswer,
@@ -39,25 +39,25 @@ const SudokuCell: React.FC<Props> = ({
       backgroundColor={bgColor}
       opacityColor={opColor}
       textColor={txtColor}
-      boardDimension={boardDimension}
+      dimension={dimension}
       isPressable={isPressable}
       onPress={onPress}
     />
   );
 };
 
-interface OwnProps {
+type OwnProps = {
   id: string;
   userId?: string | null;
   col: number;
   row: number;
   value: number;
-  boardDimension: number;
+  dimension: number;
   isPressable: boolean;
   isReveal: boolean;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
-}
+};
 
 const mapState = (
   { options, theme, users }: RootState,

@@ -13,10 +13,10 @@ const StatusBar: React.FC<Props> = ({ statusBarVisible, theme }) => {
   );
 };
 
-interface OwnProps {
+type OwnProps = {
   backgroundColor: string;
   barStyle: StatusBarStyle;
-}
+};
 
 const mapState = ({ status, theme }: RootState) => ({
   theme,

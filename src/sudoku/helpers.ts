@@ -16,13 +16,13 @@ export function copySudokuGameSolution(
   sourceGame: SudokuGameEntity,
   targetGame: SudokuGameEntity
 ) {
-  const sourceBoard = sourceGame.board;
-  const targetBoard = targetGame.board;
+  const sourceGrid = sourceGame.board;
+  const targetGrid = targetGame.board;
 
-  if (sourceBoard.length === targetBoard.length) {
-    for (let i = 0; i < sourceBoard.length; ++i) {
-      for (let j = 0; j < sourceBoard.length; ++j) {
-        targetBoard[i][j].answer = sourceBoard[i][j].answer;
+  if (sourceGrid.length === targetGrid.length) {
+    for (let i = 0; i < sourceGrid.length; ++i) {
+      for (let j = 0; j < sourceGrid.length; ++j) {
+        targetGrid[i][j].answer = sourceGrid[i][j].answer;
       }
     }
   }

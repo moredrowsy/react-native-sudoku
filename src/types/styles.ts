@@ -25,7 +25,7 @@ export interface CellColors {
 
 export interface CellStyles {
   sudokuContainer: ViewStyle;
-  sudokuContainerForBoard: ViewStyle;
+  sudokuContainerForGrid: ViewStyle;
   sudokuContainerForController: ViewStyle;
   sudokuContainerForInfo: ViewStyle;
   // Grid
@@ -40,9 +40,6 @@ export interface CellStyles {
   gridColFirstRowSubRight: ViewStyle;
   gridColTopLeft: ViewStyle;
   gridColCornerSubRightBottom: ViewStyle;
-  gridRowControllerContainer: ViewStyle;
-  gridColControllerFirstCell: ViewStyle;
-  gridColController: ViewStyle;
   // Controller.tsx styles
   controlCellsContainer: ViewStyle;
   controlCellsContainerHide: ViewStyle;

@@ -35,7 +35,7 @@ import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../sudoku';
 import { SudokuGameEntity } from '../types';
 
 import useDebounceDimensions from '../hooks/useDebounceDimensions';
-import Board, { BoardItemProps } from './Sudoku/Board';
+import Grid, { GridItemProps } from './Sudoku/Grid';
 import LongPressHeader from './UserSudokusHeader';
 import SudokuCell from './Sudoku/SudokuCell';
 
@@ -168,15 +168,14 @@ const UserSudokus: React.FC<Props> = ({
       setToRemoveSet(new Set());
     };
 
-    const renderBoardItem: React.FC<BoardItemProps<number>> = useCallback(
-      ({ id, item, row, col }) => (
+    const renderGridItem: React.FC<GridItemProps<number>> = useCallback(
+      ({ id, col, row, rowCellDimension }) => (
         <SudokuCell
-          key={col}
           id={id}
           userId={userId}
           col={col}
           row={row}
-          boardDimension={boardDimension}
+          dimension={rowCellDimension}
           hideSelectedColor={true}
           isPressable={false}
         />
@@ -207,12 +206,13 @@ const UserSudokus: React.FC<Props> = ({
             onPress={() => onPressSudoku(item.id)}
             onLongPress={() => onLongPressSudoku(item.id)}
           >
-            <Board
+            <Grid
               id={item.id}
-              boardDimension={boardDimension}
-              isPortrait={true}
+              colDimension={boardDimension}
+              rowDimension={boardDimension}
               data={EMPTY_BOARDS[item.board.length]}
-              renderItem={renderBoardItem}
+              isPortrait={true}
+              renderItem={renderGridItem}
             />
           </TouchableOpacity>
         </View>

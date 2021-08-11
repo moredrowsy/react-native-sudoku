@@ -9,7 +9,7 @@ const Cell: React.FC<Props> = ({
   backgroundColor,
   opacityColor,
   textColor,
-  boardDimension,
+  dimension,
   hideZero = true,
   isPressable,
   onPress,
@@ -18,7 +18,7 @@ const Cell: React.FC<Props> = ({
   const innerContainer: ViewStyle = { backgroundColor: backgroundColor };
   const textStyle: TextStyle = {
     color: textColor,
-    fontSize: boardDimension / 12,
+    fontSize: dimension * 0.75,
   };
 
   return (
@@ -45,16 +45,16 @@ const Cell: React.FC<Props> = ({
 
 export default Cell;
 
-interface Props {
+type Props = {
   value: number;
   backgroundColor: string;
   opacityColor: string;
   textColor: string;
-  boardDimension: number;
+  dimension: number;
   hideZero?: boolean;
   isPressable: boolean;
   onPress?: () => void;
-}
+};
 
 const styles = StyleSheet.create({
   container: {

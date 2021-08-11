@@ -22,6 +22,7 @@ const Info: React.FC<Props> = ({
   id,
   userId,
   boardDimension,
+  boardSize,
   defaultHasSolution,
   defaultScore,
   isPortrait,
@@ -42,7 +43,7 @@ const Info: React.FC<Props> = ({
 
     const completeMsg = 'Completed!';
 
-    const cellSize = boardDimension / 9;
+    const cellDimension = boardDimension / boardSize;
 
     return (
       <View
@@ -60,7 +61,7 @@ const Info: React.FC<Props> = ({
           <TouchableOpacity onPress={onGoBack}>
             <Ionicons
               name='arrow-back'
-              size={cellSize}
+              size={cellDimension}
               color={theme.colors.primary}
             />
           </TouchableOpacity>
@@ -139,24 +140,25 @@ const styles = StyleSheet.create({
   },
 });
 
-interface OwnProps {
+type OwnProps = {
   id: string;
   userId: string;
   boardDimension: number;
+  boardSize: number;
   isPortrait: boolean;
   onGoBack: () => void;
-}
+};
 
 const mapState = (
   { users, sudokus, theme }: RootState,
-  { id, userId }: OwnProps
+  { id, userId, boardSize }: OwnProps
 ) => {
-  const boardSize = users[userId].sudokus[id]?.board.length;
   const total = boardSize * boardSize;
 
   return {
     id,
     userId,
+    boardSize,
     defaultHasSolution: sudokus[id]?.hasSolution,
     defaultScore: users[userId].sudokus[id]?.defaultScore,
     theme,

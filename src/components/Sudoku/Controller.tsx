@@ -21,6 +21,7 @@ import {
 } from '../../sudoku';
 
 import ControllerCell from './ControllerCell';
+import Grid, { GridItemProps } from './Grid';
 
 const Controller: React.FC<Props> = ({
   id,
@@ -47,7 +48,7 @@ const Controller: React.FC<Props> = ({
     const { col, row } = selectedCell;
     const { board } = sudoku;
     const boardSize = board.length;
-    const cellSize = boardDimension / 9;
+    const cellDimension = boardDimension / boardSize;
 
     // Set screenStyles theme based on screen type
     const screenStyles = isPortrait ? theme.portrait : theme.landscape;
@@ -69,6 +70,9 @@ const Controller: React.FC<Props> = ({
     if (isValidIndices) {
       unique = getAvailableCells(col, row, board);
     }
+
+    // Grid only accepts 2d array.
+    const data = [emptyRows];
 
     const onCellPress = (value: number) => {
       if (isValidIndices && userId) {
@@ -119,6 +123,20 @@ const Controller: React.FC<Props> = ({
       );
     };
 
+    const renderGridItem: React.FC<GridItemProps<number>> = ({ id, item }) => (
+      <ControllerCell
+        id={id}
+        userId={userId}
+        col={col}
+        row={row}
+        value={item + 1}
+        dimension={cellDimension}
+        isPressable={isValidIndices && unique.has(item + 1)}
+        isReveal={reveal}
+        onPress={() => onCellPress(item + 1)}
+      />
+    );
+
     return (
       <View style={screenStyles.controllContainer}>
         <View
@@ -128,49 +146,16 @@ const Controller: React.FC<Props> = ({
               : screenStyles.controlCellsContainerHide
           }
         >
-          <View
-            style={
-              isPortrait
-                ? {
-                    height: cellSize,
-                    width: boardDimension,
-                  }
-                : {
-                    height: boardDimension,
-                    width: cellSize,
-                  }
-            }
-          >
-            <View style={screenStyles.gridContainer}>
-              <View style={screenStyles.gridRowControllerContainer}>
-                {emptyRows.map((controlValue, index) => {
-                  let cStyle = screenStyles.gridColControllerFirstCell;
-
-                  if (index !== 0) cStyle = screenStyles.gridColController;
-
-                  return (
-                    <View key={index} style={cStyle}>
-                      <ControllerCell
-                        id={id}
-                        userId={userId}
-                        col={col}
-                        row={row}
-                        value={controlValue + 1}
-                        boardDimension={boardDimension}
-                        isPressable={
-                          isValidIndices && unique.has(controlValue + 1)
-                        }
-                        isReveal={reveal}
-                        onPress={() => onCellPress(controlValue + 1)}
-                      />
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
-          </View>
+          <Grid
+            id={id}
+            colDimension={cellDimension}
+            rowDimension={boardDimension}
+            isPortrait={isPortrait}
+            data={data}
+            renderItem={renderGridItem}
+          />
         </View>
-        <View style={{ width: cellSize, height: cellSize }}></View>
+        <View style={{ width: cellDimension, height: cellDimension }}></View>
         <View
           style={
             !isValidIndices
@@ -184,7 +169,7 @@ const Controller: React.FC<Props> = ({
           >
             <AntDesign
               name='closesquareo'
-              size={cellSize}
+              size={cellDimension}
               color={
                 isValidIndices && selectedValue !== SUDOKU_EMPTY_CELL
                   ? theme.colors.remove
@@ -192,7 +177,7 @@ const Controller: React.FC<Props> = ({
               }
             />
           </TouchableOpacity>
-          <View style={{ width: cellSize, height: cellSize }}></View>
+          <View style={{ width: cellDimension, height: cellDimension }}></View>
 
           <TouchableOpacity
             onPress={onReset}
@@ -202,7 +187,7 @@ const Controller: React.FC<Props> = ({
           >
             <MaterialCommunityIcons
               name='restart'
-              size={cellSize}
+              size={cellDimension}
               color={
                 sudoku.defaultScore === sudoku.userScore
                   ? theme.colors.inactive
@@ -210,7 +195,7 @@ const Controller: React.FC<Props> = ({
               }
             />
           </TouchableOpacity>
-          <View style={{ width: cellSize, height: cellSize }}></View>
+          <View style={{ width: cellDimension, height: cellDimension }}></View>
           <Pressable
             onPressIn={() => setReveal(true)}
             onPressOut={() => setReveal(false)}
@@ -220,7 +205,7 @@ const Controller: React.FC<Props> = ({
           >
             <Ionicons
               name={eyeIconName as any}
-              size={cellSize}
+              size={cellDimension}
               color={
                 sudoku.hasSolution && reveal && options.showReveal
                   ? theme.colors.reveal
@@ -228,14 +213,14 @@ const Controller: React.FC<Props> = ({
               }
             />
           </Pressable>
-          <View style={{ width: cellSize, height: cellSize }}></View>
+          <View style={{ width: cellDimension, height: cellDimension }}></View>
           <TouchableOpacity
             onPress={toggleShowHints}
             disabled={!isValidIndices || !(options.showHints || showHints)}
           >
             <MaterialCommunityIcons
               name={hintsIconName as any}
-              size={cellSize}
+              size={cellDimension}
               color={
                 options.showHints && showHints
                   ? theme.colors.showHints
@@ -251,12 +236,12 @@ const Controller: React.FC<Props> = ({
   }
 };
 
-interface OwnProps {
+type OwnProps = {
   id: string;
   userId: string;
   boardDimension: number;
   isPortrait: boolean;
-}
+};
 
 const mapState = (
   { options, theme, users }: RootState,

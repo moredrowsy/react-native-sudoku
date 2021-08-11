@@ -55,7 +55,7 @@ export type RootStackParamsList = {
   Sudoku: { title: string; id: string };
 };
 
-interface OwnProps {}
+type OwnProps = {};
 
 const mapState = ({ theme }: RootState) => ({
   theme,
