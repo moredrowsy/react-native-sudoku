@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSXElementConstructor } from 'react';
 import { TextStyle } from 'react-native';
 import { ViewStyle } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,7 +10,7 @@ const Cell: React.FC<Props> = ({
   opacityColor,
   textColor,
   dimension,
-  hideZero = true,
+  hideEmpty = true,
   isPressable,
   onPress,
 }) => {
@@ -21,24 +21,20 @@ const Cell: React.FC<Props> = ({
     fontSize: dimension * 0.75,
   };
 
+  const CellView: JSXElementConstructor<any> = isPressable
+    ? TouchableOpacity
+    : View;
+
   return (
     <View style={[styles.container, outerContainer]}>
-      {isPressable ? (
-        <TouchableOpacity
-          style={[styles.innerContainer, innerContainer]}
-          onPress={onPress}
-        >
-          <Text style={[styles.textStyle, textStyle]}>
-            {value === SUDOKU_EMPTY_CELL ? ' ' : value}
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <View style={[styles.innerContainer, innerContainer]}>
-          <Text style={[styles.textStyle, textStyle]}>
-            {value === SUDOKU_EMPTY_CELL && hideZero ? ' ' : value}
-          </Text>
-        </View>
-      )}
+      <CellView
+        style={[styles.innerContainer, innerContainer]}
+        onPress={onPress}
+      >
+        <Text style={[styles.textStyle, textStyle]}>
+          {value === SUDOKU_EMPTY_CELL && hideEmpty ? ' ' : value}
+        </Text>
+      </CellView>
     </View>
   );
 };
@@ -51,7 +47,7 @@ type Props = {
   opacityColor: string;
   textColor: string;
   dimension: number;
-  hideZero?: boolean;
+  hideEmpty?: boolean;
   isPressable: boolean;
   onPress?: () => void;
 };
