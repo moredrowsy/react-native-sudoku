@@ -1,6 +1,10 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from '@expo/vector-icons';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RouteProp } from '@react-navigation/native';
@@ -8,15 +12,16 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamsList } from './RootStack';
 
 import { AppDispatch, RootState } from '../../storage/store';
-
-import AppOptions from '../AppOptions';
-import SudokuList from '../SudokuList';
-import UserSudokus from '../UserSudokus';
 import {
   NAVIGATION_HEADER_FONT_SIZE,
   NAVIGATION_HEADER_HEIGHT,
   NAVIGATION_TAB_HEIGHT,
 } from '../../styles';
+
+import AppOptions from '../AppOptions';
+import NewGame from '../Sudoku/NewGame';
+import SudokuList from '../SudokuList';
+import UserSudokus from '../UserSudokus';
 
 const Tab = createBottomTabNavigator<TabsParamList>();
 
@@ -71,6 +76,16 @@ const Tabs: React.FC<Props> = ({ theme }) => {
         }}
       />
       <Tab.Screen
+        name='NewGame'
+        component={NewGame}
+        options={{
+          title: 'Create',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name='create' color={color} size={30} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name='AppOptions'
         component={AppOptions}
         options={{
@@ -85,20 +100,18 @@ const Tabs: React.FC<Props> = ({ theme }) => {
 };
 
 export type TabsParamList = {
+  AppOptions: { title: string };
+  NewGame: { title: string };
   SudokuList: { title: string };
   UserSudokus: { title: string };
-  AppOptions: { title: string };
 };
 
-type TabsScreenNavigationProp = StackNavigationProp<
-  RootStackParamsList,
-  'Tabs'
->;
-type TabsScreenRouteProp = RouteProp<RootStackParamsList, 'Tabs'>;
+type TabsNavigationProp = StackNavigationProp<RootStackParamsList, 'Tabs'>;
+type TabsRouteProp = RouteProp<RootStackParamsList, 'Tabs'>;
 
 type OwnProps = {
-  navigtation: TabsScreenNavigationProp;
-  route: TabsScreenRouteProp;
+  navigtation: TabsNavigationProp;
+  route: TabsRouteProp;
 };
 
 const mapState = ({ theme }: RootState) => ({

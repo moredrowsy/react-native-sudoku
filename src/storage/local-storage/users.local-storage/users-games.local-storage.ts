@@ -1,11 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  restoreSudokuGameUser,
-  updateSudokuCellValueAndScore,
-} from '../../../sudoku';
 import { SudokuGameEntity } from '../../../types';
 import { getUserStorageKey } from './users.local-storage';
 
+// NOTE: Key is derived by appending to USERS_STORAGE_KEY
 const storageName = 'games';
 
 export function getUserGameStorageKey(userId: string, sudokuId?: string) {
@@ -86,17 +83,6 @@ export async function removeAllSudokuGamesFromUser(userId: string) {
   }
 }
 
-export async function resetSudokuGameFromUser(
-  userId: string,
-  sudokuId: string
-) {
-  const { key, game } = await getUserGame(userId, sudokuId);
-  if (game) {
-    restoreSudokuGameUser(game);
-    return AsyncStorage.setItem(key, JSON.stringify(game));
-  }
-}
-
 // Overwrites original game
 export async function saveSudokuGameToUser(
   userId: string,
@@ -104,30 +90,4 @@ export async function saveSudokuGameToUser(
 ) {
   const key = getUserGameStorageKey(userId, sudoku.id);
   return AsyncStorage.setItem(key, JSON.stringify(sudoku));
-}
-
-export async function updateShowHintsForGame(
-  userId: string,
-  sudokuId: string,
-  showHints: boolean
-) {
-  const { key, game } = await getUserGame(userId, sudokuId);
-  if (game) {
-    game.showHints = showHints;
-    return AsyncStorage.setItem(key, JSON.stringify(game));
-  }
-}
-
-export async function updateSudokuGameValue(
-  userId: string,
-  sudokuId: string,
-  col: number,
-  row: number,
-  value: number
-) {
-  const { key, game } = await getUserGame(userId, sudokuId);
-  if (game) {
-    updateSudokuCellValueAndScore(game, col, row, value);
-    return AsyncStorage.setItem(key, JSON.stringify(game));
-  }
 }

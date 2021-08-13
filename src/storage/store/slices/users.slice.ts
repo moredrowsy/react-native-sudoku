@@ -12,7 +12,7 @@ import {
 } from '../../../sudoku';
 import {
   AppStatus,
-  CellEntity,
+  SudokuCellEntity,
   SudokuGameEntity,
   SudokuUserEntity,
   UserEntity,
@@ -93,13 +93,18 @@ const users = createSlice({
     // Reset game to default values and score
     resetSudokuGameFromUser: (
       state,
-      action: PayloadAction<{ userId: string; sudokuId: string }>
+      action: PayloadAction<{
+        userId: string;
+        sudokuId: string;
+        onSuccess?: (sudoku: SudokuGameEntity) => void;
+      }>
     ) => {
-      const { userId, sudokuId } = action.payload;
+      const { userId, sudokuId, onSuccess } = action.payload;
 
       if (userId in state && sudokuId in state[userId].sudokus) {
         const sudoku = state[userId].sudokus[sudokuId];
         restoreSudokuGameUser(sudoku);
+        if (onSuccess) onSuccess(sudoku);
       }
     },
     // Overwrites original sudoku user
@@ -119,14 +124,14 @@ const users = createSlice({
     updateSelectedCellForGame: (
       state,
       action: PayloadAction<{
-        cell: CellEntity;
+        selectedCell: SudokuCellEntity | null;
         userId: string;
         sudokuId: string;
       }>
     ) => {
-      const { cell, sudokuId, userId } = action.payload;
+      const { selectedCell, sudokuId, userId } = action.payload;
       if (userId in state && sudokuId in state[userId].sudokus) {
-        state[userId].sudokus[sudokuId].selectedCell = cell;
+        state[userId].sudokus[sudokuId].selectedCell = selectedCell;
         return state;
       }
     },
@@ -136,11 +141,15 @@ const users = createSlice({
         userId: string;
         sudokuId: string;
         showHints: boolean;
+        onSuccess?: (sudoku: SudokuGameEntity) => void;
       }>
     ) => {
-      const { sudokuId, userId } = action.payload;
+      const { sudokuId, userId, onSuccess } = action.payload;
       if (userId && userId in state && sudokuId in state[userId].sudokus) {
-        state[userId].sudokus[sudokuId].showHints = action.payload.showHints;
+        const sudoku = state[userId].sudokus[sudokuId];
+        sudoku.showHints = action.payload.showHints;
+
+        if (onSuccess) onSuccess(sudoku);
         return state;
       }
     },
@@ -152,12 +161,14 @@ const users = createSlice({
         col: number;
         row: number;
         value: number;
+        onSuccess?: (sudoku: SudokuGameEntity) => void;
       }>
     ) => {
-      const { userId, sudokuId, col, row, value } = action.payload;
+      const { userId, sudokuId, col, row, value, onSuccess } = action.payload;
       if (userId in state && sudokuId in state[userId].sudokus) {
         const sudoku = state[userId].sudokus[sudokuId];
         updateSudokuCellValueAndScore(sudoku, col, row, value);
+        if (onSuccess) onSuccess(sudoku);
       }
     },
   },
@@ -319,8 +330,14 @@ export const resetSudokuGameFromUserAsync =
     onError?: (msg: string) => void
   ): AppThunk =>
   async (dispatch) => {
-    LocalStorage.users.resetSudokuGameFromUser(userId, sudokuId);
-    dispatch(resetSudokuGameFromUser({ userId, sudokuId }));
+    dispatch(
+      resetSudokuGameFromUser({
+        userId,
+        sudokuId,
+        onSuccess: (sudoku) =>
+          LocalStorage.users.saveSudokuGameToUser(userId, sudoku),
+      })
+    );
 
     try {
       if (onSuccess) onSuccess();
@@ -377,7 +394,7 @@ export const saveSudokuGameToUserAsync =
 
 export const setDefaultUsersAsync =
   (status: AppStatus): AppThunk =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     const username = 'Default';
     const defaultUser: UserEntity = { name: username, username };
     LocalStorage.users.addUser(defaultUser);
@@ -411,7 +428,6 @@ export const updateSudokuGameValueAsync =
     onError?: (msg: string) => void
   ): AppThunk =>
   async (dispatch) => {
-    LocalStorage.users.updateSudokuGameValue(userId, sudokuId, col, row, value);
     dispatch(
       updateSudokuGameValue({
         userId,
@@ -419,6 +435,8 @@ export const updateSudokuGameValueAsync =
         col,
         row,
         value,
+        onSuccess: (sudoku) =>
+          LocalStorage.users.saveSudokuGameToUser(userId, sudoku),
       })
     );
 
@@ -443,9 +461,16 @@ export const updateShowHintsForGameAsync =
     sudokuId: string;
     showHints: boolean;
   }): AppThunk =>
-  async (dispatch, getState) => {
-    LocalStorage.users.updateShowHintsForGame(userId, sudokuId, showHints);
-    dispatch(updateShowHintsForGame({ userId, sudokuId, showHints }));
+  async (dispatch) => {
+    dispatch(
+      updateShowHintsForGame({
+        userId,
+        sudokuId,
+        showHints,
+        onSuccess: (sudoku) =>
+          LocalStorage.users.saveSudokuGameToUser(userId, sudoku),
+      })
+    );
   };
 
 export const initSudokuUserAsync =

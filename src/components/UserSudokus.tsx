@@ -31,8 +31,8 @@ import {
   NAVIGATION_TAB_HEIGHT,
 } from '../styles';
 import { DEBOUNCE_WAIT, EMPTY_BOARDS } from '../sudoku';
-
 import { SudokuGameEntity } from '../types';
+import { ellipseStr } from '../utils';
 
 import useDebounceDimensions from '../hooks/useDebounceDimensions';
 import Grid, { GridItemProps } from './Sudoku/Grid';
@@ -138,9 +138,9 @@ const UserSudokus: React.FC<Props> = ({
       } else {
         navigation.dispatch(
           CommonActions.navigate({
-            name: 'Sudoku',
+            name: 'Game',
             params: {
-              title: `Sudoku ${id}`,
+              title: `Sudoku ${ellipseStr(id, 15)}`,
               id,
             },
           })
@@ -255,15 +255,15 @@ const styles = StyleSheet.create({
   },
 });
 
-type HomeScreenNavigationProp = BottomTabNavigationProp<
+type UserSudokuNavigationProp = BottomTabNavigationProp<
   TabsParamList,
   'UserSudokus'
 >;
-type HomeScreenRouteProp = RouteProp<TabsParamList, 'UserSudokus'>;
+type UserSudokuRouteProp = RouteProp<TabsParamList, 'UserSudokus'>;
 
 type OwnProps = {
-  navigation: HomeScreenNavigationProp;
-  route: HomeScreenRouteProp;
+  navigation: UserSudokuNavigationProp;
+  route: UserSudokuRouteProp;
 };
 
 const mapState = ({ status, theme, users }: RootState) => ({

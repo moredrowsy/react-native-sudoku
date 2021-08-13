@@ -9,7 +9,6 @@ export async function getOptions() {
   return item ? (JSON.parse(item) as AppOptions) : null;
 }
 
-// Only add game if it does not exist
 export async function setOptions(status: AppOptions) {
   return AsyncStorage.setItem(OPTIONS_STORGE_KEY, JSON.stringify(status));
 }

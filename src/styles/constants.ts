@@ -1,5 +1,6 @@
 export const BOARD_PADDING = 15;
 export const GAP_BETWEEN_COMPONENTS = 20;
+export const INFO_FONT_SIZE = 20;
 export const NAVIGATION_HEADER_HEIGHT = 35;
 export const NAVIGATION_HEADER_FONT_SIZE = 20;
 export const NAVIGATION_TAB_HEIGHT = 50;

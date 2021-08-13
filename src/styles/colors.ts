@@ -30,3 +30,38 @@ export const teal = '#009688';
 export const lightTeal = '#b2dfdb';
 export const white = '#ffffff';
 export const yellow = '#ffc107';
+
+export const colorsMap = {
+  amber,
+  lightAmber,
+  black,
+  lightBlack,
+  blue,
+  lightBlue,
+  brown,
+  lightBrown,
+  blueGrey,
+  lightBlueGrey,
+  cyan,
+  lightCyan,
+  deepPurple,
+  lightDeepPurple,
+  deepOrange,
+  lightDeepOrange,
+  gray,
+  lightGray,
+  green,
+  lightGreen,
+  indigo,
+  lightIndigo,
+  pink,
+  lightPink,
+  purple,
+  lightPurple,
+  red,
+  lightRed,
+  teal,
+  lightTeal,
+  white,
+  yellow,
+};

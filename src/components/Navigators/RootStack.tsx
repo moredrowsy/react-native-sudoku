@@ -9,7 +9,7 @@ import {
 } from '../../styles';
 
 import Tabs from './Tabs';
-import Sudoku from '../Sudoku';
+import Game from '../Sudoku/Game';
 
 const Stack = createStackNavigator<RootStackParamsList>();
 
@@ -36,8 +36,8 @@ const RootStack: React.FC<Props> = ({ theme }) => {
         // initialParams={{ theme: theme }}
       />
       <Stack.Screen
-        name='Sudoku'
-        component={Sudoku}
+        name='Game'
+        component={Game}
         initialParams={{
           title: 'Sudoku',
         }}
@@ -52,7 +52,7 @@ const RootStack: React.FC<Props> = ({ theme }) => {
 
 export type RootStackParamsList = {
   Tabs: undefined; // { theme: Theme }; <-- Can pass additional props via initialParams to Tabs component
-  Sudoku: { title: string; id: string };
+  Game: { title: string; id: string };
 };
 
 type OwnProps = {};

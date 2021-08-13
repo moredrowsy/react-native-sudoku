@@ -1,4 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import newSudoku from './slices/newSudoku.slice';
 import options from './slices/options.slice';
 import status from './slices/status.slice';
 import theme from './slices/theme.slice';
@@ -7,6 +8,7 @@ import users from './slices/users.slice';
 
 export const store = configureStore({
   reducer: {
+    newSudoku,
     options,
     status,
     theme,

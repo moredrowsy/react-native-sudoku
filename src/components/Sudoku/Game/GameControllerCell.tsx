@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
-import { AppDispatch, RootState } from '../../storage/store';
+import { AppDispatch, RootState } from '../../../storage/store';
+import { SudokuCellEntity } from '../../../types';
 
-import Cell from './Cell';
+import Cell from '../Cell';
 
-const SudokuCell: React.FC<Props> = ({
+const GameControllerCell: React.FC<Props> = ({
   value,
   dimension,
   isPressable = true,
@@ -48,32 +49,29 @@ const SudokuCell: React.FC<Props> = ({
 
 type OwnProps = {
   id: string;
-  userId?: string | null;
-  col: number;
-  row: number;
+  userId: string;
+  selectedCell: SudokuCellEntity | null;
   value: number;
   dimension: number;
   isPressable: boolean;
   isReveal: boolean;
   onPress?: () => void;
-  style?: StyleProp<ViewStyle>;
 };
 
 const mapState = (
   { options, theme, users }: RootState,
-  { id, col, row, userId, value }: OwnProps
+  { id, selectedCell, userId, value }: OwnProps
 ) => {
-  let isAnswer = false;
-  let showHints = false;
-  if (col > -1 && row > -1 && userId && id in users[userId].sudokus) {
-    isAnswer = users[userId].sudokus[id].board[row][col].answer === value;
-    showHints = users[userId].sudokus[id].showHints;
-  }
+  let isAnswer;
+  if (selectedCell)
+    isAnswer =
+      users[userId].sudokus[id].board[selectedCell.row][selectedCell.col]
+        .answer === value;
 
   return {
     isAnswer,
     appShowHints: options.showHints,
-    showHints,
+    showHints: users[userId].sudokus[id].showHints,
     theme,
   };
 };
@@ -87,4 +85,4 @@ const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = OwnProps & PropsFromRedux;
 
-export default connect(mapState)(SudokuCell);
+export default connect(mapState)(GameControllerCell);

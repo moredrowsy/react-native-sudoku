@@ -9,7 +9,6 @@ export async function getStatus() {
   return item ? (JSON.parse(item) as AppStatus) : null;
 }
 
-// Only add game if it does not exist
 export async function setStatus(status: AppStatus) {
   return AsyncStorage.setItem(STATUS_STORGE_KEY, JSON.stringify(status));
 }

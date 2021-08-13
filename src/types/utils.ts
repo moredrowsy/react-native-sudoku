@@ -1,1 +1,1 @@
-export type HashAlgorithms = 'sha1' | 'md5';
+export type EllipsePos = 'pre' | 'in' | 'post';

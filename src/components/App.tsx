@@ -9,6 +9,7 @@ import {
   initSudokuGameDataAsync,
   initSudokuUserAsync,
   initAppOptionsAsync,
+  initNewSudokuAsync,
 } from '../storage/store';
 
 import RootStack from './Navigators';
@@ -18,6 +19,7 @@ const App: React.FC<Props> = ({ status, theme, dispatch }) => {
   useEffect(() => {
     dispatch(initSudokuUserAsync());
     dispatch(initSudokuGameDataAsync());
+    dispatch(initNewSudokuAsync());
     dispatch(initAppOptionsAsync());
   }, []);
 

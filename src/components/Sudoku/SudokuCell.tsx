@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleProp, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
 
 import {
@@ -8,7 +7,6 @@ import {
   updateSelectedCellForGame,
 } from '../../storage/store';
 import { getIsCellInSelected, SUDOKU_EMPTY_CELL } from '../../sudoku';
-import { CellEntity } from '.././../types';
 
 import Cell from './Cell';
 
@@ -57,14 +55,15 @@ const SudokuCell: React.FC<Props> = ({
     if (id && userId && sudokuCell) {
       // Unselect cell if it is already selected
       // Otherwise, set selected cell as this row, col
-      const cell = isSelected ? { col: -1, row: -1, value: -1 } : sudokuCell;
+      const cell = isSelected ? null : sudokuCell;
 
-      const payload: { userId: string; sudokuId: string; cell: CellEntity } = {
-        userId: userId,
-        sudokuId: id,
-        cell,
-      };
-      dispatch(updateSelectedCellForGame(payload));
+      dispatch(
+        updateSelectedCellForGame({
+          selectedCell: cell,
+          sudokuId: id,
+          userId: userId,
+        })
+      );
     }
   };
 
@@ -96,9 +95,10 @@ const mapState = (
   { id, userId, col, row }: OwnProps
 ) => {
   if (userId && users[userId]?.sudokus[id]) {
-    const boardSize = users[userId].sudokus[id].board.length;
-    const sudokuCell = users[userId].sudokus[id].board[row][col];
-    const selectedCell = users[userId].sudokus[id].selectedCell;
+    const sudoku = users[userId].sudokus[id];
+    const boardSize = sudoku.board.length;
+    const sudokuCell = sudoku.board[row][col];
+    const selectedCell = sudoku.selectedCell;
     const isCellInSelected = getIsCellInSelected(
       sudokuCell,
       selectedCell,
@@ -108,7 +108,9 @@ const mapState = (
     return {
       sudokuCell: sudokuCell,
       isCellInSelected,
-      isSelected: col === selectedCell.col && row === selectedCell.row,
+      isSelected: selectedCell
+        ? col === selectedCell.col && row === selectedCell.row
+        : false,
       theme,
     };
   } else {

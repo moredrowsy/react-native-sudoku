@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { connect, ConnectedProps } from 'react-redux';
+import { Picker } from '@react-native-picker/picker';
 
 import { RouteProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -13,7 +14,7 @@ import {
   setShowRevealAsync,
   setThemeNameAsync,
 } from '../storage/store';
-import { themeNames } from '../styles';
+import { BOARD_PADDING, colorsMap, themeNames } from '../styles';
 import { ThemeNames } from '../types';
 
 import CheckBox from './CheckBox';
@@ -21,6 +22,7 @@ import CheckBox from './CheckBox';
 const AppOptions: React.FC<Props> = ({ options, theme, dispatch }) => {
   const [showHints, setShowHints] = useState(options.showHints);
   const [showReveal, setShowReveal] = useState(options.showReveal);
+  const [selectedTheme, setSelectedTheme] = useState(theme.name);
 
   const onShowHintsToggle = (newValue: boolean) => {
     setShowHints(newValue);
@@ -35,6 +37,10 @@ const AppOptions: React.FC<Props> = ({ options, theme, dispatch }) => {
   const onChangeThemeName = (themeName: ThemeNames) => {
     dispatch(setThemeNameAsync(themeName));
   };
+
+  useEffect(() => {
+    dispatch(setThemeNameAsync(selectedTheme));
+  }, [selectedTheme]);
 
   return (
     <View style={styles.container}>
@@ -64,37 +70,27 @@ const AppOptions: React.FC<Props> = ({ options, theme, dispatch }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.optionList}>
-        <View>
-          <Text style={[styles.themeHeader, { color: theme.colors.primary }]}>
-            Themes
+      <View>
+        <View style={{ padding: 5 }}>
+          <Text
+            style={[styles.themeHeader, { color: colorsMap[selectedTheme] }]}
+          >
+            Theme
           </Text>
         </View>
-        {themeNames.map((themeName) => (
-          <View key={themeName}>
-            {options.themeName === themeName ? (
-              <View>
-                <Text
-                  style={[
-                    styles.text,
-                    styles.currentThemeText,
-                    {
-                      color: theme.colors.primary,
-                    },
-                  ]}
-                >
-                  {themeName}
-                </Text>
-              </View>
-            ) : (
-              <TouchableOpacity onPress={() => onChangeThemeName(themeName)}>
-                <Text style={[styles.text, { color: theme.colors.inactive }]}>
-                  {themeName}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))}
+        <Picker
+          selectedValue={selectedTheme}
+          onValueChange={(itemValue, itemIndex) => setSelectedTheme(itemValue)}
+        >
+          {themeNames.map((themeName) => (
+            <Picker.Item
+              key={themeName}
+              label={themeName}
+              value={themeName}
+              color={colorsMap[themeName]}
+            />
+          ))}
+        </Picker>
       </View>
     </View>
   );
@@ -105,18 +101,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'stretch',
+    margin: BOARD_PADDING,
   },
   option: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 30,
-  },
-  optionList: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 30,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   text: {
     fontSize: 18,
@@ -130,15 +120,15 @@ const styles = StyleSheet.create({
   },
 });
 
-type HomeScreenNavigationProp = BottomTabNavigationProp<
+type AppOptionsNavigationProp = BottomTabNavigationProp<
   TabsParamList,
   'AppOptions'
 >;
-type HomeScreenRouteProp = RouteProp<TabsParamList, 'AppOptions'>;
+type AppOptionsRouteProp = RouteProp<TabsParamList, 'AppOptions'>;
 
 type OwnProps = {
-  navigation: HomeScreenNavigationProp;
-  route: HomeScreenRouteProp;
+  navigation: AppOptionsNavigationProp;
+  route: AppOptionsRouteProp;
 };
 
 const mapState = ({ options, theme }: RootState) => ({

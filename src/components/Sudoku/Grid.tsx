@@ -11,12 +11,13 @@ const Grid: React.FC<Props> = ({
   rowDimension,
   colDimension,
   data,
-  isPortrait,
+  isPortrait = true,
   renderItem,
   theme,
 }) => {
-  const colSize = data[0].length;
-  const rowSize = data.length;
+  // Can not have 0 size otherwise division by zero
+  const colSize = data[0] ? (data[0].length > 0 ? data[0].length : 1) : 1;
+  const rowSize = data.length > 0 ? data.length : 1;
   const colSubgridSize = Math.sqrt(colSize);
   const rowSubgridSize = Math.sqrt(rowSize);
 

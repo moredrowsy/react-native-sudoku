@@ -26,6 +26,6 @@ export interface SudokuGameEntity {
   defaultScore: number;
   hasSolution: boolean;
   userScore: number;
-  selectedCell: CellEntity;
+  selectedCell: SudokuCellEntity | null;
   showHints: boolean;
 }

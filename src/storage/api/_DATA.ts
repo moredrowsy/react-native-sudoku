@@ -1,8 +1,8 @@
 import { SudokuRawData } from '../../types';
 
 const DATA: Record<string, SudokuRawData> = {
-  '1': {
-    id: '1',
+  '7d224a34-50d6-50d4-baf9-ff3a87c0f5e8': {
+    id: '7d224a34-50d6-50d4-baf9-ff3a87c0f5e8',
     data: [
       [0, 0, 0, 2, 6, 0, 7, 0, 1],
       [6, 8, 0, 0, 7, 0, 0, 9, 0],
@@ -26,8 +26,8 @@ const DATA: Record<string, SudokuRawData> = {
       [7, 6, 3, 4, 1, 8, 2, 5, 9],
     ],
   },
-  '2': {
-    id: '2',
+  '8d9b2424-12d9-5fcc-8e0f-9c9511344f3d': {
+    id: '8d9b2424-12d9-5fcc-8e0f-9c9511344f3d',
     data: [
       [3, 0, 6, 5, 0, 8, 4, 0, 0],
       [5, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -51,8 +51,8 @@ const DATA: Record<string, SudokuRawData> = {
       [7, 4, 5, 2, 8, 6, 3, 1, 9],
     ],
   },
-  '3': {
-    id: '3',
+  '3e8b5472-f22e-5ce6-a955-12497362039a': {
+    id: '3e8b5472-f22e-5ce6-a955-12497362039a',
     data: [
       [0, 0, 0, 0, 0, 0, 2, 0, 0],
       [0, 8, 0, 0, 0, 7, 0, 9, 0],
@@ -76,8 +76,8 @@ const DATA: Record<string, SudokuRawData> = {
       [7, 3, 6, 1, 8, 5, 4, 2, 9],
     ],
   },
-  '4': {
-    id: '4',
+  '9edc6cc2-b61d-5c0b-afda-5a9780198553': {
+    id: '9edc6cc2-b61d-5c0b-afda-5a9780198553',
     data: [
       [0, 0, 0, 5, 0, 8, 6, 0, 1],
       [0, 0, 4, 0, 0, 0, 0, 3, 0],

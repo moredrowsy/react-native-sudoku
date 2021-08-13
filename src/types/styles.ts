@@ -54,6 +54,7 @@ export interface CellStyles {
 }
 
 export interface Theme {
+  name: ThemeNames;
   colors: CellColors;
   portrait: CellStyles;
   landscape: CellStyles;

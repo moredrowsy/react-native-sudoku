@@ -1,8 +1,4 @@
-import {
-  SUDOKU_CELL_NORMAL_MARGIN,
-  SUDOKU_CELL_SUBGRID_MARGIN,
-  WINDOW_PADDING,
-} from '../styles';
+import { v5 as uuidv5 } from 'uuid';
 import {
   CellEntity,
   SudokuCellEntity,
@@ -61,11 +57,16 @@ export function createSudokuGame(
     defaultScore: score,
     hasSolution: solution ? true : false,
     userScore: score,
-    selectedCell: { col: -1, row: -1, value: -1 },
+    selectedCell: null,
     showHints: false,
   };
 
   return sudoku;
+}
+
+// Create unique id based on uuid v5 with namepsace URL
+function createUniqueID(str: string) {
+  return uuidv5(str, uuidv5.URL);
 }
 
 export function getAvailableCells(
@@ -115,13 +116,13 @@ function isInSudokuSubgrid(
 
 export function getIsCellInSelected(
   cell: CellEntity,
-  selCel: CellEntity,
+  selCel: CellEntity | null,
   boardSize: number
 ) {
-  let isInCol = false;
-  let isInRow = false;
+  if (selCel) {
+    let isInCol = false;
+    let isInRow = false;
 
-  if (selCel.col > -1 && selCel.row > -1) {
     const subgridSize = Math.sqrt(boardSize);
     const colIdx = cell.col - (cell.col % subgridSize);
     const rowIdx = cell.row - (cell.row % subgridSize);
@@ -129,11 +130,11 @@ export function getIsCellInSelected(
     const selRowIdx = selCel.row - (selCel.row % subgridSize);
     isInCol = colIdx === selColIdx;
     isInRow = rowIdx === selRowIdx;
-  }
 
-  return (
-    cell.col === selCel.col || cell.row === selCel.row || (isInCol && isInRow)
-  );
+    return (
+      cell.col === selCel.col || cell.row === selCel.row || (isInCol && isInRow)
+    );
+  } else return false;
 }
 
 export function restoreSudokuGameUser(sudoku: SudokuGameEntity) {
@@ -146,9 +147,48 @@ export function restoreSudokuGameUser(sudoku: SudokuGameEntity) {
     }
   }
   sudoku.userScore = sudoku.defaultScore;
-  sudoku.selectedCell = { col: -1, row: -1, value: -1 };
+  sudoku.selectedCell = null;
 
   return sudoku;
+}
+
+export function sanitizeNewSudokuGame(sudoku: SudokuGameEntity) {
+  const rawData: number[][] = [];
+
+  sudoku.defaultScore = 0;
+  sudoku.hasSolution = false;
+  sudoku.selectedCell = null;
+  sudoku.showHints = false;
+
+  const { board } = sudoku;
+  for (let i = 0; i < board.length; ++i) {
+    const row: number[] = [];
+    for (let j = 0; j < board.length; ++j) {
+      if (board[i][j].value !== SUDOKU_EMPTY_CELL) {
+        board[i][j].mutable = false;
+        ++sudoku.defaultScore;
+      }
+      row.push(board[i][j].value);
+    }
+    rawData.push(row);
+  }
+
+  // Generate and assign unique ID based on the the raw data array
+  sudoku.id = createUniqueID(JSON.stringify(rawData));
+
+  sudoku.userScore = sudoku.defaultScore;
+}
+
+export function setSudokuGameSolutionFromCurrentValues(
+  sudoku: SudokuGameEntity
+) {
+  const { board } = sudoku;
+  for (let i = 0; i < board.length; ++i) {
+    for (let j = 0; j < board.length; ++j) {
+      board[i][j].answer = board[i][j].value;
+    }
+  }
+  sudoku.hasSolution = true;
 }
 
 export function updateSudokuCellValueAndScore(
@@ -177,17 +217,14 @@ export function updateSudokuCellValueAndScore(
     setSudokuGameSolutionFromCurrentValues(sudoku);
   }
 
-  return sudoku;
-}
-
-export function setSudokuGameSolutionFromCurrentValues(
-  sudoku: SudokuGameEntity
-) {
-  const { board } = sudoku;
-  for (let i = 0; i < board.length; ++i) {
-    for (let j = 0; j < board.length; ++j) {
-      board[i][j].answer = board[i][j].value;
-    }
+  // Updeate selectedCell if the cell to update is the same
+  if (
+    sudoku.selectedCell &&
+    sudoku.selectedCell.col === col &&
+    sudoku.selectedCell.row === row
+  ) {
+    sudoku.selectedCell = board[row][col];
   }
-  sudoku.hasSolution = true;
+
+  return sudoku;
 }
