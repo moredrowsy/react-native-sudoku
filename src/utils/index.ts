@@ -13,3 +13,9 @@ export function ellipseStr(
     } else return `...${str.substr(3, maxLength - 3)}`;
   } else return str;
 }
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

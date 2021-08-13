@@ -45,6 +45,9 @@ const newSudoku = createSlice({
       restoreSudokuGameUser(state);
       if (action.payload) action.payload(state);
     },
+    setNewSudokuHasSolution: (state, action: PayloadAction<boolean>) => {
+      state.hasSolution = action.payload;
+    },
     updateNewSudokuGameValue: (
       state,
       action: PayloadAction<{
@@ -55,6 +58,9 @@ const newSudoku = createSlice({
       }>
     ) => {
       const { col, row, value, onSuccess } = action.payload;
+      // Reset hasSolution flag before updating
+      // Because changes might invalidate current hasSolution flag
+      state.hasSolution = false;
       updateSudokuCellValueAndScore(state, col, row, value);
       if (onSuccess) onSuccess(state);
     },
@@ -70,6 +76,7 @@ const newSudoku = createSlice({
 export const {
   setNewSudoku,
   resetNewSudokuGame,
+  setNewSudokuHasSolution,
   updateNewSudokuGameValue,
   updateNewSudokuSelectedCell,
 } = newSudoku.actions;

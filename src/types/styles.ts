@@ -4,10 +4,12 @@ export interface CellColors {
   primary: string;
   secondary: string;
   inactive: string;
-  text: string;
+  success: string;
+  fail: string;
   margin: string;
   background: string;
   opacityBackground: string;
+  text: string;
   selectedBackground: string;
   selectedOpacity: string;
   selectedText: string;

@@ -89,6 +89,17 @@ export function getAvailableCells(
   return unique;
 }
 
+export function getRawDataFromSudokuGame(sudoku: SudokuGameEntity) {
+  const data = [];
+  const { board } = sudoku;
+  for (let i = 0; i < board.length; ++i) {
+    const row = [];
+    for (let j = 0; j < board.length; ++j) row.push(board[i][j].value);
+    data.push(row);
+  }
+  return data;
+}
+
 export function getUserFromSudokuUser(sudokuUser: SudokuUserEntity) {
   const user: UserEntity = {
     name: sudokuUser.name,

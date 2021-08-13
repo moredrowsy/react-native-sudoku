@@ -25,7 +25,9 @@ import NewGameControllerCell from './NewGameControllerCell';
 
 const NewGameController: React.FC<Props> = ({
   boardDimension,
+  isBusy,
   isPortrait,
+  onCheckSolution,
   selectedCell,
   sudoku,
   theme,
@@ -48,6 +50,9 @@ const NewGameController: React.FC<Props> = ({
 
   // Grid only accepts 2d array.
   const data = [emptyRows];
+
+  // Icon names
+  const eyeIconName = sudoku.hasSolution ? 'eye-check' : 'eye-minus';
 
   const onCellPress = (value: number) => {
     if (selectedCell) {
@@ -80,7 +85,7 @@ const NewGameController: React.FC<Props> = ({
   };
 
   // TODO: Check if this new game already exists in database and inform user
-  // TODO: Check if the new game is solvable by using the sudoku-solver and inform user
+  // TODO: Add Modal component to inform user that they can only add if it is solvable by using the eye/check icon
   const onCreate = () => {
     dispatch(createNewSudokuGameAsync());
   };
@@ -127,39 +132,66 @@ const NewGameController: React.FC<Props> = ({
       >
         <TouchableOpacity
           onPress={onCellClear}
-          disabled={!selectedCell || selectedCell.value === SUDOKU_EMPTY_CELL}
+          disabled={
+            isBusy || !selectedCell || selectedCell.value === SUDOKU_EMPTY_CELL
+          }
         >
           <AntDesign
             name='closesquareo'
             size={cellDimension}
             color={
-              selectedCell && selectedCell.value !== SUDOKU_EMPTY_CELL
+              selectedCell &&
+              selectedCell.value !== SUDOKU_EMPTY_CELL &&
+              !isBusy
                 ? theme.colors.remove
                 : theme.colors.inactive
             }
           />
         </TouchableOpacity>
         <View style={{ width: cellDimension, height: cellDimension }}></View>
-
         <TouchableOpacity
           onPress={onReset}
-          disabled={!selectedCell || sudoku.defaultScore == sudoku.userScore}
+          disabled={
+            isBusy || !selectedCell || sudoku.defaultScore == sudoku.userScore
+          }
         >
           <MaterialCommunityIcons
             name='restart'
             size={cellDimension}
             color={
-              sudoku.defaultScore === sudoku.userScore
+              sudoku.defaultScore === sudoku.userScore || isBusy
                 ? theme.colors.inactive
                 : theme.colors.reset
             }
           />
         </TouchableOpacity>
         <View style={{ width: cellDimension, height: cellDimension }}></View>
-
+        <TouchableOpacity
+          onPress={onCheckSolution}
+          disabled={
+            isBusy ||
+            !selectedCell ||
+            sudoku.defaultScore == sudoku.userScore ||
+            sudoku.userScore === boardSize * boardSize
+          }
+        >
+          <MaterialCommunityIcons
+            name={eyeIconName as any}
+            size={cellDimension}
+            color={
+              sudoku.defaultScore === sudoku.userScore || isBusy
+                ? theme.colors.inactive
+                : sudoku.hasSolution
+                ? theme.colors.success
+                : theme.colors.fail
+            }
+          />
+        </TouchableOpacity>
+        <View style={{ width: cellDimension, height: cellDimension }}></View>
         <TouchableOpacity
           onPress={onCreate}
           disabled={
+            isBusy ||
             !selectedCell ||
             sudoku.defaultScore == sudoku.userScore ||
             sudoku.userScore === boardSize * boardSize
@@ -169,9 +201,9 @@ const NewGameController: React.FC<Props> = ({
             name='library-add'
             size={cellDimension}
             color={
-              sudoku.defaultScore === sudoku.userScore
+              sudoku.defaultScore === sudoku.userScore || isBusy
                 ? theme.colors.inactive
-                : theme.colors.reset
+                : theme.colors.primary
             }
           />
         </TouchableOpacity>
@@ -182,7 +214,9 @@ const NewGameController: React.FC<Props> = ({
 
 type OwnProps = {
   boardDimension: number;
+  isBusy: boolean;
   isPortrait: boolean;
+  onCheckSolution: () => void;
 };
 
 const mapState = ({ newSudoku, theme }: RootState) => ({

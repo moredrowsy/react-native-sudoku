@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -14,17 +14,21 @@ import { black, BOARD_PADDING, green, INFO_FONT_SIZE } from '../../../styles';
 
 const NewGameInfo: React.FC<Props> = ({
   cellDimension,
+  isBusy,
   isPortrait,
+  message,
   onGoBack,
   theme,
   total,
   userScore,
   dispatch,
 }) => {
-  let infoMsg = '';
   return (
     <View
-      style={isPortrait ? styles.containerPortrait : styles.containerLandscape}
+      style={[
+        isPortrait ? styles.containerPortrait : styles.containerLandscape,
+        { height: cellDimension },
+      ]}
     >
       <View
         style={
@@ -41,35 +45,44 @@ const NewGameInfo: React.FC<Props> = ({
           />
         </TouchableOpacity>
       </View>
-      <View
-        style={
-          isPortrait
-            ? styles.infoContainerPortrait
-            : styles.infoContainerLandscape
-        }
-      >
-        {userScore === total ? (
-          <View>
-            {isPortrait ? (
-              <Text style={styles.completed}>{infoMsg}</Text>
-            ) : (
-              <View style={styles.verticalText}>
-                {[...infoMsg].map((c, index) => (
-                  <Text key={`${index}${c}`} style={styles.completed}>
-                    {c}
-                  </Text>
-                ))}
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={isPortrait ? styles.portrait : styles.landscape}>
-            <Text style={styles.score}>{userScore}</Text>
-            <Text style={styles.score}>{isPortrait ? ' / ' : '—'}</Text>
-            <Text style={styles.score}>{total}</Text>
-          </View>
-        )}
-      </View>
+      {isBusy ? (
+        <View>
+          <ActivityIndicator
+            size={cellDimension}
+            color={theme.colors.primary}
+          />
+        </View>
+      ) : (
+        <View
+          style={
+            isPortrait
+              ? styles.infoContainerPortrait
+              : styles.infoContainerLandscape
+          }
+        >
+          {message ? (
+            <View>
+              {isPortrait ? (
+                <Text style={styles.infoMsg}>{message}</Text>
+              ) : (
+                <View style={styles.verticalText}>
+                  {[...message].map((c, index) => (
+                    <Text key={`${index}${c}`} style={styles.infoMsg}>
+                      {c}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={isPortrait ? styles.portrait : styles.landscape}>
+              <Text style={styles.score}>{userScore}</Text>
+              <Text style={styles.score}>{isPortrait ? ' / ' : '—'}</Text>
+              <Text style={styles.score}>{total}</Text>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -88,6 +101,10 @@ const styles = StyleSheet.create({
     marginTop: BOARD_PADDING,
   },
   infoContainerPortrait: {},
+  busyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   landscape: {
     flexDirection: 'column',
   },
@@ -100,7 +117,7 @@ const styles = StyleSheet.create({
     color: black,
     textAlign: 'center',
   },
-  completed: {
+  infoMsg: {
     color: green,
     fontSize: INFO_FONT_SIZE,
     fontWeight: 'bold',
@@ -115,7 +132,9 @@ const styles = StyleSheet.create({
 type OwnProps = {
   cellDimension: number;
   boardSize: number;
+  isBusy?: boolean;
   isPortrait: boolean;
+  message?: string;
   onGoBack: () => void;
 };
 
