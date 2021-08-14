@@ -84,8 +84,6 @@ const NewGameController: React.FC<Props> = ({
     }
   };
 
-  // TODO: Check if this new game already exists in database and inform user
-  // TODO: Add Modal component to inform user that they can only add if it is solvable by using the eye/check icon
   const onCreate = () => {
     dispatch(createNewSudokuGameAsync());
   };
@@ -192,6 +190,7 @@ const NewGameController: React.FC<Props> = ({
           onPress={onCreate}
           disabled={
             isBusy ||
+            !sudoku.hasSolution ||
             !selectedCell ||
             sudoku.defaultScore == sudoku.userScore ||
             sudoku.userScore === boardSize * boardSize
@@ -201,7 +200,9 @@ const NewGameController: React.FC<Props> = ({
             name='library-add'
             size={cellDimension}
             color={
-              sudoku.defaultScore === sudoku.userScore || isBusy
+              isBusy ||
+              !sudoku.hasSolution ||
+              sudoku.defaultScore === sudoku.userScore
                 ? theme.colors.inactive
                 : theme.colors.primary
             }
